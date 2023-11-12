@@ -16,9 +16,9 @@ namespace game {
 		sf::Text* __mainMenu;
 		sf::Color __menuTextColor = sf::Color::Blue;
 		sf::Color __choseTextColor = sf::Color::Yellow;
-		sf::Color __borderColor = sf::Color::Black;
+		sf::Color __borderColor = sf::Color::Blue;
 		
-		void setInitText(sf::Text& text, sf::String str, double xpos, double ypos);
+		void setInitTextMenu(sf::Text& text, sf::String str, double xpos, double ypos);
 		
 		sf::RenderWindow& __window;
 	public:
@@ -40,9 +40,9 @@ namespace game {
 		void setColorTextMenu(sf::Color menColor, sf::Color ChoColor,
 			sf::Color BordColor);
 
-		void AlignMenu(int posx);
+		void AlignMenu(int posx);   
 
-		int getSelectedMenuNumber()
+		int getSelectedMenuNumber() 
 		{
 			return __mainMenuSelected;
 		}
