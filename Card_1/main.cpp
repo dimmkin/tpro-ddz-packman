@@ -1,4 +1,7 @@
-#include <SFML/Graphics.hpp>
+#include "utils.h"
+#include <iostream>
+
+
 struct Field
 {
     size_t width = 0;
@@ -6,6 +9,7 @@ struct Field
     sf::RectangleShape *rects = nullptr;
 };
 
+static const sf::Color BLACK_COLOR = sf::Color(0, 0, 0);
 
 static const float BLOCK_SIZE = 25.f;
 static const size_t FIELD_WIDTH = 31;
@@ -46,10 +50,9 @@ static const char FIELD_MAZE[] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 };
 
-static const sf::Color BROWN_COLOR = sf::Color(163, 58, 3);
-static const sf::Color WHITE_COLOR = sf::Color(255, 255, 255);
 
-void initializeField(Field &field)
+// Превращаем наш массив в поле
+void initializeField(Field& field, const sf::Texture& texture)
 {
     field.width = FIELD_WIDTH;
     field.height = FIELD_HEIGHT;
@@ -59,23 +62,25 @@ void initializeField(Field &field)
         for (size_t x = 0; x < field.width; x++)
         {
             const size_t offset = x + y * field.width;
-            sf::Color color;
-            if (FIELD_MAZE[offset] == 1)
-            {
-                color = BROWN_COLOR;
-            }
-            else
-            {
-                color = WHITE_COLOR;
-            }
             sf::RectangleShape &rect = field.rects[offset];
             rect.setPosition(x * BLOCK_SIZE, y * BLOCK_SIZE);
             rect.setSize(sf::Vector2f(BLOCK_SIZE, BLOCK_SIZE));
-            rect.setFillColor(color);
+
+            if (FIELD_MAZE[offset] == 1)
+            {
+                rect.setTexture(&texture);
+            }
+            else
+            {
+                rect.setFillColor(BLACK_COLOR);
+            }
+            
         }
     }
 }
 
+
+// Прорисовываем каждый элемент поля
 void drawField(sf::RenderWindow &window, const Field &field)
 {
     for (size_t i = 0; i < field.width * field.height; i++)
@@ -84,11 +89,7 @@ void drawField(sf::RenderWindow &window, const Field &field)
     }
 }
 
-void destroyField(Field &field)
-{
-    delete[] field.rects;
-}
-
+// Воспроизводим наше поле
 void render(sf::RenderWindow& window, const Field& field)
 {
     window.clear();
@@ -100,11 +101,22 @@ int main(int, char* [])
 {
     sf::RenderWindow window(sf::VideoMode(775, 825), "PacMan Game Clone");
 
+    // Загрузка текстуры
+    sf::Texture fieldTexture = loadTexture("pixel_3.jpg");
+
+    // Накладываем текстуры на поле
     Field field;
-    initializeField(field);
+    initializeField(field, fieldTexture);
 
     while (window.isOpen())
     {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
         render(window, field);
     }
 
