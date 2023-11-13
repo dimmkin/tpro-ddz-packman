@@ -1,6 +1,6 @@
-#include "menu.h"
+#include "menuBase.h"
 
-void game::Menu::setInitTextMenu(sf::Text& text, sf::String str, double xpos, double ypos)
+void game::MenuBase::setInitTextMenu(sf::Text& text, sf::String str, double xpos, double ypos)
 {
 	text.setFont(__font);
 	text.setFillColor(__menuTextColor);
@@ -11,7 +11,7 @@ void game::Menu::setInitTextMenu(sf::Text& text, sf::String str, double xpos, do
 	text.setOutlineColor(__borderColor);
 }
 
-void game::Menu::AlignMenu(int posx)
+void game::MenuBase::AlignMenu(int posx)
 {
 	double nullx = 0;
 	for (int i = 0; i < __maxMenu; i++) {
@@ -32,24 +32,30 @@ void game::Menu::AlignMenu(int posx)
 
 }
 
-game::Menu::Menu(sf::RenderWindow& window, double menux, double menuy,
+game::MenuBase::MenuBase(sf::RenderWindow& window, double menux, double menuy,
 	int index, sf::String name[], int sizeFont, int step)
 	:__window(window), __menuX(menux), __menuY(menuy), __sizeFont(sizeFont), __menuStep(step)
 {
 	if (!__font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf")) exit(32);
 	__maxMenu = index;
 	__mainMenu = new sf::Text[__maxMenu];
-	
+
 	for (int i = 0, ypos = __menuY; i < __maxMenu; i++, ypos += __menuStep) setInitTextMenu(__mainMenu[i], name[i], __menuX, ypos);
 	__mainMenuSelected = 0;
-	
+
 	__mainMenu[__mainMenuSelected].setFillColor(__choseTextColor);
 }
 
-void game::Menu::MoveUp()
+void game::MenuBase::draw()
+{
+	for (int i = 0; i < __maxMenu; i++) __window.draw(__mainMenu[i]);
+}
+
+
+void game::MenuBase::MovePrev()
 {
 	__mainMenuSelected--;
-	
+
 	if (__mainMenuSelected >= 0) {
 		__mainMenu[__mainMenuSelected].setFillColor(__choseTextColor);
 		__mainMenu[__mainMenuSelected + 1].setFillColor(__menuTextColor);
@@ -62,10 +68,10 @@ void game::Menu::MoveUp()
 	}
 }
 
-void game::Menu::MoveDown()
+void game::MenuBase::MoveNext()
 {
 	__mainMenuSelected++;
-	
+
 	if (__mainMenuSelected < __maxMenu) {
 		__mainMenu[__mainMenuSelected - 1].setFillColor(__menuTextColor);
 		__mainMenu[__mainMenuSelected].setFillColor(__choseTextColor);
@@ -79,12 +85,7 @@ void game::Menu::MoveDown()
 
 }
 
-void game::Menu::draw()
-{
-	for (int i = 0; i < __maxMenu; i++) __window.draw(__mainMenu[i]);
-}
-
-void game::Menu::setColorTextMenu(sf::Color menColor, sf::Color ChoColor, sf::Color BordColor)
+void game::MenuBase::setColorTextMenu(sf::Color menColor, sf::Color ChoColor, sf::Color BordColor)
 {
 	__menuTextColor = menColor;
 	__choseTextColor = ChoColor;

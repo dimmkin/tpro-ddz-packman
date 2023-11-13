@@ -1,38 +1,9 @@
-#include "menu.h"
-#include "gameselection.h"
-#include "bots.h"
-#include "maps.h"
+#include "menuBase.h"
 
 using namespace sf;
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
-
-void ChoseCountBots()
-{
-    RenderWindow Settings(VideoMode::getDesktopMode(), L"Settings", Style::Fullscreen);
-
-    RectangleShape backgroundOpt(Vector2f(1920, 1080));
-    Texture textureOpt;
-    if (!textureOpt.loadFromFile("C:\\Users\\user\\Desktop\\image\\settings.png")) exit(2);
-
-    backgroundOpt.setTexture(&textureOpt);
-    while (Settings.isOpen())
-    {
-        Event eventOpt;
-        while (Settings.pollEvent(eventOpt))
-        {
-            if (eventOpt.type == Event::Closed) Settings.close();
-            if (eventOpt.type == Event::KeyPressed)
-            {
-                if (eventOpt.key.code == Keyboard::Escape) Settings.close();
-            }
-        }
-        Settings.clear();
-        Settings.draw(backgroundOpt);
-        Settings.display();
-    }
-}
 
 void GamеStart(RenderWindow& window, Font& font)
 {
@@ -66,27 +37,27 @@ void GamеStart(RenderWindow& window, Font& font)
 
     String nameGameSelection[]{ L"Classic",L"Fast Game" };
 
-    game::GameSelection myGameSelection(Play, 210, 320, 2, nameGameSelection, 90, 70);
+    game::GameSelection myGameSelection(Play, 210, 320, 2, nameGameSelection, 90, 270);
 
-    myGameSelection.setColorTextGameSelection(Color::Blue, Color::Yellow, Color::Black);
+    myGameSelection.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
-    myGameSelection.AlignGameSelection(2);
+    myGameSelection.AlignMenu(2);
 
     String bots[]{ L"1",L"2",L"3",L"4" };
 
-    game::Bots myBots(Play, 175, 650, 4, bots, 90, 70);
+    game::ChoseBots myBots(Play, 175, 650, 4, bots, 90, 120);
+    
+    myBots.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
-    myBots.setColorTextBots(Color::Blue, Color::Yellow, Color::Black);
-
-    myBots.AlignBots(2);
+    myBots.AlignMenu(2);
 
     String maps[]{ L"1",L"2",L"3" };
 
-    game::Maps myMaps(Play, 950, 725, 3, maps, 90, 70);
+    game::Maps myMaps(Play, 950, 725, 3, maps, 90, 370);
 
-    myMaps.setColorTextMaps(Color::Blue, Color::Yellow, Color::Black);
+    myMaps.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
-    myMaps.AlignMaps(2);
+    myMaps.AlignMenu(2);
     int countBots = 1;
     int page = 0;
     while (Play.isOpen())
@@ -99,9 +70,9 @@ void GamеStart(RenderWindow& window, Font& font)
             case 0: 
                 if (eventPlay.type == Event::KeyReleased)
                 {
-                    if (eventPlay.key.code == Keyboard::Left) { myGameSelection.MoveLeft(); }
+                    if (eventPlay.key.code == Keyboard::Left) { myGameSelection.MovePrev(); }
 
-                    if (eventPlay.key.code == Keyboard::Right) { myGameSelection.MoveRight(); }
+                    if (eventPlay.key.code == Keyboard::Right) { myGameSelection.MoveNext(); }
                     if (eventPlay.key.code == Keyboard::Return)
                     {
                         page = 1;
@@ -111,8 +82,8 @@ void GamеStart(RenderWindow& window, Font& font)
             case 1: 
                 if (eventPlay.type == Event::KeyReleased)
                 {
-                    if (eventPlay.key.code == Keyboard::Left) { myBots.MoveLeft(); }
-                    if (eventPlay.key.code == Keyboard::Right) { myBots.MoveRight(); }
+                    if (eventPlay.key.code == Keyboard::Left) { myBots.MovePrev(); }
+                    if (eventPlay.key.code == Keyboard::Right) { myBots.MoveNext(); }
                     if (eventPlay.key.code == Keyboard::Return)
                     {
                         page = 2;
@@ -122,8 +93,8 @@ void GamеStart(RenderWindow& window, Font& font)
             case 2: 
                 if (eventPlay.type == Event::KeyReleased)
                 {
-                    if (eventPlay.key.code == Keyboard::Left) { myMaps.MoveLeft(); }
-                    if (eventPlay.key.code == Keyboard::Right) { myMaps.MoveRight(); }
+                    if (eventPlay.key.code == Keyboard::Left) { myMaps.MovePrev(); }
+                    if (eventPlay.key.code == Keyboard::Right) { myMaps.MoveNext(); }
                     if (eventPlay.key.code == Keyboard::Return)
                     {
                         
@@ -196,7 +167,7 @@ int main()
     Font font;
     if (!font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf")) return 5;
     
-    String nameMenu[]{ L"Start",L"Settings",L"Exit" };
+    String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
 
     game::Menu mymenu(window, 1400, 250, 3, nameMenu, 150, 160);
     
@@ -211,9 +182,9 @@ int main()
         {
             if (event.type == Event::KeyReleased)
             {
-                if (event.key.code == Keyboard::Up) { mymenu.MoveUp(); }
+                if (event.key.code == Keyboard::Up) { mymenu.MovePrev(); }
                 
-                if (event.key.code == Keyboard::Down) { mymenu.MoveDown(); }
+                if (event.key.code == Keyboard::Down) { mymenu.MoveNext(); }
                 
                 if (event.key.code == Keyboard::Return)
                 {
