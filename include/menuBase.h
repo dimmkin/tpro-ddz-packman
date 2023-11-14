@@ -69,4 +69,16 @@ namespace game {
 		Maps(sf::RenderWindow& window, double menux, double menuy,
 			int index, sf::String name[], int sizeFont = 60, int step = 80);
 	};
+
+	class Pause : public MenuBase {
+	public:
+		Pause(sf::RenderWindow& window, double menux, double menuy,
+			int index, sf::String name[], int sizeFont = 60, int step = 80);
+	};
+
+	class Exit : public GameSelection {
+	public:
+		Exit(sf::RenderWindow& window, double menux, double menuy,
+			int index, sf::String name[], int sizeFont = 60, int step = 80);
+	};
 }
