@@ -16,7 +16,9 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
 
     Texture texturePlay;
-    if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\pause.png")) exit(1);
+
+    if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
+  
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulPause;
@@ -48,7 +50,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                     {
                     case 0:PlayGame(window, font, width, height);      break;
                     case 1:GamеStart(window, font, width, height);     break;
-                    case 2:MainMenu(window, font, width, height);                      break;
+                    case 2:MainMenu(window, font, width, height);      break;
                     }
                 }
             }
@@ -66,7 +68,8 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
 
     Texture texturePlay;
-    if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\play-game.png")) exit(1);
+    if (!texturePlay.loadFromFile("image/play-game.png")) exit(1);
+
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulRounds;
@@ -106,21 +109,6 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     {
         Event event;
         while (window.pollEvent(event)) {
-            //switch (1)
-            //{
-            //case 0:
-            //    if (event.type == Event::KeyReleased)
-            //    {
-
-            //    }
-            //    break;
-            //case 1:
-            //    if (event.type == Event::KeyReleased)
-            //    {
-
-            //    }
-            //    break;
-            //}
             if (event.type == Event::KeyPressed)
             {
                 if (event.key.code == Keyboard::Escape) { Pause(window, font, width, height); }
@@ -146,7 +134,8 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
 
     Texture texturePlay;
-    if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\start-game.png")) exit(1);
+    if (!texturePlay.loadFromFile("image/start-game.png")) exit(1);
+
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulStart;
@@ -180,7 +169,7 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
     String bots[]{ L"1",L"2",L"3",L"4" };
 
     game::ChoseBots myBots(window, 175, 650, 4, bots, 90, 120);
-    
+
     myBots.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     myBots.AlignMenu(2);
@@ -255,12 +244,141 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
+void Option(sf::RenderWindow& window, sf::Font& font)
+{
+    RectangleShape backgroundOpt(Vector2f(1920, 1080));
+    Texture textureOpt;
+    if (!textureOpt.loadFromFile("image/settings.png")) exit(2);
+    backgroundOpt.setTexture(&textureOpt);
+
+    Text Titul, SettingsMenu1, SettingsMenu2, Save;
+    SettingsMenu1.setFont(font);
+    SettingsMenu2.setFont(font);
+    Titul.setFont(font);
+    Save.setFont(font);
+
+
+    InitText(Titul, 780, -30, "Settings", 150, Color::Yellow, 3, Color::Black);
+    InitText(SettingsMenu1, 300, 150, "Management", 100, Color::Yellow, 3, Color::Black);
+    InitText(SettingsMenu2, 1400, 150, "Game", 100, Color::Yellow, 3, Color::Black);
+    InitText(Save, 830, 840, L"SAVE", 200, Color::Blue, 3, Color::Black);
+
+    String ManagementCount[]{ L"1",L"2" };
+
+    game::Settigns Management(window, 260, 550, 2, ManagementCount, 90, 430);
+
+    Management.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
+
+    Management.AlignMenu(2);
+
+    String name_user[]{ L"Name :" };
+    game::Settigns Name(window, 1150, 340, 1, name_user, 90);
+
+    Name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
+
+    Name.AlignMenu(2);
+
+    String color_menu[]{ L"Color :" };
+    game::Settigns Color(window, 1150, 560, 1, color_menu, 90);
+
+    Color.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
+
+    Color.AlignMenu(2);
+
+    String Color_count[]{ L"1",L"2", L"3" };
+
+    game::Settigns Color_name(window, 1450, 700, 3, Color_count, 90, 150);
+
+    Color_name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
+
+    Color_name.AlignMenu(2);
+
+    Text message("", font, 20);
+    int page = 0;
+    while (window.isOpen())
+    {
+        Event eventOpt;
+        while (window.pollEvent(eventOpt))
+        {
+            switch (page)
+            {
+            case 0:
+                if (eventOpt.type == Event::KeyReleased)
+                {
+                    if (eventOpt.key.code == Keyboard::Left) { Management.MovePrev(); }
+
+                    if (eventOpt.key.code == Keyboard::Right) { Management.MoveNext(); }
+                    if (eventOpt.key.code == Keyboard::Return)
+                    {
+                        page = 1;
+                    }
+                }
+                break;
+            case 1:
+                if (eventOpt.type == Event::TextEntered)
+                {
+                    std::string text = message.getString();
+                    int digit = eventOpt.text.unicode;
+                    if (text.length() < 12) {
+                        message.setString(text + (char)(digit));
+                    }
+                    if (digit == 57) {
+                        message.setString(text + '9');
+                    }
+                    if (digit == 8) {
+                        message.setString(text.substr(0, text.length() - 1));
+                    }
+
+                    InitText(message, 1395, 320, message.getString(), 100, Color::Blue, 3, Color::Black);
+                }
+                if (eventOpt.type == Event::KeyReleased)
+                {
+                    if (eventOpt.key.code == Keyboard::Return)
+                    {
+                        page = 2;
+                    }
+                }
+                break;
+            case 2:
+                if (eventOpt.type == Event::KeyReleased)
+                {
+                    if (eventOpt.key.code == Keyboard::Left) { Color_name.MovePrev(); }
+                    if (eventOpt.key.code == Keyboard::Right) { Color_name.MoveNext(); }
+                    if (eventOpt.key.code == Keyboard::Return)
+                    {
+                        MainMenu(window, font, 1920, 1080);
+                    }
+                }
+                break;
+            };
+
+            if (eventOpt.type == Event::KeyPressed)
+            {
+                if (eventOpt.key.code == Keyboard::Escape) { MainMenu(window, font, 1920, 1080); }
+            }
+        }
+        window.clear();
+        window.draw(backgroundOpt);
+        window.draw(Titul);
+        window.draw(SettingsMenu1);
+        window.draw(SettingsMenu2);
+        window.draw(Save);
+        window.draw(message);
+        Name.draw();
+        Color.draw();
+        Color_name.draw();
+        Management.draw();
+        window.display();
+    }
+}
+
 void Exit(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape backgroundExit(Vector2f(width, height));
 
     Texture textureExit;
-    if (!textureExit.loadFromFile("C:\\Users\\user\\Desktop\\image\\exit.png")) exit(1);
+
+    if (!textureExit.loadFromFile("image/exit.png")) exit(1);
     backgroundExit.setTexture(&textureExit);
 
     Text TitulExit;
@@ -309,7 +427,8 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
     RectangleShape background(Vector2f(width, height));
 
     Texture textureWindow;
-    if (!textureWindow.loadFromFile("C:\\Users\\user\\Desktop\\image\\packman-menu.png")) exit(1);
+    if (!textureWindow.loadFromFile("image/packman-menu.png")) exit(1);
+
     background.setTexture(&textureWindow);
 
     String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
@@ -337,7 +456,7 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
                     {
                     case 0:GamеStart(window, font, width, height);    break;
                     case 1:Settings(window, font, width, height);     break;
-                    case 2:Exit(window, font, width, height); break;
+                    case 2:Exit(window, font, width, height);         break;
                     }
                 }
             }
@@ -361,51 +480,9 @@ int main()
     double height = VideoMode::getDesktopMode().height;
 
     Font font;
-    if (!font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf")) return 5;
+    if (!font.loadFromFile("font/EightBits.ttf")) return 5;
 
     MainMenu(window, font, width, height);
-    //RectangleShape background(Vector2f(width, height));
-    //
-    //Texture textureWindow;
-    //if (!textureWindow.loadFromFile("C:\\Users\\user\\Desktop\\image\\packman-menu.png")) return 4;
-    //background.setTexture(&textureWindow);
-
-    
-    //String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
-
-    //game::Menu mymenu(window, 1400, 250, 3, nameMenu, 150, 160);
-    //
-    //mymenu.setColorTextMenu(Color::Blue, Color::Yellow, Color::Blue);
-    //
-    //mymenu.AlignMenu(2);
-
-    //while (window.isOpen())
-    //{
-    //    Event event;
-    //    while (window.pollEvent(event))
-    //    {
-    //        if (event.type == Event::KeyReleased)
-    //        {
-    //            if (event.key.code == Keyboard::Up) { mymenu.MovePrev(); }
-    //            
-    //            if (event.key.code == Keyboard::Down) { mymenu.MoveNext(); }
-    //            
-    //            if (event.key.code == Keyboard::Return)
-    //            {
-    //                switch (mymenu.getSelectedMenuNumber())
-    //                {
-    //                case 0:GamеStart(window, font);    break;
-    //                case 1:Settings();     break;
-    //                case 2:window.close(); break;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    window.clear();
-    //    window.draw(background);
-    //    mymenu.draw();
-    //    window.display();
-    //}
     return 0;
 }
 
@@ -419,3 +496,4 @@ void InitText(Text& mtext, float xpos, float ypos, String str, int size_font,
     mtext.setOutlineThickness(bord);
     mtext.setOutlineColor(border_color);
 }
+
