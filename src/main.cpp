@@ -255,30 +255,6 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
-void Settings(RenderWindow& window, Font& font, double width, double height)
-{
-    RectangleShape backgroundOpt(Vector2f(1920, 1080));
-    Texture textureOpt;
-    if (!textureOpt.loadFromFile("C:\\Users\\user\\Desktop\\image\\settings.png")) exit(2);
-
-    backgroundOpt.setTexture(&textureOpt);
-    while (window.isOpen())
-    {
-        Event eventOpt;
-        while (window.pollEvent(eventOpt))
-        {
-            if (eventOpt.type == Event::Closed) window.close();
-            if (eventOpt.type == Event::KeyPressed)
-            {
-                if (eventOpt.key.code == Keyboard::Escape) MainMenu(window, font, width, height);
-            }
-        }
-        window.clear();
-        window.draw(backgroundOpt);
-        window.display();
-    }
-}
-
 void Exit(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape backgroundExit(Vector2f(width, height));
