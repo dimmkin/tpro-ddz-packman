@@ -5,16 +5,132 @@ using namespace sf;
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
 
-void MainMenu(sf::RenderWindow& window, sf::Font& font, double width, double height);
+void PlayGame(RenderWindow& window, Font& font, double width, double height);
 
-void GamåStart(RenderWindow& window, Font& font)
+void GamåStart(RenderWindow& window, Font& font, double width, double height);
+
+void MainMenu(RenderWindow& window, Font& font, double width, double height);
+
+void Pause(RenderWindow& window, Font& font, double width, double height)
 {
-    RenderWindow Play(VideoMode::getDesktopMode(), L"Start Game", Style::Fullscreen);
+    RectangleShape backgroundPlay(Vector2f(1920, 1080));
+
+    Texture texturePlay;
+    if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
+    backgroundPlay.setTexture(&texturePlay);
+
+    Text TitulPause;
+    TitulPause.setFont(font);
+    InitText(TitulPause, 800, -80, L"PAUSE", 200, Color::Yellow, 3, Color::Black);
+
+    String namePause[]{ L"RESUME",L"RESTART",L"EXIT GAME" };
+
+    game::Pause myPause(window, 950, 175, 3, namePause, 200, 200);
+
+    myPause.setColorTextMenu(Color::Blue, Color::Yellow, Color::Blue);
+
+    myPause.AlignMenu(2);
+
+    while (window.isOpen())
+    {
+        Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::KeyReleased)
+            {
+                if (event.key.code == Keyboard::Up) { myPause.MovePrev(); }
+
+                if (event.key.code == Keyboard::Down) { myPause.MoveNext(); }
+
+                if (event.key.code == Keyboard::Return)
+                {
+                    switch (myPause.getSelectedMenuNumber())
+                    {
+                    case 0:PlayGame(window, font, width, height);      break;
+                    case 1:GamåStart(window, font, width, height);     break;
+                    case 2:MainMenu(window, font, width, height);      break;
+                    }
+                }
+            }
+        }
+        window.clear();
+        window.draw(backgroundPlay);
+        window.draw(TitulPause);
+        myPause.draw();
+        window.display();
+    }
+}
+
+void PlayGame(RenderWindow& window, Font& font, double width, double height)
+{
+    RectangleShape backgroundPlay(Vector2f(1920, 1080));
+
+    Texture texturePlay;
+    if (!texturePlay.loadFromFile("image/play-game.png")) exit(1);
+    backgroundPlay.setTexture(&texturePlay);
+
+    Text TitulRounds;
+    TitulRounds.setFont(font);
+    InitText(TitulRounds, 690, -80, L"ROUND 1/3", 200, Color::Yellow, 3, Color::Black);
+
+    Text TitulPackman;
+    TitulPackman.setFont(font);
+    InitText(TitulPackman, 750, 840, L"PACKMAN", 200, Color::Yellow, 3, Color::Black);
+
+    Text TitulFirstPlayer;
+    TitulFirstPlayer.setFont(font);
+    InitText(TitulFirstPlayer, 150, 150, L"Player 1", 100, Color::Yellow, 3, Color::Blue);
+
+    Text TitulFirstNick;
+    TitulFirstNick.setFont(font);
+    InitText(TitulFirstNick, 120, 250, L"Nickname 1", 90, Color::Yellow, 3, Color::Blue);
+
+    Text TitulFirstScore;
+    TitulFirstScore.setFont(font);
+    InitText(TitulFirstScore, 75, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
+
+    Text TitulSecondPlayer;
+    TitulSecondPlayer.setFont(font);
+    InitText(TitulSecondPlayer, 1550, 150, L"Player 2", 100, Color::Yellow, 3, Color::Blue);
+
+    Text TitulSecondNick;
+    TitulSecondNick.setFont(font);
+    InitText(TitulSecondNick, 1520, 250, L"Nickname 2", 90, Color::Yellow, 3, Color::Blue);
+
+    Text TitulSecondScore;
+    TitulSecondScore.setFont(font);
+    InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
+
+
+    while (window.isOpen())
+    {
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::KeyPressed)
+            {
+                if (event.key.code == Keyboard::Escape) { Pause(window, font, width, height); }
+            }
+        }
+        window.clear();
+        window.draw(backgroundPlay);
+        window.draw(TitulRounds);
+        window.draw(TitulPackman);
+        window.draw(TitulFirstPlayer);
+        window.draw(TitulFirstNick);
+        window.draw(TitulFirstScore);
+        window.draw(TitulSecondPlayer);
+        window.draw(TitulSecondNick);
+        window.draw(TitulSecondScore);
+        window.display();
+    }
+}
+void GamåStart(RenderWindow& window, Font& font, double width, double height)
+{
 
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
 
     Texture texturePlay;
-    if (!texturePlay.loadFromFile("image/start.png")) exit(1);
+    if (!texturePlay.loadFromFile("image/start-game.png")) exit(1);
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulStart;
@@ -39,7 +155,7 @@ void GamåStart(RenderWindow& window, Font& font)
 
     String nameGameSelection[]{ L"Classic",L"Fast Game" };
 
-    game::GameSelection myGameSelection(Play, 210, 320, 2, nameGameSelection, 90, 270);
+    game::GameSelection myGameSelection(window, 210, 320, 2, nameGameSelection, 90, 270);
 
     myGameSelection.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
@@ -47,7 +163,7 @@ void GamåStart(RenderWindow& window, Font& font)
 
     String bots[]{ L"1",L"2",L"3",L"4" };
 
-    game::ChoseBots myBots(Play, 175, 650, 4, bots, 90, 120);
+    game::ChoseBots myBots(window, 175, 650, 4, bots, 90, 120);
 
     myBots.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
@@ -55,17 +171,17 @@ void GamåStart(RenderWindow& window, Font& font)
 
     String maps[]{ L"1",L"2",L"3" };
 
-    game::Maps myMaps(Play, 950, 725, 3, maps, 90, 370);
+    game::Maps myMaps(window, 950, 725, 3, maps, 90, 370);
 
     myMaps.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     myMaps.AlignMenu(2);
     int countBots = 1;
     int page = 0;
-    while (Play.isOpen())
+    while (window.isOpen())
     {
         Event eventPlay;
-        while (Play.pollEvent(eventPlay))
+        while (window.pollEvent(eventPlay))
         {
             switch (page)
             {
@@ -99,35 +215,34 @@ void GamåStart(RenderWindow& window, Font& font)
                     if (eventPlay.key.code == Keyboard::Right) { myMaps.MoveNext(); }
                     if (eventPlay.key.code == Keyboard::Return)
                     {
-
+                        PlayGame(window, font, width, height);
                     }
                 }
                 break;
             }
             if (eventPlay.type == Event::KeyPressed)
             {
-                if (eventPlay.key.code == Keyboard::Escape) { Play.close(); }
+                if (eventPlay.key.code == Keyboard::Escape) { MainMenu(window, font, 1920, 1080); }
             }
         }
-        Play.clear();
-        Play.draw(backgroundPlay);
-        Play.draw(TitulStart);
-        Play.draw(TitulGameSelection);
-        Play.draw(TitulCountBots);
-        Play.draw(TitulChoseMap);
-        Play.draw(TitulStartGame);
+        window.clear();
+        window.draw(backgroundPlay);
+        window.draw(TitulStart);
+        window.draw(TitulGameSelection);
+        window.draw(TitulCountBots);
+        window.draw(TitulChoseMap);
+        window.draw(TitulStartGame);
         myGameSelection.draw();
         myBots.draw();
         myMaps.draw();
-        Play.display();
+        window.display();
     }
 }
-
 void Option(sf::RenderWindow& window, sf::Font& font)
 {
     RectangleShape backgroundOpt(Vector2f(1920, 1080));
     Texture textureOpt;
-    if (!textureOpt.loadFromFile("image/settings.jpg")) exit(2);
+    if (!textureOpt.loadFromFile("image/settings.png")) exit(2);
     backgroundOpt.setTexture(&textureOpt);
 
     Text Titul, SettingsMenu1, SettingsMenu2, Save;
@@ -144,14 +259,14 @@ void Option(sf::RenderWindow& window, sf::Font& font)
 
     String ManagementCount[]{ L"1",L"2" };
 
-    game::Settigns Management(window, 260, 550, 2, ManagementCount,90, 430);
+    game::Settigns Management(window, 260, 550, 2, ManagementCount, 90, 430);
 
     Management.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     Management.AlignMenu(2);
 
-    String name_user[]{ L"Name :"};
-    game::Settigns Name(window, 1150, 340, 1,name_user, 90);
+    String name_user[]{ L"Name :" };
+    game::Settigns Name(window, 1150, 340, 1, name_user, 90);
 
     Name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
@@ -164,7 +279,7 @@ void Option(sf::RenderWindow& window, sf::Font& font)
 
     Color.AlignMenu(2);
 
-    String Color_count[]{ L"1",L"2", L"3"};
+    String Color_count[]{ L"1",L"2", L"3" };
 
     game::Settigns Color_name(window, 1450, 700, 3, Color_count, 90, 150);
 
@@ -219,16 +334,16 @@ void Option(sf::RenderWindow& window, sf::Font& font)
                 }
                 break;
             case 2:
-                 if (eventOpt.type == Event::KeyReleased)
-                 {
-                     if (eventOpt.key.code == Keyboard::Left) { Color_name.MovePrev(); }
-                     if (eventOpt.key.code == Keyboard::Right) { Color_name.MoveNext(); }
-                     if (eventOpt.key.code == Keyboard::Return)
-                     {
-                         MainMenu(window, font, 1920, 1080);
-                     }
-                 }
-                 break;
+                if (eventOpt.type == Event::KeyReleased)
+                {
+                    if (eventOpt.key.code == Keyboard::Left) { Color_name.MovePrev(); }
+                    if (eventOpt.key.code == Keyboard::Right) { Color_name.MoveNext(); }
+                    if (eventOpt.key.code == Keyboard::Return)
+                    {
+                        MainMenu(window, font, 1920, 1080);
+                    }
+                }
+                break;
             };
 
             if (eventOpt.type == Event::KeyPressed)
@@ -251,12 +366,62 @@ void Option(sf::RenderWindow& window, sf::Font& font)
     }
 }
 
-void MainMenu(sf::RenderWindow& window, sf::Font& font, double width, double height)
+void Exit(RenderWindow& window, Font& font, double width, double height)
+{
+    RectangleShape backgroundExit(Vector2f(width, height));
+
+    Texture textureExit;
+    if (!textureExit.loadFromFile("image/exit.png")) exit(1);
+    backgroundExit.setTexture(&textureExit);
+
+    Text TitulExit;
+    TitulExit.setFont(font);
+    InitText(TitulExit, 525, 250, L"ARE YOU SURE?", 200, Color::Yellow, 3, Color::Blue);
+
+    String nameExit[]{ L"YES",L"NO" };
+
+    game::Exit myExit(window, 775, 450, 2, nameExit, 200, 300);
+
+    myExit.setColorTextMenu(Color::Blue, Color::Yellow, Color::Blue);
+
+    myExit.AlignMenu(2);
+
+    while (window.isOpen())
+    {
+        Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::KeyReleased)
+            {
+                if (event.key.code == Keyboard::Left) { myExit.MovePrev(); }
+
+                if (event.key.code == Keyboard::Right) { myExit.MoveNext(); }
+
+                if (event.key.code == Keyboard::Return)
+                {
+                    switch (myExit.getSelectedMenuNumber())
+                    {
+                    case 0:window.close();                        break;
+                    case 1:MainMenu(window, font, width, height); break;
+                    }
+                }
+            }
+        }
+        window.clear();
+        window.draw(backgroundExit);
+        window.draw(TitulExit);
+        myExit.draw();
+        window.display();
+    }
+}
+
+
+void MainMenu(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape background(Vector2f(width, height));
 
     Texture textureWindow;
-    if (!textureWindow.loadFromFile("image/start.jpg")) exit(1);
+    if (!textureWindow.loadFromFile("image/packman-menu.png")) exit(1);
     background.setTexture(&textureWindow);
 
     String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
@@ -282,9 +447,9 @@ void MainMenu(sf::RenderWindow& window, sf::Font& font, double width, double hei
                 {
                     switch (mymenu.getSelectedMenuNumber())
                     {
-                    case 0:GamåStart(window, font);    break;
-                    case 1:Option(window, font);     break;
-                    case 2:window.close(); break;
+                    case 0:GamåStart(window, font, width, height);    break;
+                    case 1:Option(window, font);                      break;
+                    case 2:Exit(window, font, width, height);         break;
                     }
                 }
             }
@@ -309,7 +474,7 @@ int main()
 
     Font font;
     if (!font.loadFromFile("font/EightBits.ttf")) return 5;
-   
+
     MainMenu(window, font, width, height);
 
     return 0;
