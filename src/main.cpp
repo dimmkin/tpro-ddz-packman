@@ -5,6 +5,8 @@ using namespace sf;
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
 
+void MainMenu(sf::RenderWindow& window, sf::Font& font, double width, double height);
+
 void GamåStart(RenderWindow& window, Font& font)
 {
     RenderWindow Play(VideoMode::getDesktopMode(), L"Start Game", Style::Fullscreen);
@@ -121,18 +123,12 @@ void GamåStart(RenderWindow& window, Font& font)
     }
 }
 
-void Option()
+void Option(sf::RenderWindow& window, sf::Font& font)
 {
-    RenderWindow Option(VideoMode::getDesktopMode(), L"Settings", Style::Fullscreen);
-
     RectangleShape backgroundOpt(Vector2f(1920, 1080));
     Texture textureOpt;
     if (!textureOpt.loadFromFile("image/settings.jpg")) exit(2);
-
     backgroundOpt.setTexture(&textureOpt);
-
-    Font font;
-    if (!font.loadFromFile("font/EightBits.ttf")) exit(46);
 
     Text Titul, SettingsMenu1, SettingsMenu2, Save;
     SettingsMenu1.setFont(font);
@@ -148,21 +144,21 @@ void Option()
 
     String ManagementCount[]{ L"1",L"2" };
 
-    game::Settigns Management(Option, 260, 550, 2, ManagementCount,90, 430);
+    game::Settigns Management(window, 260, 550, 2, ManagementCount,90, 430);
 
     Management.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     Management.AlignMenu(2);
 
     String name_user[]{ L"Name :"};
-    game::Settigns Name(Option, 1150, 340, 1,name_user, 90);
+    game::Settigns Name(window, 1150, 340, 1,name_user, 90);
 
     Name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     Name.AlignMenu(2);
 
     String color_menu[]{ L"Color :" };
-    game::Settigns Color(Option, 1150, 560, 1, color_menu, 90);
+    game::Settigns Color(window, 1150, 560, 1, color_menu, 90);
 
     Color.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
@@ -170,7 +166,7 @@ void Option()
 
     String Color_count[]{ L"1",L"2", L"3"};
 
-    game::Settigns Color_name(Option, 1450, 700, 3, Color_count, 90, 150);
+    game::Settigns Color_name(window, 1450, 700, 3, Color_count, 90, 150);
 
     Color_name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
@@ -178,10 +174,10 @@ void Option()
 
     Text message("", font, 20);
     int page = 0;
-    while (Option.isOpen())
+    while (window.isOpen())
     {
         Event eventOpt;
-        while (Option.pollEvent(eventOpt))
+        while (window.pollEvent(eventOpt))
         {
             switch (page)
             {
@@ -202,7 +198,7 @@ void Option()
                 {
                     std::string text = message.getString();
                     int digit = eventOpt.text.unicode;
-                    if (text.length() < 15) {
+                    if (text.length() < 12) {
                         message.setString(text + (char)(digit));
                     }
                     if (digit == 57) {
@@ -212,7 +208,7 @@ void Option()
                         message.setString(text.substr(0, text.length() - 1));
                     }
 
-                    InitText(message, 1360, 340, message.getString(), 100, Color::Blue, 3, Color::Black);
+                    InitText(message, 1395, 320, message.getString(), 100, Color::Blue, 3, Color::Black);
                 }
                 if (eventOpt.type == Event::KeyReleased)
                 {
@@ -229,7 +225,7 @@ void Option()
                      if (eventOpt.key.code == Keyboard::Right) { Color_name.MoveNext(); }
                      if (eventOpt.key.code == Keyboard::Return)
                      {
-                          Option.close(); 
+                         MainMenu(window, font, 1920, 1080);
                      }
                  }
                  break;
@@ -237,43 +233,31 @@ void Option()
 
             if (eventOpt.type == Event::KeyPressed)
             {
-                if (eventOpt.key.code == Keyboard::Escape) { Option.close(); }
+                if (eventOpt.key.code == Keyboard::Escape) { MainMenu(window, font, 1920, 1080); }
             }
         }
-        Option.clear();
-        Option.draw(backgroundOpt);
-        Option.draw(Titul);
-        Option.draw(SettingsMenu1);
-        Option.draw(SettingsMenu2);
-        Option.draw(Save);
-        Option.draw(message);
+        window.clear();
+        window.draw(backgroundOpt);
+        window.draw(Titul);
+        window.draw(SettingsMenu1);
+        window.draw(SettingsMenu2);
+        window.draw(Save);
+        window.draw(message);
         Name.draw();
         Color.draw();
         Color_name.draw();
         Management.draw();
-        Option.display();
+        window.display();
     }
 }
 
-int main()
+void MainMenu(sf::RenderWindow& window, sf::Font& font, double width, double height)
 {
-    RenderWindow window;
-
-    window.create(VideoMode::getDesktopMode(), L"Packman", Style::Fullscreen);
-
-    window.setMouseCursorVisible(false);
-
-    double width = VideoMode::getDesktopMode().width;
-    double height = VideoMode::getDesktopMode().height;
-
     RectangleShape background(Vector2f(width, height));
 
     Texture textureWindow;
-    if (!textureWindow.loadFromFile("image/start.jpg")) return 4;
+    if (!textureWindow.loadFromFile("image/start.jpg")) exit(1);
     background.setTexture(&textureWindow);
-
-    Font font;
-    if (!font.loadFromFile("font/EightBits.ttf")) return 5;
 
     String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
 
@@ -299,7 +283,7 @@ int main()
                     switch (mymenu.getSelectedMenuNumber())
                     {
                     case 0:GamåStart(window, font);    break;
-                    case 1:Option();     break;
+                    case 1:Option(window, font);     break;
                     case 2:window.close(); break;
                     }
                 }
@@ -310,6 +294,24 @@ int main()
         mymenu.draw();
         window.display();
     }
+}
+
+int main()
+{
+    RenderWindow window;
+
+    window.create(VideoMode::getDesktopMode(), L"Packman", Style::Fullscreen);
+
+    window.setMouseCursorVisible(false);
+
+    double width = VideoMode::getDesktopMode().width;
+    double height = VideoMode::getDesktopMode().height;
+
+    Font font;
+    if (!font.loadFromFile("font/EightBits.ttf")) return 5;
+   
+    MainMenu(window, font, width, height);
+
     return 0;
 }
 
