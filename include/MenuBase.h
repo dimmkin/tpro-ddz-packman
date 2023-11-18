@@ -1,4 +1,7 @@
 #pragma once
+#include <nlohmann/json.hpp>
+#include <string>
+#include <fstream>
 #include <SFML/Graphics.hpp>
 
 namespace game {
