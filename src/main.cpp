@@ -7,7 +7,7 @@ void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 6
 
 void PlayGame(RenderWindow& window, Font& font, double width, double height);
 
-void GamÂStart(RenderWindow& window, Font& font, double width, double height);
+void Gam–µStart(RenderWindow& window, Font& font, double width, double height);
 
 void MainMenu(RenderWindow& window, Font& font, double width, double height);
 
@@ -16,7 +16,9 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
 
     Texture texturePlay;
+
     if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
+  
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulPause;
@@ -47,7 +49,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                     switch (myPause.getSelectedMenuNumber())
                     {
                     case 0:PlayGame(window, font, width, height);      break;
-                    case 1:GamÂStart(window, font, width, height);     break;
+                    case 1:Gam–µStart(window, font, width, height);     break;
                     case 2:MainMenu(window, font, width, height);      break;
                     }
                 }
@@ -67,6 +69,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/play-game.png")) exit(1);
+
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulRounds;
@@ -124,13 +127,15 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         window.display();
     }
 }
-void GamÂStart(RenderWindow& window, Font& font, double width, double height)
+
+void Gam–µStart(RenderWindow& window, Font& font, double width, double height)
 {
 
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/start-game.png")) exit(1);
+
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulStart;
@@ -190,7 +195,7 @@ void GamÂStart(RenderWindow& window, Font& font, double width, double height)
         {
             switch (page)
             {
-            case 0:
+            case 0: 
                 if (eventPlay.type == Event::KeyReleased)
                 {
                     if (eventPlay.key.code == Keyboard::Left) { myGameSelection.MovePrev(); }
@@ -210,7 +215,7 @@ void GamÂStart(RenderWindow& window, Font& font, double width, double height)
                     }
                 }
                 break;
-            case 1:
+            case 1: 
                 if (eventPlay.type == Event::KeyReleased)
                 {
                     if (eventPlay.key.code == Keyboard::Left) { myBots.MovePrev(); }
@@ -222,7 +227,7 @@ void GamÂStart(RenderWindow& window, Font& font, double width, double height)
                     }
                 }
                 break;
-            case 2:
+            case 2: 
                 if (eventPlay.type == Event::KeyReleased)
                 {
                     if (eventPlay.key.code == Keyboard::Left) { myMaps.MovePrev(); }
@@ -256,6 +261,7 @@ void GamÂStart(RenderWindow& window, Font& font, double width, double height)
         window.display();
     }
 }
+
 void Option(sf::RenderWindow& window, sf::Font& font)
 {
     RectangleShape backgroundOpt(Vector2f(1920, 1080));
@@ -445,6 +451,7 @@ void Exit(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundExit(Vector2f(width, height));
 
     Texture textureExit;
+
     if (!textureExit.loadFromFile("image/exit.png")) exit(1);
     backgroundExit.setTexture(&textureExit);
 
@@ -489,13 +496,13 @@ void Exit(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
-
 void MainMenu(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape background(Vector2f(width, height));
 
     Texture textureWindow;
     if (!textureWindow.loadFromFile("image/packman-menu.png")) exit(1);
+
     background.setTexture(&textureWindow);
 
     String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
@@ -521,8 +528,8 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (mymenu.getSelectedMenuNumber())
                     {
-                    case 0:GamÂStart(window, font, width, height);    break;
-                    case 1:Option(window, font);                      break;
+                    case 0:Gam–µStart(window, font, width, height);    break;
+                    case 1:Settings(window, font, width, height);     break;
                     case 2:Exit(window, font, width, height);         break;
                     }
                 }
@@ -559,7 +566,6 @@ int main()
     if (!font.loadFromFile("font/EightBits.ttf")) return 5;
 
     MainMenu(window, font, width, height);
-
     return 0;
 }
 
@@ -573,3 +579,4 @@ void InitText(Text& mtext, float xpos, float ypos, String str, int size_font,
     mtext.setOutlineThickness(bord);
     mtext.setOutlineColor(border_color);
 }
+
