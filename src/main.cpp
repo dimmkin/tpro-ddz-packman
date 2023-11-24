@@ -1,5 +1,8 @@
 #include "menuBase.h"
 #include "Music.h"
+#include <iostream>
+#include <chrono>
+#include <thread>
 
 using namespace sf;
 
@@ -104,6 +107,39 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     Text TitulSecondScore;
     TitulSecondScore.setFont(font);
     InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
+
+    // StartGame block
+    sf::RenderWindow localwindow(sf::VideoMode(1920, 1080), "Обратный отсчет", sf::Style::Fullscreen);
+
+    sf::Text countdownText;
+    countdownText.setFont(font);
+    countdownText.setCharacterSize(100);
+    countdownText.setFillColor(sf::Color::White);
+
+    for (int i = 3; i > 0; --i) {
+        countdownText.setString(std::to_string(i));
+
+        sf::FloatRect textBounds = countdownText.getLocalBounds();
+        countdownText.setPosition((localwindow.getSize().x - textBounds.width) / 2,
+            (localwindow.getSize().y - textBounds.height) / 2);
+
+        localwindow.clear();
+        localwindow.draw(countdownText);
+        localwindow.display();
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+
+    countdownText.setString("Start!");
+    sf::FloatRect textBounds = countdownText.getLocalBounds();
+    countdownText.setPosition((localwindow.getSize().x - textBounds.width) / 2,
+        (localwindow.getSize().y - textBounds.height) / 2);
+    localwindow.clear();
+    localwindow.draw(countdownText);
+    localwindow.display();
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    localwindow.close();
 
 
     while (window.isOpen())
@@ -477,7 +513,7 @@ int main()
     GameMusic music;
     music.Music_stop(0);
     music.Music_play(0);
-    music.Music_set_volume_all(20);
+    music.Music_set_volume_all(50);
 
     window.create(VideoMode::getDesktopMode(), L"Packman", Style::Fullscreen);
 
