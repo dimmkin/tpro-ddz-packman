@@ -36,7 +36,7 @@ game::MenuBase::MenuBase(sf::RenderWindow& window, double menux, double menuy,
 	int index, sf::String name[], int sizeFont, int step)
 	:__window(window), __menuX(menux), __menuY(menuy), __sizeFont(sizeFont), __menuStep(step)
 {
-	if (!__font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf")) exit(32);
+	if (!__font.loadFromFile("font/EightBits.ttf")) exit(32);
 	__maxMenu = index;
 	__mainMenu = new sf::Text[__maxMenu];
 

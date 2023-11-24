@@ -1,4 +1,5 @@
 #include "menuBase.h"
+#include "Music.h"
 
 using namespace sf;
 
@@ -455,7 +456,7 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
                     switch (mymenu.getSelectedMenuNumber())
                     {
                     case 0:GamеStart(window, font, width, height);    break;
-                    case 1:Settings(window, font, width, height);     break;
+                    case 1:Option(window, font);                      break;
                     case 2:Exit(window, font, width, height);         break;
                     }
                 }
@@ -471,6 +472,12 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
 int main()
 {
     RenderWindow window;
+
+    // Music block
+    GameMusic music;
+    music.Music_stop(0);
+    music.Music_play(0);
+    music.Music_set_volume_all(20);
 
     window.create(VideoMode::getDesktopMode(), L"Packman", Style::Fullscreen);
 

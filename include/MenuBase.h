@@ -88,6 +88,4 @@ namespace game {
 		Settigns(sf::RenderWindow& window, double settignsmenux, double settignsy,
 			int index, sf::String name[], int sizeFont = 60, int step = 80);
 	};
-
-
 }
