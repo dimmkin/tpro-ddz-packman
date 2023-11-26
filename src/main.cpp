@@ -1,4 +1,6 @@
 #include "menuBase.h"
+#include "field.h"
+#include "packman.h"
 
 using namespace sf;
 
@@ -16,9 +18,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
 
     Texture texturePlay;
-
-    if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
-  
+    if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\pause.png")) exit(1);
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulPause;
@@ -50,7 +50,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                     {
                     case 0:PlayGame(window, font, width, height);      break;
                     case 1:GamеStart(window, font, width, height);     break;
-                    case 2:MainMenu(window, font, width, height);      break;
+                    case 2:MainMenu(window, font, width, height);                      break;
                     }
                 }
             }
@@ -68,8 +68,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
 
     Texture texturePlay;
-    if (!texturePlay.loadFromFile("image/play-game.png")) exit(1);
-
+    if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\play-game.png")) exit(1);
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulRounds;
@@ -104,18 +103,93 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     TitulSecondScore.setFont(font);
     InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
 
+    Packman packman;
 
+    packman.direction = Direction::NONE;
+    packman.figure.setRadius(18);
+    packman.figure.setFillColor(sf::Color::Yellow);
+    packman.figure.setPosition(getPackmanStartPosition());
+
+    Field field;
+    initializeField(field);
+
+    sf::Clock clock;
     while (window.isOpen())
     {
-        Event event;
+        sf::Event event;
         while (window.pollEvent(event)) {
+            if (event.type == Event::KeyReleased)
+            {
+                if (event.type == sf::Event::KeyReleased) {
+                    if (event.key.code == sf::Keyboard::Up) {
+                        packman.direction = Direction::UP;
+                    }
+                    if (event.key.code == sf::Keyboard::Down) {
+                        packman.direction = Direction::DOWN;
+                    }
+                    if (event.key.code == sf::Keyboard::Left) {
+                        packman.direction = Direction::LEFT;
+                    }
+                    if (event.key.code == sf::Keyboard::Right) {
+                        packman.direction = Direction::RIGHT;
+                    }
+                }
+            }
             if (event.type == Event::KeyPressed)
             {
                 if (event.key.code == Keyboard::Escape) { Pause(window, font, width, height); }
             }
         }
+        const float speed = 200.f;
+
+        const float elapsedTime = clock.getElapsedTime().asSeconds();
+        clock.restart();
+        const float step = speed * elapsedTime;
+
+        packman.direction = Direction::NONE;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            packman.direction = Direction::UP;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            packman.direction = Direction::DOWN;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            packman.direction = Direction::LEFT;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            packman.direction = Direction::RIGHT;
+        }
+
+        sf::Vector2f movement(0.f, 0.f);
+        if (packman.direction == Direction::UP) {
+            movement.y -= step;
+        }
+        if (packman.direction == Direction::DOWN) {
+            movement.y += step;
+        }
+        if (packman.direction == Direction::LEFT) {
+            movement.x -= step;
+        }
+        if (packman.direction == Direction::RIGHT) {
+            movement.x += step;
+        }
+
+        const sf::FloatRect packmanBounds = packman.figure.getGlobalBounds();
+        if (checkFieldWallsCollision(field, packmanBounds, movement, speed)) {
+            packman.direction = Direction::NONE;
+        }
+        if (packman.figure.getPosition().x < 535) {
+            packman.figure.setPosition(packman.figure.getPosition().x + field.width * BLOCK_SIZE - 35, packman.figure.getPosition().y);
+        }
+        else if (packman.figure.getPosition().x > 500 + field.width * BLOCK_SIZE) {
+            packman.figure.setPosition(535, packman.figure.getPosition().y);
+        }
+        packman.figure.move(movement);
+
         window.clear();
         window.draw(backgroundPlay);
+        drawField(window, field);
+        window.draw(packman.figure);
         window.draw(TitulRounds);
         window.draw(TitulPackman);
         window.draw(TitulFirstPlayer);
@@ -130,12 +204,10 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
 
 void GamеStart(RenderWindow& window, Font& font, double width, double height)
 {
-
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
 
     Texture texturePlay;
-    if (!texturePlay.loadFromFile("image/start-game.png")) exit(1);
-
+    if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\start-game.png")) exit(1);
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulStart;
@@ -169,7 +241,7 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
     String bots[]{ L"1",L"2",L"3",L"4" };
 
     game::ChoseBots myBots(window, 175, 650, 4, bots, 90, 120);
-
+    
     myBots.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     myBots.AlignMenu(2);
@@ -244,11 +316,12 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
-void Option(sf::RenderWindow& window, sf::Font& font)
+void Settings(sf::RenderWindow& window, sf::Font& font, double width, double height)
 {
-    RectangleShape backgroundOpt(Vector2f(1920, 1080));
+    RectangleShape backgroundOpt(Vector2f(width, height));
+    
     Texture textureOpt;
-    if (!textureOpt.loadFromFile("image/settings.png")) exit(2);
+    if (!textureOpt.loadFromFile("C:\\Users\\user\\Desktop\\image\\settings.png")) exit(2);
     backgroundOpt.setTexture(&textureOpt);
 
     Text Titul, SettingsMenu1, SettingsMenu2, Save;
@@ -256,7 +329,6 @@ void Option(sf::RenderWindow& window, sf::Font& font)
     SettingsMenu2.setFont(font);
     Titul.setFont(font);
     Save.setFont(font);
-
 
     InitText(Titul, 780, -30, "Settings", 150, Color::Yellow, 3, Color::Black);
     InitText(SettingsMenu1, 300, 150, "Management", 100, Color::Yellow, 3, Color::Black);
@@ -377,8 +449,7 @@ void Exit(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundExit(Vector2f(width, height));
 
     Texture textureExit;
-
-    if (!textureExit.loadFromFile("image/exit.png")) exit(1);
+    if (!textureExit.loadFromFile("C:\\Users\\user\\Desktop\\image\\exit.png")) exit(1);
     backgroundExit.setTexture(&textureExit);
 
     Text TitulExit;
@@ -427,8 +498,7 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
     RectangleShape background(Vector2f(width, height));
 
     Texture textureWindow;
-    if (!textureWindow.loadFromFile("image/packman-menu.png")) exit(1);
-
+    if (!textureWindow.loadFromFile("C:\\Users\\user\\Desktop\\image\\packman-menu.png")) exit(1);
     background.setTexture(&textureWindow);
 
     String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
@@ -480,9 +550,10 @@ int main()
     double height = VideoMode::getDesktopMode().height;
 
     Font font;
-    if (!font.loadFromFile("font/EightBits.ttf")) return 5;
+    if (!font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf")) return 5;
 
     MainMenu(window, font, width, height);
+
     return 0;
 }
 
@@ -496,4 +567,3 @@ void InitText(Text& mtext, float xpos, float ypos, String str, int size_font,
     mtext.setOutlineThickness(bord);
     mtext.setOutlineColor(border_color);
 }
-

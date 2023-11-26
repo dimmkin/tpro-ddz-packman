@@ -4,7 +4,7 @@ game::Settigns::Settigns(sf::RenderWindow& window, double settignsmenux, double 
 	int index, sf::String name[], int sizeFont, int step)
 	: MenuBase(window, settignsmenux, settignsy, index, name, sizeFont, step)
 {
-	if (!__font.loadFromFile("font/EightBits.ttf")) exit(32);
+	if (!__font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf")) exit(32);
 	__maxMenu = index;
 	__mainMenu = new sf::Text[__maxMenu];
 
