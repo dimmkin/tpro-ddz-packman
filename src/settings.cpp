@@ -1,8 +1,8 @@
 #include "menuBase.h"
-// Здесь тоже самое естественно
-game::Settigns::Settigns(sf::RenderWindow& window, double settignsmenux, double settignsy,
+
+game::Settings::Settings(sf::RenderWindow& window, double settingsmenux, double settingsy,
 	int index, sf::String name[], int sizeFont, int step)
-	: MenuBase(window, settignsmenux, settignsy, index, name, sizeFont, step)
+	: MenuBase(window, settingsmenux, settingsy, index, name, sizeFont, step)
 {
 	if (!__font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf")) exit(32);
 	__maxMenu = index;
