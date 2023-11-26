@@ -109,39 +109,12 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
 
     // StartGame block
-    sf::RenderWindow localwindow(sf::VideoMode(1920, 1080), "Обратный отсчет", sf::Style::Fullscreen);
 
     sf::Text countdownText;
     countdownText.setFont(font);
-    countdownText.setCharacterSize(100);
-    countdownText.setFillColor(sf::Color::White);
+    InitText(countdownText, 1475, 500, L"Score: ", 150, Color::Yellow, 3, Color::Blue);
 
-    for (int i = 3; i > 0; --i) {
-        countdownText.setString(std::to_string(i));
-
-        sf::FloatRect textBounds = countdownText.getLocalBounds();
-        countdownText.setPosition((localwindow.getSize().x - textBounds.width) / 2,
-            (localwindow.getSize().y - textBounds.height) / 2);
-
-        localwindow.clear();
-        localwindow.draw(countdownText);
-        localwindow.display();
-
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-
-    countdownText.setString("Start!");
-    sf::FloatRect textBounds = countdownText.getLocalBounds();
-    countdownText.setPosition((localwindow.getSize().x - textBounds.width) / 2,
-        (localwindow.getSize().y - textBounds.height) / 2);
-    localwindow.clear();
-    localwindow.draw(countdownText);
-    localwindow.display();
-
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    localwindow.close();
-
-
+    bool isStart = true;
     while (window.isOpen())
     {
         Event event;
@@ -151,6 +124,54 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
                 if (event.key.code == Keyboard::Escape) { Pause(window, font, width, height); }
             }
         }
+
+        if (isStart) {
+
+            for (int i = 3; i >= 0; --i) {
+                countdownText.setString(std::to_string(i));
+
+                sf::FloatRect textBounds = countdownText.getLocalBounds();
+                countdownText.setPosition((window.getSize().x - textBounds.width) / 2,
+                    ((window.getSize().y - textBounds.height) / 2) - 65);
+                if (i == 0) {
+                    countdownText.setString("Start!");
+                    sf::FloatRect textBounds = countdownText.getLocalBounds();
+                    countdownText.setPosition((window.getSize().x - textBounds.width) / 2,
+                        ((window.getSize().y - textBounds.height) / 2) - 65);
+                    window.clear();
+                    window.draw(backgroundPlay);
+                    window.draw(TitulRounds);
+                    window.draw(TitulPackman);
+                    window.draw(TitulFirstPlayer);
+                    window.draw(TitulFirstNick);
+                    window.draw(TitulFirstScore);
+                    window.draw(TitulSecondPlayer);
+                    window.draw(TitulSecondNick);
+                    window.draw(TitulSecondScore);
+                    window.draw(countdownText);
+                    window.display();
+
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    break;
+                }
+                window.clear();
+                window.draw(backgroundPlay);
+                window.draw(TitulRounds);
+                window.draw(TitulPackman);
+                window.draw(TitulFirstPlayer);
+                window.draw(TitulFirstNick);
+                window.draw(TitulFirstScore);
+                window.draw(TitulSecondPlayer);
+                window.draw(TitulSecondNick);
+                window.draw(TitulSecondScore);
+                window.draw(countdownText);
+                window.display();
+
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                isStart = false;
+            }
+        }
+
         window.clear();
         window.draw(backgroundPlay);
         window.draw(TitulRounds);
