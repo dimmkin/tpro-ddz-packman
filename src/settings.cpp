@@ -1,5 +1,5 @@
 #include "menuBase.h"
-
+// Здесь тоже самое естественно
 game::Settigns::Settigns(sf::RenderWindow& window, double settignsmenux, double settignsy,
 	int index, sf::String name[], int sizeFont, int step)
 	: MenuBase(window, settignsmenux, settignsy, index, name, sizeFont, step)
