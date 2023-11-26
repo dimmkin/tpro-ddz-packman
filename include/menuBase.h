@@ -81,7 +81,7 @@ namespace game {
 		Exit(sf::RenderWindow& window, double menux, double menuy,
 			int index, sf::String name[], int sizeFont = 60, int step = 80);
 	};
-
+	# Settigs надо исправить на Settings
 	class Settigns : public MenuBase
 	{
 	public:
