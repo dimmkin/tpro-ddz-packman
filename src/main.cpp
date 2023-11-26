@@ -241,7 +241,7 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
     String bots[]{ L"1",L"2",L"3",L"4" };
 
     game::ChoseBots myBots(window, 175, 650, 4, bots, 90, 120);
-    
+
     myBots.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     myBots.AlignMenu(2);
@@ -262,7 +262,7 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
         {
             switch (page)
             {
-            case 0: 
+            case 0:
                 if (eventPlay.type == Event::KeyReleased)
                 {
                     if (eventPlay.key.code == Keyboard::Left) { myGameSelection.MovePrev(); }
@@ -274,7 +274,7 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
                     }
                 }
                 break;
-            case 1: 
+            case 1:
                 if (eventPlay.type == Event::KeyReleased)
                 {
                     if (eventPlay.key.code == Keyboard::Left) { myBots.MovePrev(); }
@@ -285,7 +285,7 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
                     }
                 }
                 break;
-            case 2: 
+            case 2:
                 if (eventPlay.type == Event::KeyReleased)
                 {
                     if (eventPlay.key.code == Keyboard::Left) { myMaps.MovePrev(); }
@@ -319,7 +319,7 @@ void GamеStart(RenderWindow& window, Font& font, double width, double height)
 void Settings(sf::RenderWindow& window, sf::Font& font, double width, double height)
 {
     RectangleShape backgroundOpt(Vector2f(width, height));
-    
+
     Texture textureOpt;
     if (!textureOpt.loadFromFile("C:\\Users\\user\\Desktop\\image\\settings.png")) exit(2);
     backgroundOpt.setTexture(&textureOpt);
@@ -337,21 +337,21 @@ void Settings(sf::RenderWindow& window, sf::Font& font, double width, double hei
 
     String ManagementCount[]{ L"1",L"2" };
 
-    game::Settigns Management(window, 260, 550, 2, ManagementCount, 90, 430);
+    game::Settings Management(window, 260, 550, 2, ManagementCount, 90, 430);
 
     Management.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     Management.AlignMenu(2);
 
     String name_user[]{ L"Name :" };
-    game::Settigns Name(window, 1150, 340, 1, name_user, 90);
+    game::Settings Name(window, 1150, 340, 1, name_user, 90);
 
     Name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     Name.AlignMenu(2);
 
     String color_menu[]{ L"Color :" };
-    game::Settigns Color(window, 1150, 560, 1, color_menu, 90);
+    game::Settings Color(window, 1150, 560, 1, color_menu, 90);
 
     Color.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
@@ -359,7 +359,7 @@ void Settings(sf::RenderWindow& window, sf::Font& font, double width, double hei
 
     String Color_count[]{ L"1",L"2", L"3" };
 
-    game::Settigns Color_name(window, 1450, 700, 3, Color_count, 90, 150);
+    game::Settings Color_name(window, 1450, 700, 3, Color_count, 90, 150);
 
     Color_name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
