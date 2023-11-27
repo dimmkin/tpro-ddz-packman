@@ -1,5 +1,6 @@
 #include "menuBase.h"
 #include "field.h"
+#include "gameprocess.h"
 #include "packman.h"
 
 using namespace sf;
@@ -9,13 +10,13 @@ void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 6
 
 void PlayGame(RenderWindow& window, Font& font, double width, double height);
 
-void GamеStart(RenderWindow& window, Font& font, double width, double height);
+void GameStart(RenderWindow& window, Font& font, double width, double height);
 
 void MainMenu(RenderWindow& window, Font& font, double width, double height);
 
 void Pause(RenderWindow& window, Font& font, double width, double height)
 {
-    RectangleShape backgroundPlay(Vector2f(1920, 1080));
+    RectangleShape backgroundPlay(Vector2f(width, height));
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\pause.png")) exit(1);
@@ -49,7 +50,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                     switch (myPause.getSelectedMenuNumber())
                     {
                     case 0:PlayGame(window, font, width, height);      break;
-                    case 1:GamеStart(window, font, width, height);     break;
+                    case 1:GameStart(window, font, width, height);     break;
                     case 2:MainMenu(window, font, width, height);                      break;
                     }
                 }
@@ -65,7 +66,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
 
 void PlayGame(RenderWindow& window, Font& font, double width, double height)
 {
-    RectangleShape backgroundPlay(Vector2f(1920, 1080));
+    RectangleShape backgroundPlay(Vector2f(width, height));
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\play-game.png")) exit(1);
@@ -103,93 +104,23 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     TitulSecondScore.setFont(font);
     InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
 
-    Packman packman;
-
-    packman.direction = Direction::NONE;
-    packman.figure.setRadius(18);
-    packman.figure.setFillColor(sf::Color::Yellow);
-    packman.figure.setPosition(getPackmanStartPosition());
-
-    Field field;
-    initializeField(field);
-
     sf::Clock clock;
-    while (window.isOpen())
-    {
+    GameProcess process;
+
+    initializeGameProcess(process, sf::Vector2f(window.getSize()));
+
+    while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == Event::KeyReleased)
-            {
-                if (event.type == sf::Event::KeyReleased) {
-                    if (event.key.code == sf::Keyboard::Up) {
-                        packman.direction = Direction::UP;
-                    }
-                    if (event.key.code == sf::Keyboard::Down) {
-                        packman.direction = Direction::DOWN;
-                    }
-                    if (event.key.code == sf::Keyboard::Left) {
-                        packman.direction = Direction::LEFT;
-                    }
-                    if (event.key.code == sf::Keyboard::Right) {
-                        packman.direction = Direction::RIGHT;
-                    }
-                }
-            }
             if (event.type == Event::KeyPressed)
             {
                 if (event.key.code == Keyboard::Escape) { Pause(window, font, width, height); }
             }
         }
-        const float speed = 200.f;
-
         const float elapsedTime = clock.getElapsedTime().asSeconds();
         clock.restart();
-        const float step = speed * elapsedTime;
-
-        packman.direction = Direction::NONE;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            packman.direction = Direction::UP;
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-            packman.direction = Direction::DOWN;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            packman.direction = Direction::LEFT;
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            packman.direction = Direction::RIGHT;
-        }
-
-        sf::Vector2f movement(0.f, 0.f);
-        if (packman.direction == Direction::UP) {
-            movement.y -= step;
-        }
-        if (packman.direction == Direction::DOWN) {
-            movement.y += step;
-        }
-        if (packman.direction == Direction::LEFT) {
-            movement.x -= step;
-        }
-        if (packman.direction == Direction::RIGHT) {
-            movement.x += step;
-        }
-
-        const sf::FloatRect packmanBounds = packman.figure.getGlobalBounds();
-        if (checkFieldWallsCollision(field, packmanBounds, movement, speed)) {
-            packman.direction = Direction::NONE;
-        }
-        if (packman.figure.getPosition().x < 535) {
-            packman.figure.setPosition(packman.figure.getPosition().x + field.width * BLOCK_SIZE - 35, packman.figure.getPosition().y);
-        }
-        else if (packman.figure.getPosition().x > 500 + field.width * BLOCK_SIZE) {
-            packman.figure.setPosition(535, packman.figure.getPosition().y);
-        }
-        packman.figure.move(movement);
-
         window.clear();
         window.draw(backgroundPlay);
-        drawField(window, field);
-        window.draw(packman.figure);
         window.draw(TitulRounds);
         window.draw(TitulPackman);
         window.draw(TitulFirstPlayer);
@@ -198,13 +129,15 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         window.draw(TitulSecondPlayer);
         window.draw(TitulSecondNick);
         window.draw(TitulSecondScore);
+        updateGameProcess(process, elapsedTime);
+        drawGameProcess(window, process);
         window.display();
     }
 }
 
-void GamеStart(RenderWindow& window, Font& font, double width, double height)
+void GameStart(RenderWindow& window, Font& font, double width, double height)
 {
-    RectangleShape backgroundPlay(Vector2f(1920, 1080));
+    RectangleShape backgroundPlay(Vector2f(width, height));
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\start-game.png")) exit(1);
@@ -524,7 +457,7 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (mymenu.getSelectedMenuNumber())
                     {
-                    case 0:GamеStart(window, font, width, height);    break;
+                    case 0:GameStart(window, font, width, height);    break;
                     case 1:Settings(window, font, width, height);     break;
                     case 2:Exit(window, font, width, height);         break;
                     }

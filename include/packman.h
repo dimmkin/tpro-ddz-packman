@@ -1,19 +1,11 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "hero.h"
 
-class Field;
-
-enum class Direction {
-	NONE,
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-
-class Packman {
+class Packman : public Hero
+{
 public:
-	sf::CircleShape figure;
-	Direction direction;
+	void updateHeroDirection(Packman& packman);
+	void updateHero(Packman& packman, float elapsedTime, Field& field, const float speed);
 };
