@@ -22,6 +22,9 @@ void initializeGameProcess(GameProcess& process, const sf::Vector2f& processSize
 	initializeGhostByID(process.ghosts, GhostID::THIRD);
 	initializeGhostByID(process.ghosts, GhostID::FORTH);
 
+	process.gameState = GameState::PLAY;
+	process.totalCookiesCount = countRemainingCookies(process.field);
+
 	process.gameOverBackground.setFillColor(sf::Color(200, 200, 200, 200));
 	process.gameOverBackground.setSize(processSize);
 
@@ -34,10 +37,17 @@ void initializeGameProcess(GameProcess& process, const sf::Vector2f& processSize
 	process.gameOverTitle.setOrigin(0.5f * titleBounds.width, 0.5f * titleBounds.height);
 }
 
+void updateGameOverTitle(sf::Text& title, const std::string& text)
+{
+	title.setString(text);
+	const sf::FloatRect titleBounds = title.getLocalBounds();
+	title.setOrigin(0.5f * titleBounds.width, 0.5f * titleBounds.height);
+}
+
 void updateGameProcess(GameProcess& process, float elapsedTime)
 {
 	if (process.gameState == GameState::PLAY) {
-		process.packman.updateHero(process.packman, elapsedTime, process.field, 200.f);
+		process.packman.updateHero(process.packman, elapsedTime, process.field, 220.f);
 
 		for (auto& pair : process.ghosts) {
 			pair.second.updateHero(pair.second, elapsedTime, process.field, 90.f);
@@ -49,7 +59,34 @@ void updateGameProcess(GameProcess& process, float elapsedTime)
 				process.gameState = GameState::LOSE;
 			}
 		}
+
+		if (process.totalCookiesCount - process.packman.eatenCookies == 0) {
+			updateGameOverTitle(process.gameOverTitle, "You WIN!!!");
+			process.gameState = GameState::WIN;
+		}
 	}
+}
+
+std::string getGameProcessWindowTitle(const GameProcess& process)
+{
+	std::string title;
+	static double cookiesLeft;
+	int result;
+
+	if (process.gameState == GameState::PLAY) {
+		cookiesLeft = floor(static_cast<double>(process.packman.eatenCookies) / process.totalCookiesCount * 100);
+		result = cookiesLeft;
+		title = std::to_string(result) + '%';
+	}
+	if (process.gameState == GameState::WIN) {
+		title = "You WIN! Nice =)";
+		return title;
+	}
+	if (process.gameState == GameState::LOSE) {
+		title = "YOU ARE LOSER!";
+		return title;
+	}
+	return title;
 }
 
 void drawGameProcess(sf::RenderWindow& window, GameProcess& process)
@@ -61,7 +98,7 @@ void drawGameProcess(sf::RenderWindow& window, GameProcess& process)
 		pair.second.drawHero(window, pair.second);
 	}
 
-	if (process.gameState == GameState::LOSE) {
+	if (process.gameState == GameState::LOSE || process.gameState == GameState::WIN) {
 		window.draw(process.gameOverBackground);
 		window.draw(process.gameOverTitle);
 	}

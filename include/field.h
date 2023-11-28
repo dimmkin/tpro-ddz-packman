@@ -25,12 +25,13 @@ enum class GhostID {
 enum class CellCategory {
     WALL,
     ROAD,
+    COOKIE
 };
 
 class Cell {
 public:
     CellCategory category;
-    sf::RectangleShape bounds;
+    sf::FloatRect bounds;
 };
 
 class Field
@@ -44,23 +45,23 @@ public:
 static const float BLOCK_SIZE = 40.f;
 static const size_t FIELD_WIDTH = 21;
 static const size_t FIELD_HEIGHT = 17;
-static const char FIELD_MAZE[] = "#####################"
-                                 "#  #      ####      #"
-                                 "#  #      #   # ## ##"
-                                 "#  #      # # ####  #"
-                                 "#  #      # #       #"
-                                 "#        #  #########"
+static const char FIELD_MAZE[] = "######  #############"
+                                 "#1                 2#"
+                                 "# #### ####### #### #"
                                  "#                   #"
-                                 "   @  #              "
-                                 "      #              "
-                                 "#     #             #"
-                                 "#     #             #"
-                                 "#     #            4#"
-                                 "#                  1#"
+                                 "# ##  @ #   #    ## #"
+                                 "#       #   #       #"
+                                 "####    #####    ####"
+                                 "                     "
+                                 "#### # ####### # ####"
+                                 "#    #         #    #"
+                                 "# ## # ####### # ## #"
+                                 "#            4      #"
+                                 "#    #   ###   #    #"
+                                 "#       3           #"
+                                 "# #### ####### #### #"
                                  "#                   #"
-                                 "#                  3#"
-                                 "#                  2#"
-                                 "#####################";
+                                 "######  #############";
 
 void initializeFieldGraphics(FieldGraphics& graphics);
 static sf::FloatRect moveRectangle(const sf::FloatRect& rectangle, sf::Vector2f& offset);
@@ -76,3 +77,6 @@ sf::Vector2f getGhostsStartPosition(GhostID& ghostID);
 bool checkFieldWallsCollision(const Field& field, const sf::FloatRect& oldBounds, sf::Vector2f& movement, const float& speed);
 void initializeField(Field& field);
 void drawField(sf::RenderWindow& window, const Field& field);
+
+unsigned int countRemainingCookies(const Field& field);
+unsigned int eatAllCookiesBounds(Field& field, const sf::FloatRect& bounds);

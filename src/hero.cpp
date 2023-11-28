@@ -1,26 +1,43 @@
 #include "hero.h"
 #include "field.h"
 
+Direction Hero::randomDirection(Direction previousDirection)
+{
+	constexpr std::array<Direction, 4> directionValues{ { Direction::UP,Direction::DOWN,Direction::LEFT,Direction::RIGHT } };
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(0, directionValues.size() - 1);
+	int randomIndex = dis(gen);
+	Direction randomDirection = directionValues[randomIndex];
+
+	while (randomDirection == previousDirection) {
+		randomIndex = dis(gen);
+		randomDirection = directionValues[randomIndex];
+	}
+
+	return randomDirection;
+}
+
 void Hero::updateHeroDirection(Hero& hero)
 {
 	if (hero.direction == Direction::UP) {
-		hero.direction = Direction::RIGHT;
+		hero.direction = randomDirection(Direction::UP);
 		return;
 	}
 	if (hero.direction == Direction::DOWN) {
-		hero.direction = Direction::LEFT;
+		hero.direction = randomDirection(Direction::DOWN);
 		return;
 	}
 	if (hero.direction == Direction::LEFT) {
-		hero.direction = Direction::UP;
+		hero.direction = randomDirection(Direction::LEFT);
 		return;
 	}
 	if (hero.direction == Direction::RIGHT) {
-		hero.direction = Direction::DOWN;
+		hero.direction = randomDirection(Direction::RIGHT);
 		return;
 	}
 	if (hero.direction == Direction::NONE) {
-		hero.direction = Direction::LEFT;
+		hero.direction = Direction::UP;
 		return;
 	}
 }
@@ -50,18 +67,19 @@ sf::Vector2f Hero::buildMovement(sf::Vector2f& movement, Hero& hero, const float
 	return movement;
 }
 
-void Hero::collisionsAndMovingOut(Field& field, Hero& hero, sf::Vector2f& movement, const float speed)
-
+void Hero::MovingOut(Field& field, Hero& hero, sf::Vector2f& movement, const float speed)
 {
-	const sf::FloatRect heroBounds = hero.figure.getGlobalBounds();
-	if (checkFieldWallsCollision(field, heroBounds, movement, speed)) {
-		hero.updateHeroDirection(hero);
-	}
 	if (hero.figure.getPosition().x < 535) {
 		hero.figure.setPosition(hero.figure.getPosition().x + field.width * BLOCK_SIZE - 35, hero.figure.getPosition().y);
 	}
 	else if (hero.figure.getPosition().x > 500 + field.width * BLOCK_SIZE) {
 		hero.figure.setPosition(535, hero.figure.getPosition().y);
+	}
+	if (hero.figure.getPosition().y < 190) {
+		hero.figure.setPosition(hero.figure.getPosition().x, hero.figure.getPosition().y + field.width * BLOCK_SIZE - 190);
+	}
+	else if (hero.figure.getPosition().y > field.width * BLOCK_SIZE) {
+		hero.figure.setPosition(hero.figure.getPosition().x, 190);
 	}
 }
 
@@ -77,7 +95,17 @@ void Hero::updateHero(Hero& hero, float elapsedTime, Field& field, const float s
 		hero.updateHeroDirection(hero);
 	}
 
-	hero.collisionsAndMovingOut(field, hero, movement, speed);
+	static std::chrono::steady_clock::time_point lastDirectionChangeTime = std::chrono::steady_clock::now();
+	std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
+	std::chrono::seconds elapsedTimeSinceLastChange = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastDirectionChangeTime);
+	
+	const sf::FloatRect heroBounds = hero.figure.getGlobalBounds();
+	if (checkFieldWallsCollision(field, heroBounds, movement, speed) || elapsedTimeSinceLastChange.count() >= 0.01) {
+		updateHeroDirection(hero);
+		lastDirectionChangeTime = std::chrono::steady_clock::now();
+	}
+
+	hero.MovingOut(field, hero, movement, speed);
 
 	hero.figure.move(movement);
 }

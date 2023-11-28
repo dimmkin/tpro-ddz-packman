@@ -117,6 +117,10 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
                 if (event.key.code == Keyboard::Escape) { Pause(window, font, width, height); }
             }
         }
+        Text Scores;
+        Scores.setFont(font);
+        InitText(Scores, 225, 500, getGameProcessWindowTitle(process), 80, Color::Yellow, 3, Color::Blue);
+
         const float elapsedTime = clock.getElapsedTime().asSeconds();
         clock.restart();
         window.clear();
@@ -131,6 +135,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         window.draw(TitulSecondScore);
         updateGameProcess(process, elapsedTime);
         drawGameProcess(window, process);
+        window.draw(Scores);
         window.display();
     }
 }

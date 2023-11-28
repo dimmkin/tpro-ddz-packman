@@ -27,7 +27,14 @@ void Packman::updateHero(Packman& packman, float elapsedTime, Field& field, cons
 	sf::Vector2f movement(0.f, 0.f);
 	movement = buildMovement(movement, packman, step);
 	
-	packman.collisionsAndMovingOut(field, packman, movement, speed);
+	const sf::FloatRect packmanBounds = packman.figure.getGlobalBounds();
+	if (checkFieldWallsCollision(field, packmanBounds, movement, speed)) {
+		packman.direction = Direction::NONE;
+	}
+
+	packman.MovingOut(field, packman, movement, speed);
+
+	packman.eatenCookies += eatAllCookiesBounds(field, packman.figure.getGlobalBounds());
 
 	packman.figure.move(movement);
 }

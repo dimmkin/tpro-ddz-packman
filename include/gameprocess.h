@@ -9,7 +9,8 @@
 
 enum class GameState {
 	PLAY,
-	LOSE
+	LOSE,
+	WIN
 };
 
 class GameProcess
@@ -19,6 +20,7 @@ public:
 	Packman packman;
 	std::map<GhostID, Ghost> ghosts;
 	GameState gameState = GameState::PLAY;
+	unsigned int totalCookiesCount;
 
 	sf::Font font;
 	sf::RectangleShape gameOverBackground;
@@ -27,5 +29,7 @@ public:
 
 static void initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID ghostID);
 void initializeGameProcess(GameProcess& process, const sf::Vector2f& processSize);
+void updateGameOverTitle(sf::Text& title, const std::string& text);
 void updateGameProcess(GameProcess& process, float elapsedTime);
+std::string getGameProcessWindowTitle(const GameProcess& process);
 void drawGameProcess(sf::RenderWindow& window, GameProcess& process);

@@ -8,8 +8,8 @@ void initializeFieldGraphics(FieldGraphics& graphics)
     graphics.wallFigure.setFillColor(sf::Color::Blue);
     graphics.wallFigure.setSize({ BLOCK_SIZE,BLOCK_SIZE });
     
-    graphics.cookieFigure.setFillColor(sf::Color::Red);
-    graphics.cookieFigure.setRadius(10.f);
+    graphics.cookieFigure.setFillColor(sf::Color::Yellow);
+    graphics.cookieFigure.setRadius(3.f);
 }
 
 static sf::FloatRect moveRectangle(const sf::FloatRect& rectangle, sf::Vector2f& offset)
@@ -97,29 +97,40 @@ bool checkFieldWallsCollision(const Field& field, const sf::FloatRect& oldBounds
     for (size_t i = 0; i < field.width * field.height; i++)
     {
         const Cell& cell = field.cells[i];
-        if (cell.category == CellCategory::ROAD)
+        if (cell.category != CellCategory::WALL)
         {
             continue;
         }
 
-        sf::FloatRect blockBound = cell.bounds.getGlobalBounds();
+        sf::FloatRect blockBound = cell.bounds;
         if (newBounds.intersects(blockBound))
         {
-            if (movement.y < 0)
+            const float bottomShift = getBottom(blockBound) - newBounds.top;
+            const float topShift = getBottom(newBounds) - blockBound.top;
+            const float rightShift = getRight(blockBound) - newBounds.left;
+            const float leftShift = getRight(newBounds) - blockBound.left;
+            const float movementShift = std::max(std::abs(movement.x), std::abs(movement.y));
+
+            Direction direction = selectShiftDirection(leftShift, rightShift,
+                topShift, bottomShift,
+                movementShift + std::numeric_limits<float>::epsilon(), 0.5f * BLOCK_SIZE);
+            if (direction == Direction::NONE)
             {
-                movement.y += blockBound.top + blockBound.height - newBounds.top;
+                direction = selectShiftDirection(leftShift, rightShift,
+                    topShift, bottomShift,
+                    0, 0.5f * BLOCK_SIZE);
             }
-            else if (movement.y > 0)
-            {
-                movement.y -= newBounds.top + newBounds.height - blockBound.top;
+            if (direction == Direction::UP) {
+                movement.y -= topShift;
             }
-            if (movement.x < 0)
-            {
-                movement.x += blockBound.left + blockBound.width - newBounds.left;
+            if (direction == Direction::DOWN) {
+                movement.y += bottomShift;
             }
-            else if (movement.x > 0)
-            {
-                movement.x -= newBounds.left + newBounds.width - blockBound.left;
+            if (direction == Direction::LEFT) {
+                movement.x -= leftShift;
+            }
+            if (direction == Direction::RIGHT) {
+                movement.x += rightShift;
             }
             changed = true;
             newBounds = moveRectangle(oldBounds, movement);
@@ -139,32 +150,100 @@ void initializeField(Field& field)
         {
             const size_t offset = x + y * field.width;
             CellCategory category;
+            
             sf::Color color;
-
-            if (FIELD_MAZE[offset] == '#')
+            switch (FIELD_MAZE[offset])
             {
+            case '#':
                 category = CellCategory::WALL;
-                color = sf::Color::Blue;
-            }
-            else
-            {
+                break;
+            case ' ':
+                category = CellCategory::COOKIE;
+                break;
+            case '1':
+                category = CellCategory::COOKIE;
+                break;
+            case '2':
+                category = CellCategory::COOKIE;
+                break;
+            case '3':
+                category = CellCategory::COOKIE;
+                break;
+            case '4':
+                category = CellCategory::COOKIE;
+                break;
+            default:
                 category = CellCategory::ROAD;
-                color = sf::Color::Black;
+                break;
             }
 
             Cell& cell = field.cells[offset];
             cell.category = category;
-            cell.bounds.setPosition(x * BLOCK_SIZE + 535, y * BLOCK_SIZE + 190);
-            cell.bounds.setSize(sf::Vector2f(BLOCK_SIZE, BLOCK_SIZE));
-            cell.bounds.setFillColor(color);
+            cell.bounds.left = x * BLOCK_SIZE + 535;
+            cell.bounds.top = y * BLOCK_SIZE + 190;
+            cell.bounds.width = BLOCK_SIZE;
+            cell.bounds.height = BLOCK_SIZE;
         }
     }
 }
 
 void drawField(sf::RenderWindow& window, const Field& field)
 {
+    FieldGraphics graphics;
+    initializeFieldGraphics(graphics);
+
+    for (size_t i = 0; i < field.width * field.height; i++) {
+        const Cell& cell = field.cells[i];
+        const sf::Vector2f position = { cell.bounds.left, cell.bounds.top };
+        const sf::Vector2f center = position + sf::Vector2f(0.5f * cell.bounds.width, 0.5f * cell.bounds.height);
+
+        if (cell.category == CellCategory::WALL) {
+            graphics.wallFigure.setPosition(position);
+            window.draw(graphics.wallFigure);
+        }
+        if (cell.category == CellCategory::ROAD) {
+            graphics.roadFigure.setPosition(position);
+            window.draw(graphics.roadFigure);
+        }
+        if (cell.category == CellCategory::COOKIE) {
+            graphics.roadFigure.setPosition(position);
+            graphics.cookieFigure.setPosition(center.x - 1.f, center.y - 1.f);
+            window.draw(graphics.roadFigure);
+            window.draw(graphics.cookieFigure);
+        }
+    }
+}
+
+unsigned int countRemainingCookies(const Field& field)
+{
+    unsigned int result = 0;
+
+    for (size_t offset = 0; offset < field.width * field.height; offset++) {
+        const Cell& cell = field.cells[offset];
+        if (cell.category == CellCategory::COOKIE) {
+            ++result;
+        }
+    }
+    return result;
+}
+
+unsigned int eatAllCookiesBounds(Field& field, const sf::FloatRect& bounds)
+{
+    unsigned int cookiesCount = 0;
+
     for (size_t i = 0; i < field.width * field.height; i++)
     {
-        window.draw(field.cells[i].bounds);
+        Cell& cell = field.cells[i];
+        if (cell.category != CellCategory::COOKIE) {
+            continue;
+        }
+
+        sf::FloatRect intersect;
+
+        if (cell.bounds.intersects(bounds, intersect) && (getArea(intersect) >= 800.f)) {
+            ++cookiesCount;
+            cell.category = CellCategory::ROAD;
+        }
     }
+    return cookiesCount;
 }
