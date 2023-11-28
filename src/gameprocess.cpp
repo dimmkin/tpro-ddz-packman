@@ -16,7 +16,7 @@ void initializeGameProcess(GameProcess& process, const sf::Vector2f& processSize
 	}
 
 	initializeField(process.field);
-	process.packman.initializeHero(process.packman, getPackmanStartPosition(), 20.f, sf::Color::Yellow);
+	process.packman.initializePackman(process.packman);
 	initializeGhostByID(process.ghosts, GhostID::FIRST);
 	initializeGhostByID(process.ghosts, GhostID::SECOND);
 	initializeGhostByID(process.ghosts, GhostID::THIRD);
@@ -53,7 +53,7 @@ void updateGameProcess(GameProcess& process, float elapsedTime)
 			pair.second.updateHero(pair.second, elapsedTime, process.field, 90.f);
 		}
 
-		const sf::FloatRect packmanBounds = process.packman.figure.getGlobalBounds();
+		const sf::FloatRect packmanBounds = process.packman.getPackmanBounds(process.packman);
 		for (const auto& pair : process.ghosts) {
 			if (pair.second.figure.getGlobalBounds().intersects(packmanBounds)) {
 				process.gameState = GameState::LOSE;
@@ -92,7 +92,8 @@ std::string getGameProcessWindowTitle(const GameProcess& process)
 void drawGameProcess(sf::RenderWindow& window, GameProcess& process)
 {
 	drawField(window, process.field);
-	process.packman.drawHero(window, process.packman);
+	/*process.packman.drawHero(window, process.packman);*/
+	process.packman.drawPackman(window, process.packman);
 
 	for (auto& pair : process.ghosts) {
 		pair.second.drawHero(window, pair.second);

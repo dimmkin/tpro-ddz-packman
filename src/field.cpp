@@ -160,6 +160,9 @@ void initializeField(Field& field)
             case ' ':
                 category = CellCategory::COOKIE;
                 break;
+            case '@':
+                category = CellCategory::COOKIE;
+                break;
             case '1':
                 category = CellCategory::COOKIE;
                 break;

@@ -50,7 +50,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                     switch (myPause.getSelectedMenuNumber())
                     {
                     case 0:PlayGame(window, font, width, height);      break;
-                    case 1:GameStart(window, font, width, height);     break;
+                    case 1:PlayGame(window, font, width, height);     break;
                     case 2:MainMenu(window, font, width, height);                      break;
                     }
                 }
