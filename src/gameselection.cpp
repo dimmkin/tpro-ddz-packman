@@ -4,7 +4,6 @@ game::GameSelection::GameSelection(sf::RenderWindow& window, double menux, doubl
 	int index, sf::String name[], int sizeFont, int step)
 	: MenuBase(window, menux, menuy, index, name, sizeFont, step)
 {
-	if (!__font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf")) exit(32);
 	__maxMenu = index;
 	__mainMenu = new sf::Text[__maxMenu];
 

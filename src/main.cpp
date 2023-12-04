@@ -19,7 +19,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundPlay(Vector2f(width, height));
 
     Texture texturePlay;
-    if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\pause.png")) exit(1);
+    if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulPause;
@@ -69,7 +69,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundPlay(Vector2f(width, height));
 
     Texture texturePlay;
-    if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\play-game.png")) exit(1);
+    if (!texturePlay.loadFromFile("image/play-game.png")) exit(1);
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulRounds;
@@ -107,7 +107,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     sf::Clock clock;
     GameProcess process;
 
-    initializeGameProcess(process, sf::Vector2f(window.getSize()));
+    process.initializeGameProcess(sf::Vector2f(window.getSize()));
 
     while (window.isOpen()) {
         sf::Event event;
@@ -119,7 +119,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         }
         Text Scores;
         Scores.setFont(font);
-        InitText(Scores, 225, 500, getGameProcessWindowTitle(process), 80, Color::Yellow, 3, Color::Blue);
+        InitText(Scores, 225, 500, process.getGameProcessWindowTitle(), 80, Color::Yellow, 3, Color::Blue);
 
         const float elapsedTime = clock.getElapsedTime().asSeconds();
         clock.restart();
@@ -133,8 +133,8 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         window.draw(TitulSecondPlayer);
         window.draw(TitulSecondNick);
         window.draw(TitulSecondScore);
-        updateGameProcess(process, elapsedTime);
-        drawGameProcess(window, process);
+        process.updateGameProcess(elapsedTime);
+        process.drawGameProcess(window);
         window.draw(Scores);
         window.display();
     }
@@ -145,7 +145,7 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundPlay(Vector2f(width, height));
 
     Texture texturePlay;
-    if (!texturePlay.loadFromFile("C:\\Users\\user\\Desktop\\image\\start-game.png")) exit(1);
+    if (!texturePlay.loadFromFile("image/start-game.png")) exit(1);
     backgroundPlay.setTexture(&texturePlay);
 
     Text TitulStart;
@@ -259,7 +259,7 @@ void Settings(sf::RenderWindow& window, sf::Font& font, double width, double hei
     RectangleShape backgroundOpt(Vector2f(width, height));
 
     Texture textureOpt;
-    if (!textureOpt.loadFromFile("C:\\Users\\user\\Desktop\\image\\settings.png")) exit(2);
+    if (!textureOpt.loadFromFile("image/settings.png")) exit(2);
     backgroundOpt.setTexture(&textureOpt);
 
     Text Titul, SettingsMenu1, SettingsMenu2, Save;
@@ -387,7 +387,7 @@ void Exit(RenderWindow& window, Font& font, double width, double height)
     RectangleShape backgroundExit(Vector2f(width, height));
 
     Texture textureExit;
-    if (!textureExit.loadFromFile("C:\\Users\\user\\Desktop\\image\\exit.png")) exit(1);
+    if (!textureExit.loadFromFile("image/exit.png")) exit(1);
     backgroundExit.setTexture(&textureExit);
 
     Text TitulExit;
@@ -436,7 +436,7 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
     RectangleShape background(Vector2f(width, height));
 
     Texture textureWindow;
-    if (!textureWindow.loadFromFile("C:\\Users\\user\\Desktop\\image\\packman-menu.png")) exit(1);
+    if (!textureWindow.loadFromFile("image/packman-menu.png")) exit(1);
     background.setTexture(&textureWindow);
 
     String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
@@ -488,7 +488,7 @@ int main()
     double height = VideoMode::getDesktopMode().height;
 
     Font font;
-    if (!font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf")) return 5;
+    if (!font.loadFromFile("font/EightBits.ttf")) return 5;
 
     MainMenu(window, font, width, height);
 

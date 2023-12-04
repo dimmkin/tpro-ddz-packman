@@ -1,41 +1,79 @@
 #include "field.h"
 
-void initializeFieldGraphics(FieldGraphics& graphics)
+void Field::randomizeMap(std::vector<char> symbols, std::string startMap)
 {
-    graphics.roadFigure.setFillColor(sf::Color::Black);
-    graphics.roadFigure.setSize({ BLOCK_SIZE,BLOCK_SIZE });
+    map = startMap;
     
-    graphics.wallFigure.setFillColor(sf::Color::Blue);
-    graphics.wallFigure.setSize({ BLOCK_SIZE,BLOCK_SIZE });
-    
-    graphics.cookieFigure.setFillColor(sf::Color::Yellow);
-    graphics.cookieFigure.setRadius(3.f);
+    std::random_device rd;
+    std::mt19937 generator(rd());
+
+    std::shuffle(symbols.begin(), symbols.end(), generator);
+
+    for (char symbol : symbols) {
+        while (true) {
+            int position = std::uniform_int_distribution<int>(0, map.size() - 1)(generator);
+
+            if (map[position] == ' ') {
+                map[position] = symbol;
+                break;
+            }
+        }
+    }
 }
 
-static sf::FloatRect moveRectangle(const sf::FloatRect& rectangle, sf::Vector2f& offset)
+void Field::clearMap(std::vector<char> symbols, std::string& startMap)
+{
+    map = startMap;
+
+    int length = map.size();
+    for (char symbol : symbols) {
+        int position = 0;
+        while (position < length) {
+            if (map[position] == symbol) {
+                map[position] = ' ';
+                break;
+            }
+            position++;
+        }
+    }
+}
+
+FieldGraphics::FieldGraphics()
+{
+    roadFigure.setFillColor(sf::Color::Black);
+    roadFigure.setSize({ BLOCK_SIZE,BLOCK_SIZE });
+        
+    wallFigure.setFillColor(sf::Color::Blue);
+    wallFigure.setSize({ BLOCK_SIZE,BLOCK_SIZE });
+        
+    cookieFigure.setFillColor(sf::Color::Yellow);
+    cookieFigure.setRadius(3.f);
+}
+
+sf::FloatRect Field::moveRectangle(const sf::FloatRect& rectangle, sf::Vector2f& offset)
 {
     return { rectangle.left + offset.x, rectangle.top + offset.y, rectangle.width, rectangle.height };
 }
 
-static float getArea(const sf::FloatRect& rectangle)
+float Field::getArea(const sf::FloatRect& rectangle)
 {
     return rectangle.width * rectangle.height;
 }
 
-static float getBottom(const sf::FloatRect& rectangle)
+float Field::getBottom(const sf::FloatRect& rectangle)
 {
     return rectangle.top + rectangle.height;
 }
 
-static float getRight(const sf::FloatRect& rectangle)
+float Field::getRight(const sf::FloatRect& rectangle)
 {
     return rectangle.left + rectangle.width;
 }
 
-static Direction selectShiftDirection(float leftShift, float rightShift, float topShift, float bottomShift, float minShift, float maxShift)
+Direction Field::selectShiftDirection(float leftShift, float rightShift, float topShift, float bottomShift, float minShift, float maxShift)
 {
     Direction result = Direction::NONE;
-    float bestShift = BLOCK_SIZE * FIELD_WIDTH;
+    float bestShift = BLOCK_SIZE * WIDTH_OF_FIELD;
     if ((minShift < leftShift && leftShift < maxShift) && leftShift < bestShift) {
         result = Direction::LEFT;
         bestShift = leftShift;
@@ -56,25 +94,25 @@ static Direction selectShiftDirection(float leftShift, float rightShift, float t
     return result;
 }
 
-static sf::Vector2f getStartPosition(char marker)
+sf::Vector2f Field::getStartPosition(char marker)
 {
-    for (size_t y = 0; y < FIELD_HEIGHT; ++y) {
-        for (size_t x = 0; x < FIELD_WIDTH; ++x) {
-            const size_t offset = x + y * FIELD_WIDTH;
-            if (FIELD_MAZE[offset] == marker) {
-                return { x * BLOCK_SIZE + 535, y * BLOCK_SIZE + 190 };
+    for (size_t y = 0; y < HEIGHT_OF_FIELD; ++y) {
+        for (size_t x = 0; x < WIDTH_OF_FIELD; ++x) {
+            const size_t offset = x + y * WIDTH_OF_FIELD;
+            if (map[offset] == marker) {
+                return { x * BLOCK_SIZE + LEFT_INDENTATION, y * BLOCK_SIZE + TOP_INDENTATION};
             }
         }
     }
     return { 0, 0 };
 }
 
-sf::Vector2f getPackmanStartPosition()
+sf::Vector2f Field::getPackmanStartPosition()
 {
     return getStartPosition('@');
 }
 
-sf::Vector2f getGhostsStartPosition(GhostID& ghostID)
+sf::Vector2f Field::getGhostsStartPosition(GhostID& ghostID)
 {
     if (ghostID == GhostID::FIRST) {
         return getStartPosition('1');
@@ -90,13 +128,23 @@ sf::Vector2f getGhostsStartPosition(GhostID& ghostID)
     }
 }
 
-bool checkFieldWallsCollision(const Field& field, const sf::FloatRect& oldBounds, sf::Vector2f& movement, const float& speed)
+sf::Vector2f Field::getBonusesStartPosition(TypesBonuses& type)
+{
+    if (type == TypesBonuses::BOMB) {
+        return getStartPosition('Q');
+    }
+    if (type == TypesBonuses::CYCLE) {
+        return getStartPosition('W');
+    }
+}
+
+bool Field::checkFieldWallsCollision(const sf::FloatRect& oldBounds, sf::Vector2f& movement, const float& speed)
 {
     sf::FloatRect newBounds = moveRectangle(oldBounds, movement);
     bool changed = false;
-    for (size_t i = 0; i < field.width * field.height; i++)
+    for (size_t i = 0; i < width * height; i++)
     {
-        const Cell& cell = field.cells[i];
+        const Cell& cell = cells[i];
         if (cell.category != CellCategory::WALL)
         {
             continue;
@@ -139,48 +187,49 @@ bool checkFieldWallsCollision(const Field& field, const sf::FloatRect& oldBounds
     return changed;
 }
 
-void initializeField(Field& field)
+void Field::initializeField()
 {
-    field.width = FIELD_WIDTH;
-    field.height = FIELD_HEIGHT;
-    field.cells = new Cell[field.width * field.height];
-    for (size_t y = 0; y < field.height; y++)
+    randomizeMap(ALL_SYMBOLS);
+    width = WIDTH_OF_FIELD;
+    height = HEIGHT_OF_FIELD;
+    cells = new Cell[width * height];
+    for (size_t y = 0; y < height; y++)
     {
-        for (size_t x = 0; x < field.width; x++)
+        for (size_t x = 0; x < width; x++)
         {
-            const size_t offset = x + y * field.width;
+            const size_t offset = x + y * width;
             CellCategory category;
             
             sf::Color color;
-            switch (FIELD_MAZE[offset])
+            switch (map[offset])
             {
             case '#':
                 category = CellCategory::WALL;
                 break;
             case ' ':
-                category = CellCategory::COOKIE;
+                category = CellCategory::DOT;
                 break;
             case '@':
-                category = CellCategory::COOKIE;
+                category = CellCategory::DOT;
                 break;
             case '1':
-                category = CellCategory::COOKIE;
+                category = CellCategory::DOT;
                 break;
             case '2':
-                category = CellCategory::COOKIE;
+                category = CellCategory::DOT;
                 break;
             case '3':
-                category = CellCategory::COOKIE;
+                category = CellCategory::DOT;
                 break;
             case '4':
-                category = CellCategory::COOKIE;
+                category = CellCategory::DOT;
                 break;
             default:
                 category = CellCategory::ROAD;
                 break;
             }
 
-            Cell& cell = field.cells[offset];
+            Cell& cell = cells[offset];
             cell.category = category;
             cell.bounds.left = x * BLOCK_SIZE + 535;
             cell.bounds.top = y * BLOCK_SIZE + 190;
@@ -190,13 +239,12 @@ void initializeField(Field& field)
     }
 }
 
-void drawField(sf::RenderWindow& window, const Field& field)
+void Field::drawField(sf::RenderWindow& window)
 {
     FieldGraphics graphics;
-    initializeFieldGraphics(graphics);
 
-    for (size_t i = 0; i < field.width * field.height; i++) {
-        const Cell& cell = field.cells[i];
+    for (size_t i = 0; i < width * height; i++) {
+        const Cell& cell = cells[i];
         const sf::Vector2f position = { cell.bounds.left, cell.bounds.top };
         const sf::Vector2f center = position + sf::Vector2f(0.5f * cell.bounds.width, 0.5f * cell.bounds.height);
 
@@ -208,7 +256,7 @@ void drawField(sf::RenderWindow& window, const Field& field)
             graphics.roadFigure.setPosition(position);
             window.draw(graphics.roadFigure);
         }
-        if (cell.category == CellCategory::COOKIE) {
+        if (cell.category == CellCategory::DOT) {
             graphics.roadFigure.setPosition(position);
             graphics.cookieFigure.setPosition(center.x - 1.f, center.y - 1.f);
             window.draw(graphics.roadFigure);
@@ -217,27 +265,27 @@ void drawField(sf::RenderWindow& window, const Field& field)
     }
 }
 
-unsigned int countRemainingCookies(const Field& field)
+unsigned int Field::countRemainingCookies()
 {
     unsigned int result = 0;
 
-    for (size_t offset = 0; offset < field.width * field.height; offset++) {
-        const Cell& cell = field.cells[offset];
-        if (cell.category == CellCategory::COOKIE) {
+    for (size_t offset = 0; offset < width * height; offset++) {
+        const Cell& cell = cells[offset];
+        if (cell.category == CellCategory::DOT) {
             ++result;
         }
     }
     return result;
 }
 
-unsigned int eatAllCookiesBounds(Field& field, const sf::FloatRect& bounds)
+unsigned int Field::eatAllCookiesBounds(const sf::FloatRect& bounds)
 {
     unsigned int cookiesCount = 0;
 
-    for (size_t i = 0; i < field.width * field.height; i++)
+    for (size_t i = 0; i < width * height; i++)
     {
-        Cell& cell = field.cells[i];
-        if (cell.category != CellCategory::COOKIE) {
+        Cell& cell = cells[i];
+        if (cell.category != CellCategory::DOT) {
             continue;
         }
 

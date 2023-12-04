@@ -2,7 +2,8 @@
 #include <SFML/Graphics.hpp>
 
 namespace game {
-	class MenuBase {
+	class MenuBase
+	{
 	protected:
 		double __menuX;
 		double __menuY;
