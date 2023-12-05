@@ -34,9 +34,9 @@ class Hero
 public:
 
 	// fields
-	sf::RectangleShape figure;
-	sf::Texture texture;
-	Direction direction;
+	sf::RectangleShape __figure;
+	sf::Texture __texture;
+	Direction __direction;
 
 	// methods
 	Direction randomDirection(Direction previousDirection);

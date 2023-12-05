@@ -22,12 +22,12 @@ class Bonus
 {
 public:
 	// fields
-	sf::RectangleShape figure;
-	sf::Texture texture;
-	TypesBonuses bonusType;
-	bool active;
-	unsigned int eatenDots;
-	unsigned int remainingDots;
+	sf::RectangleShape __figure;
+	sf::Texture __texture;
+	TypesBonuses __bonusType;
+	bool __active;
+	unsigned int __eatenDots;
+	unsigned int __remainingDots;
 
 	// methods
 	bool initializeBonus(const sf::Vector2f& position, const std::string& texturePath, const sf::IntRect frame, TypesBonuses type, bool active);

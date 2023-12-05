@@ -42,44 +42,44 @@ void Packman::assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bo
 void Packman::updateHeroDirection()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		direction = Direction::UP;
-		orientationDegrees = 0;
+		__direction = Direction::UP;
+		__orientationDegrees = 0;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		direction = Direction::DOWN;
-		orientationDegrees = 180;
+		__direction = Direction::DOWN;
+		__orientationDegrees = 180;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		direction = Direction::LEFT;
-		orientationDegrees = 270;
+		__direction = Direction::LEFT;
+		__orientationDegrees = 270;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		direction = Direction::RIGHT;
-		orientationDegrees = 90;
+		__direction = Direction::RIGHT;
+		__orientationDegrees = 90;
 	}
 }
 
 void Packman::initializePackman(Field& field, Packman& packman, float speed)
 {
-	packman.direction = Direction::NONE;
-	packman.position = field.getPackmanStartPosition();
-	packman.eatenCookies = 0;
-	packman.orientationDegrees = 90;
-	packman.phaseAnimation = 0;
-	packman.speed = speed;
+	packman.__direction = Direction::NONE;
+	packman.__position = field.getPackmanStartPosition();
+	packman.__eatenCookies = 0;
+	packman.__orientationDegrees = 90;
+	packman.__phaseAnimation = 0;
+	packman.__speed = speed;
 	
-	packman.topShape.setFillColor(sf::Color::Yellow);
-	packman.bottomShape.setFillColor(sf::Color::Yellow);
+	packman.__topShape.setFillColor(sf::Color::Yellow);
+	packman.__bottomShape.setFillColor(sf::Color::Yellow);
 }
 
 void Packman::setSpeedMultiplier(float newSpeed)
 {
-	speed = newSpeed;
+	__speed = newSpeed;
 }
 
 void Packman::updateHero(float elapsedTime, Field& field)
 {
-	const float step = speed * elapsedTime;
+	const float step = __speed * elapsedTime;
 
 	updateHeroDirection();
 
@@ -87,48 +87,48 @@ void Packman::updateHero(float elapsedTime, Field& field)
 	movement = buildMovement(movement, *this, step);
 	
 	const sf::FloatRect packmanBounds = getPackmanBounds();
-	if (field.checkFieldWallsCollision(packmanBounds, movement, speed)) {
+	if (field.checkFieldWallsCollision(packmanBounds, movement, __speed)) {
 	}
-	if (position.x < LEFT_INDENTATION) {
-		position.x = this->position.x + field.width * BLOCK_SIZE - 35;
+	if (__position.x < LEFT_INDENTATION) {
+		__position.x = __position.x + field.__width * BLOCK_SIZE - 35;
 	}
-	else if (position.x > LEFT_INDENTATION - 35  + field.width * BLOCK_SIZE) {
-		position.x = LEFT_INDENTATION;
+	else if (__position.x > LEFT_INDENTATION - 35  + field.__width * BLOCK_SIZE) {
+		__position.x = LEFT_INDENTATION;
 	}
-	if (position.y < TOP_INDENTATION) {
-		position.y = position.y + field.width * BLOCK_SIZE - TOP_INDENTATION;
+	if (__position.y < TOP_INDENTATION) {
+		__position.y = __position.y + field.__width * BLOCK_SIZE - TOP_INDENTATION;
 	}
-	else if (position.y > field.width * BLOCK_SIZE) {
-		position.y = TOP_INDENTATION;
+	else if (__position.y > field.__width * BLOCK_SIZE) {
+		__position.y = TOP_INDENTATION;
 	}
 	
-	eatenCookies += field.eatAllCookiesBounds(getPackmanBounds());
+	__eatenCookies += field.eatAllCookiesBounds(getPackmanBounds());
 	
-	position += movement;
+	__position += movement;
 	
-	if (this->direction == Direction::NONE) {
-		this->phaseAnimation = 0;
+	if (__direction == Direction::NONE) {
+		__phaseAnimation = 0;
 	}
 	else {
 		const float deltaPhase = elapsedTime / 0.3f;
-		this->phaseAnimation = (this->phaseAnimation + deltaPhase) - static_cast<int>(phaseAnimation + deltaPhase);
+		__phaseAnimation = (__phaseAnimation + deltaPhase) - static_cast<int>(__phaseAnimation + deltaPhase);
 	}
-	assignPackmanFigure(topShape, bottomShape, phaseAnimation);
+	assignPackmanFigure(__topShape, __bottomShape, __phaseAnimation);
 }
 
 void Packman::drawPackman(sf::RenderWindow& window)
 {
 	sf::RenderStates states;
 
-	states.transform.translate(position);
+	states.transform.translate(__position);
 
-	states.transform.rotate(orientationDegrees);
+	states.transform.rotate(__orientationDegrees);
 
-	window.draw(topShape, states);
-	window.draw(bottomShape, states);
+	window.draw(__topShape, states);
+	window.draw(__bottomShape, states);
 }
 
 sf::FloatRect Packman::getPackmanBounds()
 {
-	return sf::FloatRect(position.x - RADIUS_OF_PACKMAN, position.y - RADIUS_OF_PACKMAN, 2.f * RADIUS_OF_PACKMAN, 2.f * RADIUS_OF_PACKMAN);
+	return sf::FloatRect(__position.x - RADIUS_OF_PACKMAN, __position.y - RADIUS_OF_PACKMAN, 2.f * RADIUS_OF_PACKMAN, 2.f * RADIUS_OF_PACKMAN);
 }
