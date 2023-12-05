@@ -1,4 +1,4 @@
-#include "../include/field.h"
+#include "field.h"
 
 static sf::FloatRect moveRectangle(const sf::FloatRect& rectangle, sf::Vector2f& offset)
 {

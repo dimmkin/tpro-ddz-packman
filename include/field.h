@@ -1,7 +1,8 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
 #include "packman.h"
+
+
 enum class CellCategory {
     WALL,
     ROAD
