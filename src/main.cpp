@@ -1,4 +1,7 @@
 #include "menuBase.h"
+#include "field.h"
+#include "gameprocess.h"
+#include "packman.h"
 using namespace sf;
 using json = nlohmann::json;
 
@@ -61,6 +64,8 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
+
+
 void PlayGame(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape backgroundPlay(Vector2f(1920, 1080));
@@ -92,7 +97,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     InitText(TitulFirstNick, 120, 250, NikName1.getString(), 90, Color::Yellow, 3, Color::Blue);
     RectangleShape heats1(Vector2f(100, 100));
     Texture heats_image1;
-    if (!heats_image1.loadFromFile("image/heat.png")) exit(23);
+    if (!heats_image1.loadFromFile("image/lifes.png")) exit(23);
     heats1.setTexture(&heats_image1);
     heats1.setPosition(110, 400);
     std::string heat_file_count= data["Option"][1];
@@ -120,7 +125,10 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     TitulSecondScore.setFont(font);
     InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
 
+    sf::Clock clock;
+    GameProcess process;
 
+    process.initializeGameProcess(sf::Vector2f(window.getSize()));
     while (window.isOpen())
     {
         Event event;
@@ -130,6 +138,11 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
                 if (event.key.code == Keyboard::Escape) { Pause(window, font, width, height); }
             }
         }
+        Text Scores;
+        Scores.setFont(font);
+        InitText(Scores, 225, 500, process.getGameProcessWindowTitle(), 80, Color::Yellow, 3, Color::Blue);
+
+        const float elapsedTime = clock.getElapsedTime().asSeconds();
         window.clear();
         window.draw(backgroundPlay);
         window.draw(TitulRounds);
@@ -142,9 +155,13 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         window.draw(TitulSecondScore);
         window.draw(heats1);
         window.draw(Heats_Count);
+        process.updateGameProcess(elapsedTime);
+        process.drawGameProcess(window);
+        window.draw(Scores);
         window.display();
     }
 }
+
 void GamåStart(RenderWindow& window, Font& font, double width, double height)
 {
 
@@ -427,9 +444,6 @@ void Option(sf::RenderWindow& window, sf::Font& font)
                     {
                         data["Option"].push_back(Color_name.getSelectedMenuNumber() + 1);
                         std::ofstream file("text.json");
-                        if (!file.is_open()) {
-                            MainMenu(window, font, 1920, 1080);
-                        }
                         file << data;
                         file.close();
                         MainMenu(window, font, 1920, 1080);
