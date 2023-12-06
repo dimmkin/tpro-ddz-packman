@@ -41,6 +41,29 @@ void Hero::updateHeroDirection()
 		return;
 	}
 }
+Direction Hero::changeOfDirection(Direction direction)
+{
+	if (direction == Direction::UP) {
+		direction =Direction::DOWN;
+		return Direction::DOWN;
+	}
+	if (direction == Direction::DOWN) {
+		direction = Direction::UP;
+		return Direction::UP;
+	}
+	if (direction == Direction::LEFT) {
+		direction = Direction::RIGHT;
+		return Direction::RIGHT;
+	}
+	if (direction == Direction::RIGHT) {
+		direction = Direction::LEFT;
+		return Direction::LEFT;
+	}
+	if (direction == Direction::NONE) {
+		direction = Direction::UP;
+		return Direction::UP;
+	}
+}
 
 bool Hero::initializeHero(const sf::Vector2f& position, const std::string& texturePath)
 {

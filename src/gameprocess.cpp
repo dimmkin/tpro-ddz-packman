@@ -1,4 +1,9 @@
 #include "gameprocess.h"
+#include <iostream>
+#include <fstream>
+using namespace sf;
+#include "json/nlohmann/json.hpp"
+using json = nlohmann::json;
 
 bool GameProcess::initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID ghostID)
 {
@@ -23,12 +28,35 @@ void GameProcess::initializeGameProcess(const sf::Vector2f& processSize)
 	bool succeed = font.loadFromFile("font/EightBits.ttf");
 
 	field.initializeField();
-	packman.initializePackman(field, packman, 1.f);
+	packman.initializePackman(field, packman, 150.f);
 
-	initializeGhostByID(ghosts, GhostID::FIRST);
-	initializeGhostByID(ghosts, GhostID::SECOND);
-	initializeGhostByID(ghosts, GhostID::THIRD);
-	initializeGhostByID(ghosts, GhostID::FORTH);
+	std::ifstream file("text.json");
+	json data = json::parse(file);
+	file.close();
+	int i = data["Start_game"][1];
+	switch (i)
+	{
+	case 1 :
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		break;
+	case 2:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		break;
+	case 3:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		initializeGhostByID(ghosts, GhostID::THIRD);
+		break;
+	case 4:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		initializeGhostByID(ghosts, GhostID::THIRD);
+		initializeGhostByID(ghosts, GhostID::FORTH);
+		break;
+	default:
+		break;
+	}
 
 	initializeBonusByType(bonuses, TypesBonuses::BOMB, FRAME_BOMB);
 	initializeBonusByType(bonuses, TypesBonuses::CYCLE, FRAME_CYCLE);
@@ -60,10 +88,34 @@ void GameProcess::killBotsAndChangePosition()
 	ghosts.clear();
 	field.clearMap(SYMBOLS_GHOSTS, field.map);
 	field.randomizeMap(SYMBOLS_GHOSTS, field.map);
-	initializeGhostByID(ghosts, GhostID::FIRST);
-	initializeGhostByID(ghosts, GhostID::SECOND);
-	initializeGhostByID(ghosts, GhostID::THIRD);
-	initializeGhostByID(ghosts, GhostID::FORTH);
+
+	std::ifstream file("text.json");
+	json data = json::parse(file);
+	file.close();
+	int i = data["Start_game"][1];
+	switch (i)
+	{
+	case 1:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		break;
+	case 2:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		break;
+	case 3:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		initializeGhostByID(ghosts, GhostID::THIRD);
+		break;
+	case 4:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		initializeGhostByID(ghosts, GhostID::THIRD);
+		initializeGhostByID(ghosts, GhostID::FORTH);
+		break;
+	default:
+		break;
+	}
 }
 
 void GameProcess::changedBonusesPosition()
@@ -103,24 +155,34 @@ void GameProcess::redrawingBonuses()
 	}
 }
 
-void GameProcess::updateGameProcess(float elapsedTime)
+void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes)
 {
+
 	if (gameState == GameState::PLAY) {
 		packman.updateHero(elapsedTime, field);
 
 		redrawingBonuses();
 
 		for (auto& pair : ghosts) {
-			pair.second.updateHero(elapsedTime, field, 2.f);
+			pair.second.updateHero(elapsedTime, field, 90.f);
 		}
 
 		const sf::FloatRect packmanBounds = packman.getPackmanBounds();
-		for (const auto& pair : ghosts) {
+		for ( auto& pair : ghosts) {
 			if (pair.second.figure.getGlobalBounds().intersects(packmanBounds)) {
-				gameState = GameState::LOSE;
+				if (lifes == 1) {
+					gameState = GameState::LOSE;
+				}
+				else
+				{
+					flag_lifes = true;
+					packman.direction = packman.changeOfDirection(packman.direction);
+					packman.orientationDegrees = packman.directionOrientationDegrees(packman.direction);
+					pair.second.direction = pair.second.changeOfDirection(pair.second.direction);
+					exit;
+				}
 			}
 		}
-
 		for (auto it = packman.activeBonuses.begin(); it != packman.activeBonuses.end(); ++it) {
 			if (it->second.bonusType == TypesBonuses::CYCLE && it->second.active && packman.eatenCookies >= it->second.eatenDots + 10) {
 				packman.setSpeedMultiplier(120.f);

@@ -59,6 +59,21 @@ void Packman::updateHeroDirection()
 	}
 }
 
+int Packman::directionOrientationDegrees(Direction direction) {
+	if (direction == Direction::UP) {
+		return 0;
+	}
+	else if (direction == Direction::DOWN) {
+		return 180;
+	}
+	if (direction == Direction::LEFT) {
+		return 270;
+	}
+	else if (direction == Direction::RIGHT) {
+		return 90;
+	}
+}
+
 void Packman::initializePackman(Field& field, Packman& packman, float speed)
 {
 	packman.direction = Direction::NONE;
@@ -68,8 +83,27 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed)
 	packman.phaseAnimation = 0;
 	packman.speed = speed;
 
-	packman.topShape.setFillColor(sf::Color::Yellow);
-	packman.bottomShape.setFillColor(sf::Color::Yellow);
+	std::ifstream file("text.json");
+	json data = json::parse(file);
+	file.close();
+	int i = data["Option"][3];
+	sf::Color color_pacman;
+	switch (i)
+	{
+	case 1:
+		color_pacman = sf::Color::Red;
+		break;
+	case 2:
+		color_pacman = sf::Color::Magenta;
+		break;
+	case 3:
+		color_pacman = sf::Color::Green;
+		break;
+	default:
+		break;
+	}
+	packman.topShape.setFillColor(color_pacman);
+	packman.bottomShape.setFillColor(color_pacman);
 }
 
 void Packman::setSpeedMultiplier(float newSpeed)

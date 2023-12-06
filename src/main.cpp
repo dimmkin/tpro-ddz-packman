@@ -2,7 +2,12 @@
 #include "field.h"
 #include "gameprocess.h"
 #include "packman.h"
+#include <string>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
 using namespace sf;
+#include "json/nlohmann/json.hpp"
 using json = nlohmann::json;
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
@@ -66,9 +71,10 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
 
 
 
+
 void PlayGame(RenderWindow& window, Font& font, double width, double height)
 {
-    RectangleShape backgroundPlay(Vector2f(1920, 1080));
+    RectangleShape backgroundPlay(Vector2f(width, height));
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/play-game.png")) exit(1);
@@ -100,10 +106,11 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     if (!heats_image1.loadFromFile("image/lifes.png")) exit(23);
     heats1.setTexture(&heats_image1);
     heats1.setPosition(110, 400);
-    std::string heat_file_count= data["Option"][1];
+    std::string heat_file_count = data["Option"][1];
     std::string heat_panel1 = "x" + heat_file_count;
     Text heat_text;
     heat_text.setString(heat_panel1);
+    unsigned int lifes = std::stoi(heat_file_count);
 
     Text Heats_Count;
     Heats_Count.setFont(font);
@@ -129,9 +136,10 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     GameProcess process;
 
     process.initializeGameProcess(sf::Vector2f(window.getSize()));
-    while (window.isOpen())
-    {
-        Event event;
+    unsigned stek = lifes;
+    bool flag = false;
+    while (window.isOpen()) {
+        sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::KeyPressed)
             {
@@ -143,6 +151,16 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         InitText(Scores, 225, 500, process.getGameProcessWindowTitle(), 80, Color::Yellow, 3, Color::Blue);
 
         const float elapsedTime = clock.getElapsedTime().asSeconds();
+        if (flag) {
+            --lifes;
+            std::string heat_panel1 = "x" + std::to_string(lifes);
+            heat_text.setString(heat_panel1);
+            stek = lifes;
+            InitText(Heats_Count, 250, 380, heat_text.getString(), 90, Color::Yellow, 3, Color::Blue);
+            flag = false;
+
+        }
+        clock.restart();
         window.clear();
         window.draw(backgroundPlay);
         window.draw(TitulRounds);
@@ -155,13 +173,12 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         window.draw(TitulSecondScore);
         window.draw(heats1);
         window.draw(Heats_Count);
-        process.updateGameProcess(elapsedTime);
+        process.updateGameProcess(elapsedTime, flag, lifes);
         process.drawGameProcess(window);
         window.draw(Scores);
         window.display();
     }
 }
-
 void GamåStart(RenderWindow& window, Font& font, double width, double height)
 {
 
@@ -303,7 +320,7 @@ void Option(sf::RenderWindow& window, sf::Font& font)
 
     RectangleShape heats(Vector2f(150, 150));
     Texture heats_image;
-    if (!heats_image.loadFromFile("image/heat.png")) exit(23);
+    if (!heats_image.loadFromFile("image/lifes.png")) exit(23);
     heats.setTexture(&heats_image);
     heats.setPosition(100, 700);
 
@@ -322,21 +339,21 @@ void Option(sf::RenderWindow& window, sf::Font& font)
     InitText(Arrow, 375, 730, L"<      >", 70, Color::Yellow, 3, Color::Black);
     String ManagementCount[]{ L"1",L"2" };
 
-    game::Settigns Management(window, 260, 550, 2, ManagementCount, 90, 430);
+    game::Settings Management(window, 260, 550, 2, ManagementCount, 90, 430);
 
     Management.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     Management.AlignMenu(2);
 
     String name_user[]{ L"Name :" };
-    game::Settigns Name(window, 1150, 340, 1, name_user, 90);
+    game::Settings Name(window, 1150, 340, 1, name_user, 90);
 
     Name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     Name.AlignMenu(2);
 
     String color_menu[]{ L"Color :" };
-    game::Settigns Color(window, 1150, 560, 1, color_menu, 90);
+    game::Settings Color(window, 1150, 560, 1, color_menu, 90);
 
     Color.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
@@ -344,7 +361,7 @@ void Option(sf::RenderWindow& window, sf::Font& font)
 
     String Color_count[]{ L"1",L"2", L"3" };
 
-    game::Settigns Color_name(window, 1450, 700, 3, Color_count, 90, 150);
+    game::Settings Color_name(window, 1450, 700, 3, Color_count, 90, 150);
 
     Color_name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
