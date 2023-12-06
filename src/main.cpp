@@ -6,6 +6,8 @@
 
 using namespace sf;
 
+GameMusic Fon_music;
+
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
 
@@ -40,6 +42,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
         Event event;
         while (window.pollEvent(event))
         {
+            Fon_music.Music_return(0);
             if (event.type == Event::KeyReleased)
             {
                 if (event.key.code == Keyboard::Up) { myPause.MovePrev(); }
@@ -50,9 +53,9 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (myPause.getSelectedMenuNumber())
                     {
-                    case 0:PlayGame(window, font, width, height);      break;
+                    case 0:PlayGame(window, font, width, height);     break;
                     case 1:PlayGame(window, font, width, height);     break;
-                    case 2:MainMenu(window, font, width, height);                      break;
+                    case 2:MainMenu(window, font, width, height);     break;
                     }
                 }
             }
@@ -115,17 +118,27 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     InitText(countdownText, 1475, 500, L"Score: ", 150, Color::Yellow, 3, Color::Blue);
 
     bool isStart = true;
+    GameMusic music;
+    Fon_music.Music_pause(0);
+    music.Music_stop_all();
+    int index = music.Random_music(2, 8);
 
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::KeyPressed)
             {
-                if (event.key.code == Keyboard::Escape) { Pause(window, font, width, height); }
+                if (event.key.code == Keyboard::Escape) 
+                {
+                    music.Music_pause_all();
+                    Pause(window, font, width, height); 
+                }
             }
         }
-
         if (isStart) {
+
+        music.Music_play(1);
+        music.Music_set_volume_all(10);
 
             for (int i = 3; i >= 0; --i) {
                 countdownText.setString(std::to_string(i));
@@ -171,6 +184,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
                 isStart = false;
             }
         }
+        music.Music_play_always(index);
 
         Text Scores;
         Scores.setFont(font);
@@ -576,10 +590,9 @@ int main()
 {
     RenderWindow window;
 
-    GameMusic music;
-    music.Music_stop(0);
-    music.Music_play(0);
-    music.Music_set_volume_all(10);
+    Fon_music.Music_stop(0);
+    Fon_music.Music_play(0);
+    Fon_music.Music_set_volume_all(10);
 
     window.create(VideoMode::getDesktopMode(), L"Packman", Style::Fullscreen);
 

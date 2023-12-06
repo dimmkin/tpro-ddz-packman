@@ -187,9 +187,9 @@ bool Field::checkFieldWallsCollision(const sf::FloatRect& oldBounds, sf::Vector2
     return changed;
 }
 
-void Field::initializeField(int selectMap)
+void Field::initializeField()
 {
-    randomizeMap(ALL_SYMBOLS, selectMap);
+    randomizeMap(ALL_SYMBOLS);
     width = WIDTH_OF_FIELD;
     height = HEIGHT_OF_FIELD;
     cells = new Cell[width * height];
@@ -298,4 +298,5 @@ unsigned int Field::eatAllCookiesBounds(const sf::FloatRect& bounds)
     }
     return cookiesCount;
 }
+
 
