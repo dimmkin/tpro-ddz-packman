@@ -2,7 +2,8 @@
 #include <SFML/Graphics.hpp>
 
 namespace game {
-	class MenuBase {
+	class MenuBase
+	{
 	protected:
 		double __menuX;
 		double __menuY;
@@ -81,7 +82,7 @@ namespace game {
 		Exit(sf::RenderWindow& window, double menux, double menuy,
 			int index, sf::String name[], int sizeFont = 60, int step = 80);
 	};
-	
+
 	class Settings : public MenuBase
 	{
 	public:

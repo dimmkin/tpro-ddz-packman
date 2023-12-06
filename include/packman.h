@@ -1,19 +1,37 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "hero.h"
+#include "bonus.h"
 
-class Field;
+// ñonstants
+const int PHASE = 90;
+const float NUMBER_PI = 3.141592654f;
+const int PI_RADIAN = 180;
+const float RADIUS_OF_PACKMAN = 20.f;
 
-enum class Direction {
-	NONE,
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-
-class Packman {
+class Packman : public Hero
+{
 public:
-	sf::CircleShape figure;
-	Direction direction;
+
+	// fields
+	sf::ConvexShape topShape;
+	sf::ConvexShape bottomShape;
+	sf::Vector2f position;
+	float orientationDegrees;
+	float phaseAnimation;
+	float speed;
+	unsigned int eatenCookies;
+	std::map<TypesBonuses, Bonus> activeBonuses;
+
+	// methods
+	sf::Vector2f getRadialPoint(float angle, float radius);
+	void assignFigure(sf::ConvexShape& shape, std::vector<sf::Vector2f> const& points);
+	void initializePackman(Field& field, Packman& packman, float speed = 120.f);
+	void assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bottomShape, const float phaseAnimation);
+	void setSpeedMultiplier(float newSpeed);
+	void updateHeroDirection();
+	void updateHero(float elapsedTime, Field& field);
+	void drawPackman(sf::RenderWindow& window);
+	sf::FloatRect getPackmanBounds();
 };
