@@ -8,7 +8,7 @@ using namespace sf;
 #include "json/nlohmann/json.hpp"
 using json = nlohmann::json;
 
-// Ñonstants
+// constants
 const int PHASE = 90;
 const float NUMBER_PI = 3.141592654f;
 const int PI_RADIAN = 180;
