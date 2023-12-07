@@ -89,4 +89,10 @@ namespace game {
 		Settings(sf::RenderWindow& window, double settingsmenux, double settingsy,
 			int index, sf::String name[], int sizeFont = 60, int step = 80);
 	};
+	
+	class EndGame : public GameSelection {
+	public:
+		EndGame(sf::RenderWindow& window, double menux, double menuy,
+			int index, sf::String name[], int sizeFont = 60, int step = 80);
+	};
 }

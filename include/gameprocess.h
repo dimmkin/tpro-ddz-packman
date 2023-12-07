@@ -33,15 +33,15 @@ class GameProcess
 public:
 
 	// fields 
-	Field field;
-	Packman packman;
-	std::map<GhostID, Ghost> ghosts;
-	std::map<TypesBonuses, Bonus> bonuses;
-	GameState gameState = GameState::PLAY;
-	unsigned int totalCookiesCount;
-	sf::Font font;
-	sf::RectangleShape gameOverBackground;
-	sf::Text gameOverTitle;
+	Field __field;
+	Packman __packman;
+	std::map<GhostID, Ghost> __ghosts;
+	std::map<TypesBonuses, Bonus> __bonuses;
+	GameState __gameState = GameState::PLAY;
+	unsigned int __totalCookiesCount;
+	sf::Font __font;
+	sf::RectangleShape __gameOverBackground;
+	sf::Text __gameOverTitle;
 
 	// methods
 	void redrawingBonuses();
@@ -49,10 +49,8 @@ public:
 	void killBotsAndChangePosition();
 	bool initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID ghostID);
 	bool initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, TypesBonuses type, const sf::IntRect frame, bool active = false);
-	void updateGameOverTitle(sf::Text& title, const std::string& text);
 	void updateGameProcess(float elapsedTime);
 	std::string getGameProcessWindowTitle();
 	void drawGameProcess(sf::RenderWindow& window);
 	void initializeGameProcess(const sf::Vector2f& processSize);
 };
-

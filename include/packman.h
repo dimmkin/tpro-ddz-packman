@@ -15,14 +15,14 @@ class Packman : public Hero
 public:
 
 	// fields
-	sf::ConvexShape topShape;
-	sf::ConvexShape bottomShape;
-	sf::Vector2f position;
-	float orientationDegrees;
-	float phaseAnimation;
-	float speed;
-	unsigned int eatenCookies;
-	std::map<TypesBonuses, Bonus> activeBonuses;
+	sf::ConvexShape __topShape;
+	sf::ConvexShape __bottomShape;
+	sf::Vector2f __position;
+	float __orientationDegrees;
+	float __phaseAnimation;
+	float __speed;
+	unsigned int __eatenCookies;
+	std::map<TypesBonuses, Bonus> __activeBonuses;
 
 	// methods
 	sf::Vector2f getRadialPoint(float angle, float radius);

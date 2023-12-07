@@ -43,6 +43,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
         while (window.pollEvent(event))
         {
             Fon_music.Music_return(0);
+
             if (event.type == Event::KeyReleased)
             {
                 if (event.key.code == Keyboard::Up) { myPause.MovePrev(); }
@@ -53,9 +54,9 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (myPause.getSelectedMenuNumber())
                     {
-                    case 0:PlayGame(window, font, width, height);     break;
+                    case 0:PlayGame(window, font, width, height);      break;
                     case 1:PlayGame(window, font, width, height);     break;
-                    case 2:MainMenu(window, font, width, height);     break;
+                    case 2:MainMenu(window, font, width, height);                      break;
                     }
                 }
             }
@@ -64,6 +65,79 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
         window.draw(backgroundPlay);
         window.draw(TitulPause);
         myPause.draw();
+        window.display();
+    }
+}
+
+void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double height, GameProcess& process, unsigned int scores)
+{
+    sf::RectangleShape backgrounGameOver(sf::Vector2f(width, height));
+
+    sf::Texture textureGameOver;
+    if (!textureGameOver.loadFromFile("image/exit.png")) exit(1);
+    backgrounGameOver.setTexture(&textureGameOver);
+
+    sf::Text TitulGameOver;
+    TitulGameOver.setFont(font);
+    InitText(TitulGameOver, 725, 200, L"GAME OVER", 150, sf::Color::Yellow, 3, sf::Color::Blue);
+    
+    sf::Text TitulGameWon;
+    TitulGameWon.setFont(font);
+    InitText(TitulGameWon, 600, 200, L"CONGRATULATION!", 150, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::Text TitulFirstPlayerForGameOver;
+    TitulFirstPlayerForGameOver.setFont(font);
+    InitText(TitulFirstPlayerForGameOver, 550, 350, L"Player 1", 90, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::Text TitulFirstPlayerForGameWon;
+    TitulFirstPlayerForGameWon.setFont(font);
+    InitText(TitulFirstPlayerForGameWon, 750, 400, L"Player 1", 140, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::Text TitulScores;
+    TitulScores.setFont(font);
+    InitText(TitulScores, 550, 500, L"SCORES: " + std::to_string(scores) + "%", 90, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::String nameEndGame[]{ L"RESTART",L"EXIT" };
+
+    game::EndGame myEndGame(window, 800, 625, 2, nameEndGame, 150, 350);
+
+    myEndGame.setColorTextMenu(sf::Color::Blue, sf::Color::Yellow, sf::Color::Blue);
+
+    myEndGame.AlignMenu(2);
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::KeyReleased)
+            {
+                if (event.key.code == sf::Keyboard::Left) { myEndGame.MovePrev(); }
+
+                if (event.key.code == sf::Keyboard::Right) { myEndGame.MoveNext(); }
+
+                if (event.key.code == sf::Keyboard::Return)
+                {
+                    switch (myEndGame.getSelectedMenuNumber())
+                    {
+                    case 0:PlayGame(window, font, width, height);     break;
+                    case 1:MainMenu(window, font, width, height);     break;
+                    }
+                }
+            }
+        }
+        window.clear();
+        window.draw(backgrounGameOver);
+        if (process.__gameState == GameState::LOSE) {
+            window.draw(TitulGameOver);
+            window.draw(TitulScores);
+            window.draw(TitulFirstPlayerForGameOver);
+        }
+        if (process.__gameState == GameState::WIN) {
+            window.draw(TitulGameWon);
+            window.draw(TitulFirstPlayerForGameWon);
+        }
+        myEndGame.draw();
         window.display();
     }
 }
@@ -113,6 +187,8 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
 
     process.initializeGameProcess(sf::Vector2f(window.getSize()));
 
+    bool paused = false;
+
     sf::Text countdownText;
     countdownText.setFont(font);
     InitText(countdownText, 1475, 500, L"Score: ", 150, Color::Yellow, 3, Color::Blue);
@@ -128,17 +204,17 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         while (window.pollEvent(event)) {
             if (event.type == Event::KeyPressed)
             {
-                if (event.key.code == Keyboard::Escape) 
-                {
+                if (event.key.code == Keyboard::Escape) {
                     music.Music_pause_all();
                     Pause(window, font, width, height); 
                 }
             }
         }
+
         if (isStart) {
 
-        music.Music_play(1);
-        music.Music_set_volume_all(10);
+            music.Music_play(1);
+            music.Music_set_volume_all(10);
 
             for (int i = 3; i >= 0; --i) {
                 countdownText.setString(std::to_string(i));
@@ -185,6 +261,11 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
             }
         }
         music.Music_play_always(index);
+
+        if (process.__gameState == GameState::LOSE || process.__gameState == GameState::WIN) {
+            unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
+            EndGame(window, font, width, height, process, scores);
+        }
 
         Text Scores;
         Scores.setFont(font);
@@ -260,6 +341,7 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
     myMaps.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
     myMaps.AlignMenu(2);
+
 
 
     // Button map
@@ -610,12 +692,12 @@ int main()
 }
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font,
-    Color menu_text_color, int bord, Color border_color)
+   Color menu_text_color, int bord, Color border_color)
 {
-    mtext.setCharacterSize(size_font);
-    mtext.setPosition(xpos, ypos);
-    mtext.setString(str);
-    mtext.setFillColor(menu_text_color);
-    mtext.setOutlineThickness(bord);
-    mtext.setOutlineColor(border_color);
+   mtext.setCharacterSize(size_font);
+   mtext.setPosition(xpos, ypos);
+   mtext.setString(str);
+   mtext.setFillColor(menu_text_color);
+   mtext.setOutlineThickness(bord);
+   mtext.setOutlineColor(border_color);
 }

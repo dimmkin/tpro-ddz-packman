@@ -3,7 +3,7 @@
 GameMusic::GameMusic()
 {
 	// Array of file names and music paths
-	std::array<std::string, _count_game_music>nameFile{ "music/PacMan_Tem.ogg", "music/Staring_fun.ogg", "music/f_1.ogg",  "music/f_2.ogg", "music/f_3.ogg", "music/f_4.ogg", "music/f_4.ogg", "music/f_6.ogg", "music/f_7.ogg"};
+	std::array<std::string, _count_game_music>nameFile{ "music/PacMan_Tem.ogg", "music/Staring_fun.ogg", "music/f_1.ogg",  "music/f_2.ogg", "music/f_3.ogg", "music/f_4.ogg", "music/f_4.ogg", "music/f_6.ogg", "music/f_7.ogg" };
 
 	// Assigning music to music objects
 	for (int index = 0; index != _count_game_music; ++index) {

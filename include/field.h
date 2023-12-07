@@ -19,69 +19,30 @@ const int LEFT_INDENTATION = 535;
 const int TOP_INDENTATION = 190;
 const std::vector<char> ALL_SYMBOLS = { '1','2','3','4','@', 'Q', 'W', 'E' };
 
-static const char* FIELD[] = {
-    "#####################"
-    "#                   #"
-    "# ##### ## ## ##### #"
-    "#    ## ## ## ##    #"
-    "# ## ## ## ## ## ## #"
-    "# ##             ## #"
-    "  #### ### ### ####  "
-    "###### #     # ######"
-    "  ##   #######   ##  "
-    "# ## #         # ## #"
-    "# ## # ####### # ## #"
-    "#    #         #    #"
-    "# ## ## ## ## ## ## #"
-    "#        # #        #"
-    "# ###### # # ###### #"
-    "#                   #"
-    "#####################",
-
-    "#####################"
-    "#                   #"
-    "# ##### # # # ##### #"
-    "# #     # # #     # #"
-    "# # ##### # ##### # #"
-    "# #               # #"
-    "# #### ### ### #### #"
-    "#      #     #      #"
-    "###### ####### ######"
-    "                     "
-    "### ############# ###"
-    "#                   #"
-    "# ##### ##### ##### #"
-    "#     #       #     #"
-    "# ### # ##### # ### #"
-    "#                   #"
-    "#####################",
-
-    "#####################"
-    "#                   #"
-    "# ##### # # # ##### #"
-    "# #     # # #     # #"
-    "# # ##### # ##### # #"
-    "# # #           # # #"
-    "# # #  ### ###  # # #"
-    "#   #           #   #"
-    "# #   #########   # #"
-    "# # #           # # #"
-    "# # # ######### # # #"
-    "                     "
-    "######### # #########"
-    "#         #         #"
-    "# ####### # ####### #"
-    "#                   #"
-    "#####################"
-};
-
+static char FIELD[] = "######  #############"
+"#                   #"
+"# #### ####### #### #"
+"#                   #"
+"# ##    #   #    ## #"
+"#       #   #       #"
+"####    #####    ####"
+"                     "
+"#### # ####### # ####"
+"#    #         #    #"
+"# ## # ####### # ## #"
+"#                   #"
+"#    #   ###   #    #"
+"#                   #"
+"# #### ####### #### #"
+"#                   #"
+"######  #############";
 
 class FieldGraphics
 {
 public:
-    sf::RectangleShape roadFigure;
-    sf::RectangleShape wallFigure;
-    sf::CircleShape cookieFigure;
+    sf::RectangleShape __roadFigure;
+    sf::RectangleShape __wallFigure;
+    sf::CircleShape __cookieFigure;
 
     FieldGraphics();
 };
@@ -104,8 +65,8 @@ enum class CellCategory
 class Cell
 {
 public:
-    CellCategory category;
-    sf::FloatRect bounds;
+    CellCategory __category;
+    sf::FloatRect __bounds;
 };
 
 class Field
@@ -113,15 +74,15 @@ class Field
 public:
 
     // fields
-    static const std::string randomizedMap;
-    size_t width = 0;
-    size_t height = 0;
-    Cell* cells = nullptr;
-    std::string map;
-    bool changed = false;
+    static const std::string __randomizedMap;
+    size_t __width = 0;
+    size_t __height = 0;
+    Cell* __cells = nullptr;
+    std::string __map;
+    bool __changed = false;
 
     // methods
-    void randomizeMap(std::vector<char> symbols, std::string startMap = FIELD[0]);
+    void randomizeMap(std::vector<char> symbols, std::string startMap = FIELD);
     void clearMap(std::vector<char> symbols, std::string& startMap);
     sf::FloatRect moveRectangle(const sf::FloatRect& rectangle, sf::Vector2f& offset);
     float getArea(const sf::FloatRect& rectangle);
