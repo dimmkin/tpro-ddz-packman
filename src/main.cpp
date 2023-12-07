@@ -15,13 +15,14 @@ void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 6
 
 void PlayGame(RenderWindow& window, Font& font, double width, double height);
 
-void GamåStart(RenderWindow& window, Font& font, double width, double height);
+void GameStart(RenderWindow& window, Font& font, double width, double height);
 
 void MainMenu(RenderWindow& window, Font& font, double width, double height);
 
 void Pause(RenderWindow& window, Font& font, double width, double height)
 {
-    RectangleShape backgroundPlay(Vector2f(1920, 1080));
+    RectangleShape backgroundPlay(Vector2f(width, height));
+
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
@@ -55,8 +56,8 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                     switch (myPause.getSelectedMenuNumber())
                     {
                     case 0:PlayGame(window, font, width, height);      break;
-                    case 1:GamåStart(window, font, width, height);     break;
-                    case 2:MainMenu(window, font, width, height);      break;
+                    case 1:PlayGame(window, font, width, height);     break;
+                    case 2:MainMenu(window, font, width, height);                      break;
                     }
                 }
             }
@@ -69,8 +70,78 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
+void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double height, GameProcess& process, unsigned int scores)
+{
+    sf::RectangleShape backgrounGameOver(sf::Vector2f(width, height));
 
+    sf::Texture textureGameOver;
+    if (!textureGameOver.loadFromFile("image/exit.png")) exit(1);
+    backgrounGameOver.setTexture(&textureGameOver);
 
+    sf::Text TitulGameOver;
+    TitulGameOver.setFont(font);
+    InitText(TitulGameOver, 725, 200, L"GAME OVER", 150, sf::Color::Yellow, 3, sf::Color::Blue);
+    
+    sf::Text TitulGameWon;
+    TitulGameWon.setFont(font);
+    InitText(TitulGameWon, 600, 200, L"CONGRATULATION!", 150, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::Text TitulFirstPlayerForGameOver;
+    TitulFirstPlayerForGameOver.setFont(font);
+    InitText(TitulFirstPlayerForGameOver, 550, 350, L"Player 1", 90, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::Text TitulFirstPlayerForGameWon;
+    TitulFirstPlayerForGameWon.setFont(font);
+    InitText(TitulFirstPlayerForGameWon, 750, 400, L"Player 1", 140, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::Text TitulScores;
+    TitulScores.setFont(font);
+    InitText(TitulScores, 550, 500, L"SCORES: " + std::to_string(scores) + "%", 90, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::String nameEndGame[]{ L"RESTART",L"EXIT" };
+
+    game::EndGame myEndGame(window, 800, 625, 2, nameEndGame, 150, 350);
+
+    myEndGame.setColorTextMenu(sf::Color::Blue, sf::Color::Yellow, sf::Color::Blue);
+
+    myEndGame.AlignMenu(2);
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::KeyReleased)
+            {
+                if (event.key.code == sf::Keyboard::Left) { myEndGame.MovePrev(); }
+
+                if (event.key.code == sf::Keyboard::Right) { myEndGame.MoveNext(); }
+
+                if (event.key.code == sf::Keyboard::Return)
+                {
+                    switch (myEndGame.getSelectedMenuNumber())
+                    {
+                    case 0:PlayGame(window, font, width, height);     break;
+                    case 1:MainMenu(window, font, width, height);     break;
+                    }
+                }
+            }
+        }
+        window.clear();
+        window.draw(backgrounGameOver);
+        if (process.__gameState == GameState::LOSE) {
+            window.draw(TitulGameOver);
+            window.draw(TitulScores);
+            window.draw(TitulFirstPlayerForGameOver);
+        }
+        if (process.__gameState == GameState::WIN) {
+            window.draw(TitulGameWon);
+            window.draw(TitulFirstPlayerForGameWon);
+        }
+        myEndGame.draw();
+        window.display();
+    }
+}
 
 void PlayGame(RenderWindow& window, Font& font, double width, double height)
 {
@@ -136,6 +207,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     GameProcess process;
 
     process.initializeGameProcess(sf::Vector2f(window.getSize()));
+
     unsigned stek = lifes;
     bool flag = false;
     while (window.isOpen()) {
@@ -143,14 +215,23 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         while (window.pollEvent(event)) {
             if (event.type == Event::KeyPressed)
             {
-                if (event.key.code == Keyboard::Escape) { Pause(window, font, width, height); }
+                if (event.key.code == Keyboard::Escape) {
+                    Pause(window, font, width, height); 
+                }
             }
         }
+
+        if (process.__gameState == GameState::LOSE || process.__gameState == GameState::WIN) {
+            unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
+            EndGame(window, font, width, height, process, scores);
+        }
+
         Text Scores;
         Scores.setFont(font);
         InitText(Scores, 225, 500, process.getGameProcessWindowTitle(), 80, Color::Yellow, 3, Color::Blue);
 
         const float elapsedTime = clock.getElapsedTime().asSeconds();
+
         if (flag) {
             --lifes;
             std::string heat_panel1 = "x" + std::to_string(lifes);
@@ -160,6 +241,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
             flag = false;
 
         }
+
         clock.restart();
         window.clear();
         window.draw(backgroundPlay);
@@ -179,10 +261,9 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         window.display();
     }
 }
-void GamåStart(RenderWindow& window, Font& font, double width, double height)
+void GameStart(RenderWindow& window, Font& font, double width, double height)
 {
-
-    RectangleShape backgroundPlay(Vector2f(1920, 1080));
+    RectangleShape backgroundPlay(Vector2f(width, height));
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/start-game.png")) exit(1);
@@ -230,6 +311,7 @@ void GamåStart(RenderWindow& window, Font& font, double width, double height)
 
     myMaps.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
+
     std::ifstream file("text.json");
     json data = json::parse(file);
     data["Start_game"].clear();
@@ -272,6 +354,7 @@ void GamåStart(RenderWindow& window, Font& font, double width, double height)
                     if (eventPlay.key.code == Keyboard::Right) { myBots.MoveNext(); }
                     if (eventPlay.key.code == Keyboard::Return)
                     {
+
                         data["Start_game"].push_back(myBots.getSelectedMenuNumber() + 1);
                         page = 2;
                     }
@@ -311,9 +394,10 @@ void GamåStart(RenderWindow& window, Font& font, double width, double height)
         window.display();
     }
 }
-void Option(sf::RenderWindow& window, sf::Font& font)
+void Settings(sf::RenderWindow& window, sf::Font& font, double width, double height)
 {
-    RectangleShape backgroundOpt(Vector2f(1920, 1080));
+    RectangleShape backgroundOpt(Vector2f(width, height));
+
     Texture textureOpt;
     if (!textureOpt.loadFromFile("image/settings.png")) exit(2);
     backgroundOpt.setTexture(&textureOpt);
@@ -329,13 +413,14 @@ void Option(sf::RenderWindow& window, sf::Font& font)
     SettingsMenu2.setFont(font);
     Titul.setFont(font);
     Save.setFont(font);
-    Arrow.setFont(font);
 
+    Arrow.setFont(font);
 
     InitText(Titul, 780, -30, "Settings", 150, Color::Yellow, 3, Color::Black);
     InitText(SettingsMenu1, 300, 150, "Management", 100, Color::Yellow, 3, Color::Black);
     InitText(SettingsMenu2, 1400, 150, "Game", 100, Color::Yellow, 3, Color::Black);
     InitText(Save, 830, 840, L"SAVE", 200, Color::Blue, 3, Color::Black);
+
     InitText(Arrow, 375, 730, L"<      >", 70, Color::Yellow, 3, Color::Black);
     String ManagementCount[]{ L"1",L"2" };
 
@@ -377,6 +462,7 @@ void Option(sf::RenderWindow& window, sf::Font& font)
     if (count == 1) {
         InitText(heat, 450, 700, heat.getString(), 100, Color::Yellow, 3, Color::Black);
     }
+
     while (window.isOpen())
     {
         Event eventOpt;
@@ -440,7 +526,6 @@ void Option(sf::RenderWindow& window, sf::Font& font)
                     if (digit == 8) {
                         message.setString(text.substr(0, text.length() - 1));
                     }
-                    
                     InitText(message, 1395, 320, message.getString(), 100, Color::Blue, 3, Color::Black);
                 }
                 if (eventOpt.type == Event::KeyReleased)
@@ -459,6 +544,7 @@ void Option(sf::RenderWindow& window, sf::Font& font)
                     if (eventOpt.key.code == Keyboard::Right) { Color_name.MoveNext(); }
                     if (eventOpt.key.code == Keyboard::Return)
                     {
+
                         data["Option"].push_back(Color_name.getSelectedMenuNumber() + 1);
                         std::ofstream file("text.json");
                         file << data;
@@ -541,7 +627,6 @@ void Exit(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
-
 void MainMenu(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape background(Vector2f(width, height));
@@ -573,8 +658,8 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (mymenu.getSelectedMenuNumber())
                     {
-                    case 0:GamåStart(window, font, width, height);    break;
-                    case 1:Option(window, font);                      break;
+                    case 0:GameStart(window, font, width, height);    break;
+                    case 1:Settings(window, font, width, height);     break;
                     case 2:Exit(window, font, width, height);         break;
                     }
                 }
@@ -616,12 +701,12 @@ int main()
 }
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font,
-    Color menu_text_color, int bord, Color border_color)
+   Color menu_text_color, int bord, Color border_color)
 {
-    mtext.setCharacterSize(size_font);
-    mtext.setPosition(xpos, ypos);
-    mtext.setString(str);
-    mtext.setFillColor(menu_text_color);
-    mtext.setOutlineThickness(bord);
-    mtext.setOutlineColor(border_color);
+   mtext.setCharacterSize(size_font);
+   mtext.setPosition(xpos, ypos);
+   mtext.setString(str);
+   mtext.setFillColor(menu_text_color);
+   mtext.setOutlineThickness(bord);
+   mtext.setOutlineColor(border_color);
 }

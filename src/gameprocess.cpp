@@ -11,7 +11,7 @@ bool GameProcess::initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID 
 
 	const std::string texturePath = TEXTURE_MAPPING.at(ghostID);
 
-	return ghost.initializeHero(field.getGhostsStartPosition(ghostID), texturePath);
+	return ghost.initializeHero(__field.getGhostsStartPosition(ghostID), texturePath);
 }
 
 bool GameProcess::initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, TypesBonuses type, const sf::IntRect frame, bool active)
@@ -20,7 +20,7 @@ bool GameProcess::initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, 
 
 	const std::string texturePath = BONUSES_TEXTURE;
 
-	return bonus.initializeBonus(field.getBonusesStartPosition(type), texturePath, frame, type, active);
+	return bonus.initializeBonus(__field.getBonusesStartPosition(type), texturePath, frame, type, active);
 }
 
 void GameProcess::initializeGameProcess(const sf::Vector2f& processSize)
@@ -64,23 +64,8 @@ void GameProcess::initializeGameProcess(const sf::Vector2f& processSize)
 	gameState = GameState::PLAY;
 	totalCookiesCount = field.countRemainingCookies();
 
-	gameOverBackground.setFillColor(sf::Color::Black);
-	gameOverBackground.setSize(processSize);
-
-	gameOverTitle.setFont(font);
-	gameOverTitle.setFillColor(sf::Color::Yellow);
-	gameOverTitle.setPosition(0.5f * processSize);
-	gameOverTitle.setString("Game Over! BYE!!!");
-
 	const sf::FloatRect titleBounds = gameOverTitle.getLocalBounds();
 	gameOverTitle.setOrigin(0.5f * titleBounds.width, 0.5f * titleBounds.height);
-}
-
-void GameProcess::updateGameOverTitle(sf::Text& title, const std::string& text)
-{
-	title.setString(text);
-	const sf::FloatRect titleBounds = title.getLocalBounds();
-	title.setOrigin(0.5f * titleBounds.width, 0.5f * titleBounds.height);
 }
 
 void GameProcess::killBotsAndChangePosition()
@@ -120,11 +105,11 @@ void GameProcess::killBotsAndChangePosition()
 
 void GameProcess::changedBonusesPosition()
 {
-	field.clearMap(SYMBOLS_BONUSES, field.map);
-	field.randomizeMap(SYMBOLS_BONUSES, field.map);
-	initializeBonusByType(bonuses, TypesBonuses::BOMB, FRAME_BOMB);
-	initializeBonusByType(bonuses, TypesBonuses::CYCLE, FRAME_CYCLE);
-	field.changed = true;
+	__field.clearMap(SYMBOLS_BONUSES, __field.__map);
+	__field.randomizeMap(SYMBOLS_BONUSES, __field.__map);
+	initializeBonusByType(__bonuses, TypesBonuses::BOMB, FRAME_BOMB);
+	initializeBonusByType(__bonuses, TypesBonuses::CYCLE, FRAME_CYCLE);
+	__field.__changed = true;
 }
 
 void GameProcess::redrawingBonuses()
@@ -214,9 +199,8 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 			++it;
 		}
 
-		if (totalCookiesCount - packman.eatenCookies == 0) {
-			updateGameOverTitle(gameOverTitle, "You WIN!!!");
-			gameState = GameState::WIN;
+		if (__totalCookiesCount - __packman.__eatenCookies == 0) {
+			__gameState = GameState::WIN;
 		}
 	}
 }
@@ -227,37 +211,25 @@ std::string GameProcess::getGameProcessWindowTitle()
 	static double cookiesLeft;
 	int result;
 
-	if (gameState == GameState::PLAY) {
-		cookiesLeft = floor(static_cast<double>(packman.eatenCookies) / totalCookiesCount * 100);
+	if (__gameState == GameState::PLAY) {
+		cookiesLeft = floor(static_cast<double>(__packman.__eatenCookies) / __totalCookiesCount * 100);
 		result = cookiesLeft;
 		title = std::to_string(result) + '%';
 	}
-	/*if (process.gameState == GameState::WIN) {
-		title = "You WIN! Nice =)";
-		return title;
-	}
-	if (process.gameState == GameState::LOSE) {
-		title = "YOU ARE LOSER!";
-		return title;
-	}*/
 	return title;
 }
 
 void GameProcess::drawGameProcess(sf::RenderWindow& window)
 {
-	field.drawField(window);
-	packman.drawPackman(window);
+	__field.drawField(window);
+	__packman.drawPackman(window);
 
-	for (auto& pair : ghosts) {
+	for (auto& pair : __ghosts) {
 		pair.second.drawHero(window);
 	}
 
-	for (auto& pair : bonuses) {
+	for (auto& pair : __bonuses) {
 		pair.second.drawBonus(window);
 	}
 
-	if (gameState == GameState::LOSE || gameState == GameState::WIN) {
-		window.draw(gameOverBackground);
-		window.draw(gameOverTitle);
-	}
 }

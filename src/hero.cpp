@@ -81,16 +81,16 @@ bool Hero::initializeHero(const sf::Vector2f& position, const std::string& textu
 
 sf::Vector2f Hero::buildMovement(sf::Vector2f& movement, Hero& hero, const float step)
 {
-	if (hero.direction == Direction::UP) {
+	if (hero.__direction == Direction::UP) {
 		movement.y -= step;
 	}
-	if (hero.direction == Direction::DOWN) {
+	if (hero.__direction == Direction::DOWN) {
 		movement.y += step;
 	}
-	if (hero.direction == Direction::LEFT) {
+	if (hero.__direction == Direction::LEFT) {
 		movement.x -= step;
 	}
-	if (hero.direction == Direction::RIGHT) {
+	if (hero.__direction == Direction::RIGHT) {
 		movement.x += step;
 	}
 	return movement;
@@ -98,40 +98,40 @@ sf::Vector2f Hero::buildMovement(sf::Vector2f& movement, Hero& hero, const float
 
 void Hero::MovingOut(Field& field, sf::Vector2f& movement, const float speed)
 {
-	if (figure.getPosition().x < LEFT_INDENTATION) {
-		figure.setPosition(figure.getPosition().x + field.width * BLOCK_SIZE - 35, figure.getPosition().y);
+	if (__figure.getPosition().x < LEFT_INDENTATION) {
+		__figure.setPosition(__figure.getPosition().x + field.__width * BLOCK_SIZE - 35, __figure.getPosition().y);
 	}
-	else if (figure.getPosition().x > LEFT_INDENTATION - 35 + field.width * BLOCK_SIZE) {
-		figure.setPosition(LEFT_INDENTATION, figure.getPosition().y);
+	else if (__figure.getPosition().x > LEFT_INDENTATION - 35 + field.__width * BLOCK_SIZE) {
+		__figure.setPosition(LEFT_INDENTATION, __figure.getPosition().y);
 	}
-	if (figure.getPosition().y < TOP_INDENTATION) {
-		figure.setPosition(figure.getPosition().x, figure.getPosition().y + field.width * BLOCK_SIZE - TOP_INDENTATION);
+	if (__figure.getPosition().y < TOP_INDENTATION) {
+		__figure.setPosition(__figure.getPosition().x, __figure.getPosition().y + field.__width * BLOCK_SIZE - TOP_INDENTATION);
 	}
-	else if (figure.getPosition().y > field.width * BLOCK_SIZE) {
-		figure.setPosition(figure.getPosition().x, TOP_INDENTATION);
+	else if (__figure.getPosition().y > field.__width * BLOCK_SIZE) {
+		__figure.setPosition(__figure.getPosition().x, TOP_INDENTATION);
 	}
 }
 
 void Hero::drawEyes()
 {
-	if (direction == Direction::LEFT) {
-		figure.setTextureRect(FRAME_EYES_LEFT);
+	if (__direction == Direction::LEFT) {
+		__figure.setTextureRect(FRAME_EYES_LEFT);
 		return;
 	}
-	if (direction == Direction::RIGHT) {
-		figure.setTextureRect(FRAME_EYES_RIGHT);
+	if (__direction == Direction::RIGHT) {
+		__figure.setTextureRect(FRAME_EYES_RIGHT);
 		return;
 	}
-	if (direction == Direction::DOWN) {
-		figure.setTextureRect(FRAME_EYES_BOTTOM);
+	if (__direction == Direction::DOWN) {
+		__figure.setTextureRect(FRAME_EYES_BOTTOM);
 		return;
 	}
-	if (direction == Direction::UP) {
-		figure.setTextureRect(FRAME_EYES_TOP);
+	if (__direction == Direction::UP) {
+		__figure.setTextureRect(FRAME_EYES_TOP);
 		return;
 	}
-	if (direction == Direction::NONE) {
-		figure.setTextureRect(FRAME_EYES_TOP);
+	if (__direction == Direction::NONE) {
+		__figure.setTextureRect(FRAME_EYES_TOP);
 		return;
 	}
 }
@@ -144,26 +144,28 @@ void Hero::updateHero(float elapsedTime, Field& field, const float speed)
 
 	movement = buildMovement(movement, *this, step);
 
-	if (direction == Direction::NONE)
+	if (__direction == Direction::NONE)
 		updateHeroDirection();
 
 	static std::chrono::steady_clock::time_point lastDirectionChangeTime = std::chrono::steady_clock::now();
 	std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
 	std::chrono::seconds elapsedTimeSinceLastChange = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastDirectionChangeTime);
 
-	const sf::FloatRect heroBounds = figure.getGlobalBounds();
+	const sf::FloatRect heroBounds = __figure.getGlobalBounds();
+
 	if (field.checkFieldWallsCollision(heroBounds, movement, speed) || elapsedTimeSinceLastChange.count() >= 0.01) {
 		updateHeroDirection();
 		lastDirectionChangeTime = std::chrono::steady_clock::now();
 	}
 
 	MovingOut(field, movement, speed);
-	figure.move(movement);
+
+	__figure.move(movement);
 
 	drawEyes();
 }
 
 void Hero::drawHero(sf::RenderWindow& window)
 {
-	window.draw(figure);
+	window.draw(__figure);
 }

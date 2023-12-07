@@ -1,8 +1,8 @@
 #include "menuBase.h"
 
-game::GameSelection::GameSelection(sf::RenderWindow& window, double menux, double menuy,
+game::Settings::Settings(sf::RenderWindow& window, double settingsmenux, double settingsy,
 	int index, sf::String name[], int sizeFont, int step)
-	: MenuBase(window, menux, menuy, index, name, sizeFont, step)
+	: MenuBase(window, settingsmenux, settingsy, index, name, sizeFont, step)
 {
 	__maxMenu = index;
 	__mainMenu = new sf::Text[__maxMenu];
