@@ -2,8 +2,13 @@
 #include "field.h"
 #include "gameprocess.h"
 #include "packman.h"
-
+#include <string>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
 using namespace sf;
+#include "json/nlohmann/json.hpp"
+using json = nlohmann::json;
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
@@ -17,6 +22,7 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height);
 void Pause(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
+
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
@@ -157,9 +163,29 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     TitulFirstPlayer.setFont(font);
     InitText(TitulFirstPlayer, 150, 150, L"Player 1", 100, Color::Yellow, 3, Color::Blue);
 
+    std::ifstream file("text.json");
+    json data = json::parse(file);
+    file.close();
+    std::string name_user = data["Option"][2];
+    Text NikName1;
+    NikName1.setString(name_user);
     Text TitulFirstNick;
     TitulFirstNick.setFont(font);
-    InitText(TitulFirstNick, 120, 250, L"Nickname 1", 90, Color::Yellow, 3, Color::Blue);
+    InitText(TitulFirstNick, 120, 250, NikName1.getString(), 90, Color::Yellow, 3, Color::Blue);
+    RectangleShape heats1(Vector2f(100, 100));
+    Texture heats_image1;
+    if (!heats_image1.loadFromFile("image/lifes.png")) exit(23);
+    heats1.setTexture(&heats_image1);
+    heats1.setPosition(110, 400);
+    std::string heat_file_count = data["Option"][1];
+    std::string heat_panel1 = "x" + heat_file_count;
+    Text heat_text;
+    heat_text.setString(heat_panel1);
+    unsigned int lifes = std::stoi(heat_file_count);
+
+    Text Heats_Count;
+    Heats_Count.setFont(font);
+    InitText(Heats_Count, 250, 380, heat_text.getString(), 90, Color::Yellow, 3, Color::Blue);
 
     Text TitulFirstScore;
     TitulFirstScore.setFont(font);
@@ -182,8 +208,8 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
 
     process.initializeGameProcess(sf::Vector2f(window.getSize()));
 
-    bool paused = false;
-
+    unsigned stek = lifes;
+    bool flag = false;
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -205,6 +231,17 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         InitText(Scores, 225, 500, process.getGameProcessWindowTitle(), 80, Color::Yellow, 3, Color::Blue);
 
         const float elapsedTime = clock.getElapsedTime().asSeconds();
+
+        if (flag) {
+            --lifes;
+            std::string heat_panel1 = "x" + std::to_string(lifes);
+            heat_text.setString(heat_panel1);
+            stek = lifes;
+            InitText(Heats_Count, 250, 380, heat_text.getString(), 90, Color::Yellow, 3, Color::Blue);
+            flag = false;
+
+        }
+
         clock.restart();
         window.clear();
         window.draw(backgroundPlay);
@@ -216,13 +253,14 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         window.draw(TitulSecondPlayer);
         window.draw(TitulSecondNick);
         window.draw(TitulSecondScore);
-        process.updateGameProcess(elapsedTime);
+        window.draw(heats1);
+        window.draw(Heats_Count);
+        process.updateGameProcess(elapsedTime, flag, lifes);
         process.drawGameProcess(window);
         window.draw(Scores);
         window.display();
     }
 }
-
 void GameStart(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
@@ -273,6 +311,12 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
 
     myMaps.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
+
+    std::ifstream file("text.json");
+    json data = json::parse(file);
+    data["Start_game"].clear();
+    file.close();
+
     myMaps.AlignMenu(2);
     int countBots = 1;
     int page = 0;
@@ -291,6 +335,14 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
                     if (eventPlay.key.code == Keyboard::Right) { myGameSelection.MoveNext(); }
                     if (eventPlay.key.code == Keyboard::Return)
                     {
+                        std::string str = "";
+                        if (myGameSelection.getSelectedMenuNumber() == 0) {
+                            str = "Classic";
+                        }
+                        else {
+                            str = "Fast Game";
+                        }
+                        data["Start_game"].push_back(str);
                         page = 1;
                     }
                 }
@@ -302,6 +354,8 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
                     if (eventPlay.key.code == Keyboard::Right) { myBots.MoveNext(); }
                     if (eventPlay.key.code == Keyboard::Return)
                     {
+
+                        data["Start_game"].push_back(myBots.getSelectedMenuNumber() + 1);
                         page = 2;
                     }
                 }
@@ -313,6 +367,10 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
                     if (eventPlay.key.code == Keyboard::Right) { myMaps.MoveNext(); }
                     if (eventPlay.key.code == Keyboard::Return)
                     {
+                        data["Start_game"].push_back(myMaps.getSelectedMenuNumber() + 1);
+                        std::ofstream file("text.json");
+                        file << data;
+                        file.close();
                         PlayGame(window, font, width, height);
                     }
                 }
@@ -336,7 +394,6 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
         window.display();
     }
 }
-
 void Settings(sf::RenderWindow& window, sf::Font& font, double width, double height)
 {
     RectangleShape backgroundOpt(Vector2f(width, height));
@@ -345,17 +402,26 @@ void Settings(sf::RenderWindow& window, sf::Font& font, double width, double hei
     if (!textureOpt.loadFromFile("image/settings.png")) exit(2);
     backgroundOpt.setTexture(&textureOpt);
 
-    Text Titul, SettingsMenu1, SettingsMenu2, Save;
+    RectangleShape heats(Vector2f(150, 150));
+    Texture heats_image;
+    if (!heats_image.loadFromFile("image/lifes.png")) exit(23);
+    heats.setTexture(&heats_image);
+    heats.setPosition(100, 700);
+
+    Text Titul, SettingsMenu1, SettingsMenu2, Save, Arrow;
     SettingsMenu1.setFont(font);
     SettingsMenu2.setFont(font);
     Titul.setFont(font);
     Save.setFont(font);
+
+    Arrow.setFont(font);
 
     InitText(Titul, 780, -30, "Settings", 150, Color::Yellow, 3, Color::Black);
     InitText(SettingsMenu1, 300, 150, "Management", 100, Color::Yellow, 3, Color::Black);
     InitText(SettingsMenu2, 1400, 150, "Game", 100, Color::Yellow, 3, Color::Black);
     InitText(Save, 830, 840, L"SAVE", 200, Color::Blue, 3, Color::Black);
 
+    InitText(Arrow, 375, 730, L"<      >", 70, Color::Yellow, 3, Color::Black);
     String ManagementCount[]{ L"1",L"2" };
 
     game::Settings Management(window, 260, 550, 2, ManagementCount, 90, 430);
@@ -384,10 +450,19 @@ void Settings(sf::RenderWindow& window, sf::Font& font, double width, double hei
 
     Color_name.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
-    Color_name.AlignMenu(2);
+    std::ifstream file("text.json");
+    json data = json::parse(file);
+    data["Option"].clear();
+    file.close();
 
     Text message("", font, 20);
+    Text heat("1", font, 20);
     int page = 0;
+    int count = 1;
+    if (count == 1) {
+        InitText(heat, 450, 700, heat.getString(), 100, Color::Yellow, 3, Color::Black);
+    }
+
     while (window.isOpen())
     {
         Event eventOpt;
@@ -403,11 +478,41 @@ void Settings(sf::RenderWindow& window, sf::Font& font, double width, double hei
                     if (eventOpt.key.code == Keyboard::Right) { Management.MoveNext(); }
                     if (eventOpt.key.code == Keyboard::Return)
                     {
+                        data["Option"].push_back(Management.getSelectedMenuNumber() + 1);
                         page = 1;
                     }
                 }
                 break;
-            case 1:
+            case 1 :
+
+                if (eventOpt.type == Event::KeyReleased)
+                {
+                    String heat_count = heat.getString();
+                    
+                    if (eventOpt.key.code == Keyboard::Left) {
+                        if ((count - 1) >= 1) {
+                            std::string compare = std::to_string(--count);
+                            heat.setString(compare);
+                        }
+                        InitText(heat, 450, 700, heat.getString(), 100, Color::Yellow, 3, Color::Black);
+                    }
+
+                    if (eventOpt.key.code == Keyboard::Right) {
+                        if ( (count + 1) <= 5) {
+                            std::string compare = std::to_string(++count);
+                            heat.setString(compare);
+                        }
+                        InitText(heat, 450, 700, heat.getString(), 100, Color::Yellow, 3, Color::Black);
+                    }
+                    
+                    if (eventOpt.key.code == Keyboard::Return)
+                    {
+                        data["Option"].push_back(heat.getString());
+                        page = 2;
+                    }
+                }
+                break;
+            case 2:
                 if (eventOpt.type == Event::TextEntered)
                 {
                     std::string text = message.getString();
@@ -421,24 +526,29 @@ void Settings(sf::RenderWindow& window, sf::Font& font, double width, double hei
                     if (digit == 8) {
                         message.setString(text.substr(0, text.length() - 1));
                     }
-
                     InitText(message, 1395, 320, message.getString(), 100, Color::Blue, 3, Color::Black);
                 }
                 if (eventOpt.type == Event::KeyReleased)
                 {
                     if (eventOpt.key.code == Keyboard::Return)
                     {
-                        page = 2;
+                        data["Option"].push_back(message.getString());
+                        page = 3;
                     }
                 }
                 break;
-            case 2:
+            case 3:
                 if (eventOpt.type == Event::KeyReleased)
                 {
                     if (eventOpt.key.code == Keyboard::Left) { Color_name.MovePrev(); }
                     if (eventOpt.key.code == Keyboard::Right) { Color_name.MoveNext(); }
                     if (eventOpt.key.code == Keyboard::Return)
                     {
+
+                        data["Option"].push_back(Color_name.getSelectedMenuNumber() + 1);
+                        std::ofstream file("text.json");
+                        file << data;
+                        file.close();
                         MainMenu(window, font, 1920, 1080);
                     }
                 }
@@ -452,11 +562,14 @@ void Settings(sf::RenderWindow& window, sf::Font& font, double width, double hei
         }
         window.clear();
         window.draw(backgroundOpt);
+        window.draw(heats);
         window.draw(Titul);
         window.draw(SettingsMenu1);
         window.draw(SettingsMenu2);
         window.draw(Save);
+        window.draw(Arrow);
         window.draw(message);
+        window.draw(heat);
         Name.draw();
         Color.draw();
         Color_name.draw();
@@ -561,6 +674,15 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
 
 int main()
 {
+    std::ifstream file_open("text.json");
+    json data = json::parse(file_open);
+    data["Start_game"] = { "Classic", 1, 1 };
+    data["Option"] = { 1, "1","User",1 };
+    file_open.close();
+    std::ofstream file_close("text.json");
+    file_close << data;
+    file_close.close();
+
     RenderWindow window;
 
     window.create(VideoMode::getDesktopMode(), L"Packman", Style::Fullscreen);

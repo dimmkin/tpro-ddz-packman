@@ -151,6 +151,7 @@ bool Field::checkFieldWallsCollision(const sf::FloatRect& oldBounds, sf::Vector2
         }
 
         sf::FloatRect blockBound = cell.__bounds;
+
         if (newBounds.intersects(blockBound))
         {
             const float bottomShift = getBottom(blockBound) - newBounds.top;

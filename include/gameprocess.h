@@ -49,7 +49,10 @@ public:
 	void killBotsAndChangePosition();
 	bool initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID ghostID);
 	bool initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, TypesBonuses type, const sf::IntRect frame, bool active = false);
-	void updateGameProcess(float elapsedTime);
+
+	void updateGameOverTitle(sf::Text& title, const std::string& text);
+	void updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes);
+
 	std::string getGameProcessWindowTitle();
 	void drawGameProcess(sf::RenderWindow& window);
 	void initializeGameProcess(const sf::Vector2f& processSize);

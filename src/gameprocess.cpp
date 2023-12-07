@@ -1,5 +1,9 @@
 #include "gameprocess.h"
-#include "menuBase.h"
+#include <iostream>
+#include <fstream>
+using namespace sf;
+#include "json/nlohmann/json.hpp"
+using json = nlohmann::json;
 
 bool GameProcess::initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID ghostID)
 {
@@ -21,32 +25,82 @@ bool GameProcess::initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, 
 
 void GameProcess::initializeGameProcess(const sf::Vector2f& processSize)
 {
-	bool succeed = __font.loadFromFile("C:\\Users\\user\\Desktop\\font\\EightBits.ttf");
+	bool succeed = font.loadFromFile("font/EightBits.ttf");
 
-	__field.initializeField();
-	__packman.initializePackman(__field, __packman, 150.f);
+	field.initializeField();
+	packman.initializePackman(field, packman, 150.f);
 
-	initializeGhostByID(__ghosts, GhostID::FIRST);
-	initializeGhostByID(__ghosts, GhostID::SECOND);
-	initializeGhostByID(__ghosts, GhostID::THIRD);
-	initializeGhostByID(__ghosts, GhostID::FORTH);
+	std::ifstream file("text.json");
+	json data = json::parse(file);
+	file.close();
+	int i = data["Start_game"][1];
+	switch (i)
+	{
+	case 1 :
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		break;
+	case 2:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		break;
+	case 3:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		initializeGhostByID(ghosts, GhostID::THIRD);
+		break;
+	case 4:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		initializeGhostByID(ghosts, GhostID::THIRD);
+		initializeGhostByID(ghosts, GhostID::FORTH);
+		break;
+	default:
+		break;
+	}
 
-	initializeBonusByType(__bonuses, TypesBonuses::BOMB, FRAME_BOMB);
-	initializeBonusByType(__bonuses, TypesBonuses::CYCLE, FRAME_CYCLE);
+	initializeBonusByType(bonuses, TypesBonuses::BOMB, FRAME_BOMB);
+	initializeBonusByType(bonuses, TypesBonuses::CYCLE, FRAME_CYCLE);
 
-	__gameState = GameState::PLAY;
-	__totalCookiesCount = __field.countRemainingCookies();
+	gameState = GameState::PLAY;
+	totalCookiesCount = field.countRemainingCookies();
+
+	const sf::FloatRect titleBounds = gameOverTitle.getLocalBounds();
+	gameOverTitle.setOrigin(0.5f * titleBounds.width, 0.5f * titleBounds.height);
 }
 
 void GameProcess::killBotsAndChangePosition()
 {
-	__ghosts.clear();
-	__field.clearMap(SYMBOLS_GHOSTS, __field.__map);
-	__field.randomizeMap(SYMBOLS_GHOSTS, __field.__map);
-	initializeGhostByID(__ghosts, GhostID::FIRST);
-	initializeGhostByID(__ghosts, GhostID::SECOND);
-	initializeGhostByID(__ghosts, GhostID::THIRD);
-	initializeGhostByID(__ghosts, GhostID::FORTH);
+	ghosts.clear();
+	field.clearMap(SYMBOLS_GHOSTS, field.map);
+	field.randomizeMap(SYMBOLS_GHOSTS, field.map);
+
+	std::ifstream file("text.json");
+	json data = json::parse(file);
+	file.close();
+	int i = data["Start_game"][1];
+	switch (i)
+	{
+	case 1:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		break;
+	case 2:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		break;
+	case 3:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		initializeGhostByID(ghosts, GhostID::THIRD);
+		break;
+	case 4:
+		initializeGhostByID(ghosts, GhostID::FIRST);
+		initializeGhostByID(ghosts, GhostID::SECOND);
+		initializeGhostByID(ghosts, GhostID::THIRD);
+		initializeGhostByID(ghosts, GhostID::FORTH);
+		break;
+	default:
+		break;
+	}
 }
 
 void GameProcess::changedBonusesPosition()
@@ -60,76 +114,86 @@ void GameProcess::changedBonusesPosition()
 
 void GameProcess::redrawingBonuses()
 {
-	if (__packman.__eatenCookies == 50 && !__field.__changed) {
+	if (packman.eatenCookies == 50 && !field.changed) {
 		changedBonusesPosition();
 	}
-	if (__packman.__eatenCookies == 51) {
-		__field.__changed = false;
+	if (packman.eatenCookies == 51) {
+		field.changed = false;
 	}
-	if (__packman.__eatenCookies == 100 && !__field.__changed) {
+	if (packman.eatenCookies == 100 && !field.changed) {
 		changedBonusesPosition();
 	}
-	if (__packman.__eatenCookies == 101) {
-		__field.__changed = false;
+	if (packman.eatenCookies == 101) {
+		field.changed = false;
 	}
-	if (__packman.__eatenCookies == 150 && !__field.__changed) {
+	if (packman.eatenCookies == 150 && !field.changed) {
 		changedBonusesPosition();
 	}
-	if (__packman.__eatenCookies == 151) {
-		__field.__changed = false;
+	if (packman.eatenCookies == 151) {
+		field.changed = false;
 	}
-	if (__packman.__eatenCookies == 200 && !__field.__changed) {
+	if (packman.eatenCookies == 200 && !field.changed) {
 		changedBonusesPosition();
 	}
-	if (__packman.__eatenCookies == 201) {
-		__field.__changed = false;
+	if (packman.eatenCookies == 201) {
+		field.changed = false;
 	}
 }
 
-void GameProcess::updateGameProcess(float elapsedTime)
+void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes)
 {
-	if (__gameState == GameState::PLAY) {
-		__packman.updateHero(elapsedTime, __field);
+
+	if (gameState == GameState::PLAY) {
+		packman.updateHero(elapsedTime, field);
 
 		redrawingBonuses();
 
-		for (auto& pair : __ghosts) {
-			pair.second.updateHero(elapsedTime, __field, 90.f);
+		for (auto& pair : ghosts) {
+			pair.second.updateHero(elapsedTime, field, 90.f);
 		}
 
-		const sf::FloatRect packmanBounds = __packman.getPackmanBounds();
-		for (const auto& pair : __ghosts) {
-			if (pair.second.__figure.getGlobalBounds().intersects(packmanBounds)) {
-				__gameState = GameState::LOSE;
+		const sf::FloatRect packmanBounds = packman.getPackmanBounds();
+		for ( auto& pair : ghosts) {
+			if (pair.second.figure.getGlobalBounds().intersects(packmanBounds)) {
+				if (lifes == 1) {
+					gameState = GameState::LOSE;
+				}
+				else
+				{
+					flag_lifes = true;
+					packman.direction = packman.changeOfDirection(packman.direction);
+					packman.orientationDegrees = packman.directionOrientationDegrees(packman.direction);
+					pair.second.direction = pair.second.changeOfDirection(pair.second.direction);
+					exit;
+				}
+			}
+		}
+		for (auto it = packman.activeBonuses.begin(); it != packman.activeBonuses.end(); ++it) {
+			if (it->second.bonusType == TypesBonuses::CYCLE && it->second.active && packman.eatenCookies >= it->second.eatenDots + 10) {
+				packman.setSpeedMultiplier(120.f);
+				it->second.active = false;
 			}
 		}
 
-		for (auto it = __packman.__activeBonuses.begin(); it != __packman.__activeBonuses.end(); ++it) {
-			if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman.__eatenCookies >= it->second.__eatenDots + 10) {
-				__packman.setSpeedMultiplier(120.f);
-				it->second.__active = false;
-			}
-		}
-
-		for (auto it = __bonuses.begin(); it != __bonuses.end();) {
-			if (it->second.__figure.getGlobalBounds().intersects(packmanBounds)) {
-				if (it->second.__bonusType == TypesBonuses::BOMB) {
-					it->second.__active = true;
+		for (auto it = bonuses.begin(); it != bonuses.end();) {
+			if (it->second.figure.getGlobalBounds().intersects(packmanBounds)) {
+				if (it->second.bonusType == TypesBonuses::BOMB) {
+					it->second.active = true;
 					killBotsAndChangePosition();
 				}
-				if (it->second.__bonusType == TypesBonuses::CYCLE) {
-					__packman.setSpeedMultiplier(240.f);
-					it->second.__active = true;
-					it->second.__eatenDots = __packman.__eatenCookies;
-					__packman.__activeBonuses[it->first] = it->second;
+				if (it->second.bonusType == TypesBonuses::CYCLE) {
+					packman.setSpeedMultiplier(240.f);
+					it->second.active = true;
+					it->second.eatenDots = packman.eatenCookies;
+					packman.activeBonuses[it->first] = it->second;
 				}
 			}
-			if (it->second.__bonusType == TypesBonuses::BOMB && it->second.__active) {
-				it = __bonuses.erase(it);
+			if (it->second.bonusType == TypesBonuses::BOMB && it->second.active) {
+				it = bonuses.erase(it);
 				continue;
 			}
-			if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active) {
-				it = __bonuses.erase(it);
+			if (it->second.bonusType == TypesBonuses::CYCLE && it->second.active) {
+				it = bonuses.erase(it);
 				continue;
 			}
 			++it;
