@@ -13,6 +13,12 @@
 # Файлы исходного кода библиотеки
 !src/*.cpp
 
+# Картинки
+!image/*.png
+
+# Музыка
+!sound/*.ogg
+
 # Readme
 !Readme.md
 !Rules.md
