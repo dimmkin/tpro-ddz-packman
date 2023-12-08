@@ -8,8 +8,8 @@
 #include <vector>
 #include <random>
 #include <algorithm>
-#include "bonus.h"
-#include "packman.h"
+#include "../include/bonus.h"
+#include "../include/packman.h"
 
 // constants
 static const float BLOCK_SIZE = 40.f;

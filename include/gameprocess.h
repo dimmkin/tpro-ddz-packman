@@ -1,11 +1,11 @@
 #pragma once
 
-#include "bonus.h"
-#include "hero.h"
-#include "field.h"
-#include "packman.h"
-#include "ghost.h"
-#include <Windows.h>
+#include "../include/bonus.h"
+#include "../include/hero.h"
+#include "../include/field.h"
+#include "../include/packman.h"
+#include "../include/ghost.h"
+//#include <Windows.h>
 #include <thread>
 #include <cassert>
 #include <map>

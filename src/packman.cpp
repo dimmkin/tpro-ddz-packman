@@ -1,5 +1,5 @@
-#include "packman.h"
-#include "field.h"
+#include "../include/packman.h"
+#include "../include/field.h"
 
 sf::Vector2f Packman::getRadialPoint(float angle, float radius)
 {
@@ -56,19 +56,21 @@ void Packman::updateHeroDirection()
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 		__direction = Direction::RIGHT;
 		__orientationDegrees = 90;
+	}
 }
 
-int Packman::directionOrientationDegrees(Direction direction) {
-	if (direction == Direction::UP) {
+int Packman::directionOrientationDegrees(Direction direction)
+{
+	if (__direction == Direction::UP) {
 		return 0;
 	}
-	else if (direction == Direction::DOWN) {
+	else if (__direction == Direction::DOWN) {
 		return 180;
 	}
-	if (direction == Direction::LEFT) {
+	if (__direction == Direction::LEFT) {
 		return 270;
 	}
-	else if (direction == Direction::RIGHT) {
+	else if (__direction == Direction::RIGHT) {
 		return 90;
   }
 }

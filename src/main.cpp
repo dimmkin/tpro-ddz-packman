@@ -1,13 +1,13 @@
-#include "menuBase.h"
-#include "field.h"
-#include "gameprocess.h"
-#include "packman.h"
+#include "../include/menuBase.h"
+#include "../include/field.h"
+#include "../include/gameprocess.h"
+#include "../include/packman.h"
 #include <string>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 using namespace sf;
-#include "json/nlohmann/json.hpp"
+#include "../json/nlohmann/json.hpp"
 using json = nlohmann::json;
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,

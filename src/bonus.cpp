@@ -1,6 +1,6 @@
-#include "bonus.h"
-#include "field.h"
-#include "packman.h"
+#include "../include/bonus.h"
+#include "../include/field.h"
+#include "../include/packman.h"
 
 bool Bonus::initializeBonus(const sf::Vector2f& position, const std::string& texturePath, const sf::IntRect frame, TypesBonuses type, bool active)
 {

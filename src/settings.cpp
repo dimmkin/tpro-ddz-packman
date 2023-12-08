@@ -1,4 +1,4 @@
-#include "menuBase.h"
+#include "../include/menuBase.h"
 
 game::Settings::Settings(sf::RenderWindow& window, double settingsmenux, double settingsy,
 	int index, sf::String name[], int sizeFont, int step)

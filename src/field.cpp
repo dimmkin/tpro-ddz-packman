@@ -1,4 +1,4 @@
-#include "field.h"
+#include "../include/field.h"
 
 void Field::randomizeMap(std::vector<char> symbols, std::string startMap)
 {

@@ -1,4 +1,4 @@
-#include "menuBase.h"
+#include "../include/menuBase.h"
 
 game::GameSelection::GameSelection(sf::RenderWindow& window, double menux, double menuy,
 	int index, sf::String name[], int sizeFont, int step)

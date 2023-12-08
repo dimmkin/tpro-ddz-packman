@@ -1,11 +1,11 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "hero.h"
-#include "bonus.h"
+#include "../include/hero.h"
+#include "../include/bonus.h"
 #include <fstream>
 using namespace sf;
-#include "json/nlohmann/json.hpp"
+#include "../json/nlohmann/json.hpp"
 using json = nlohmann::json;
 
 // constants

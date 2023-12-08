@@ -1,5 +1,5 @@
-#include "hero.h"
-#include "field.h"
+#include "../include/hero.h"
+#include "../include/field.h"
 
 Direction Hero::randomDirection(Direction previousDirection)
 {
@@ -20,24 +20,24 @@ Direction Hero::randomDirection(Direction previousDirection)
 
 void Hero::updateHeroDirection()
 {
-	if (direction == Direction::UP) {
-		direction = randomDirection(Direction::UP);
+	if (__direction == Direction::UP) {
+		__direction = randomDirection(Direction::UP);
 		return;
 	}
-	if (direction == Direction::DOWN) {
-		direction = randomDirection(Direction::DOWN);
+	if (__direction == Direction::DOWN) {
+		__direction = randomDirection(Direction::DOWN);
 		return;
 	}
-	if (direction == Direction::LEFT) {
-		direction = randomDirection(Direction::LEFT);
+	if (__direction == Direction::LEFT) {
+		__direction = randomDirection(Direction::LEFT);
 		return;
 	}
-	if (direction == Direction::RIGHT) {
-		direction = randomDirection(Direction::RIGHT);
+	if (__direction == Direction::RIGHT) {
+		__direction = randomDirection(Direction::RIGHT);
 		return;
 	}
-	if (direction == Direction::NONE) {
-		direction = Direction::UP;
+	if (__direction == Direction::NONE) {
+		__direction = Direction::UP;
 		return;
 	}
 }
@@ -67,14 +67,14 @@ Direction Hero::changeOfDirection(Direction direction)
 
 bool Hero::initializeHero(const sf::Vector2f& position, const std::string& texturePath)
 {
-	if (!texture.loadFromFile(texturePath))
+	if (!__texture.loadFromFile(texturePath))
 		return false;
 
-	direction = Direction::NONE;
-	figure.setSize({ 40.f, 40.f });
-	figure.setPosition(position);
-	figure.setTexture(&texture);
-	figure.setTextureRect(FRAME_EYES_TOP);
+	__direction = Direction::NONE;
+	__figure.setSize({ 40.f, 40.f });
+	__figure.setPosition(position);
+	__figure.setTexture(&__texture);
+	__figure.setTextureRect(FRAME_EYES_TOP);
 
 	return true;
 }

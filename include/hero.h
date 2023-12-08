@@ -48,5 +48,5 @@ public:
 	void updateHero(float elapsedTime, Field& field, const float speed);
 	void drawHero(sf::RenderWindow& window);
 	void drawEyes();
-	void getDirection(Direction direction) { this->direction = direction; }
+	void getDirection(Direction direction) { __direction = direction; }
 };

@@ -1,4 +1,4 @@
-#include "menuBase.h"
+#include "../include/menuBase.h"
 
 void game::MenuBase::setInitTextMenu(sf::Text& text, sf::String str, double xpos, double ypos)
 {
