@@ -1,32 +1,21 @@
-# Prerequisites
-*.d
+# ---> cpp_task_unix
+# По умолчанию игнорировать все файлы 
+*
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Не игнорировать директории
+!*/
 
-# Precompiled Headers
-*.gch
-*.pch
+# gitignore
+!.gitignore
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# Заголовочные файлы библиотеки
+!include/*.h
+# Файлы исходного кода библиотеки
+!src/*.cpp
 
-# Fortran module files
-*.mod
-*.smod
+# Readme
+!Readme.md
+!Rules.md
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# CMakeLists
+!CMakeLists.txt
