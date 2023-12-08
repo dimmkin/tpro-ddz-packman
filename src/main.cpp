@@ -2,6 +2,7 @@
 #include "../include/field.h"
 #include "../include/gameprocess.h"
 #include "../include/packman.h"
+#include "../include/Music.h"
 #include <string>
 #include <algorithm>
 #include <fstream>
@@ -9,6 +10,8 @@
 using namespace sf;
 #include "../json/nlohmann/json.hpp"
 using json = nlohmann::json;
+
+GameMusic Fon_music;
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
@@ -22,7 +25,6 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height);
 void Pause(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
-
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
@@ -45,6 +47,9 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
         Event event;
         while (window.pollEvent(event))
         {
+
+            Fon_music.Music_return(0);
+
             if (event.type == Event::KeyReleased)
             {
                 if (event.key.code == Keyboard::Up) { myPause.MovePrev(); }
@@ -208,6 +213,17 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
 
     process.initializeGameProcess(sf::Vector2f(window.getSize()));
 
+
+    sf::Text countdownText;
+    countdownText.setFont(font);
+    InitText(countdownText, 1475, 500, L"Score: ", 150, Color::Yellow, 3, Color::Blue);
+
+    bool isStart = true;
+    GameMusic music;
+    Fon_music.Music_pause(0);
+    music.Music_stop_all();
+    int index = music.Random_music(2, 8);
+
     unsigned stek = lifes;
     bool flag = false;
     while (window.isOpen()) {
@@ -216,12 +232,66 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
             if (event.type == Event::KeyPressed)
             {
                 if (event.key.code == Keyboard::Escape) {
+                    music.Music_pause_all();
                     Pause(window, font, width, height); 
                 }
             }
         }
 
+        if (isStart) {
+
+            music.Music_play(1);
+            music.Music_set_volume_all(10);
+
+            for (int i = 3; i >= 0; --i) {
+                countdownText.setString(std::to_string(i));
+
+                sf::FloatRect textBounds = countdownText.getLocalBounds();
+                countdownText.setPosition((window.getSize().x - textBounds.width) / 2,
+                    ((window.getSize().y - textBounds.height) / 2) - 65);
+                if (i == 0) {
+                    countdownText.setString("Start!");
+                    sf::FloatRect textBounds = countdownText.getLocalBounds();
+                    countdownText.setPosition((window.getSize().x - textBounds.width) / 2,
+                        ((window.getSize().y - textBounds.height) / 2) - 65);
+                    window.clear();
+                    window.draw(backgroundPlay);
+                    window.draw(TitulRounds);
+                    window.draw(TitulPackman);
+                    window.draw(TitulFirstPlayer);
+                    window.draw(TitulFirstNick);
+                    window.draw(TitulFirstScore);
+                    window.draw(TitulSecondPlayer);
+                    window.draw(TitulSecondNick);
+                    window.draw(TitulSecondScore);
+                    window.draw(countdownText);
+                    window.display();
+
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    break;
+                }
+                window.clear();
+                window.draw(backgroundPlay);
+                window.draw(TitulRounds);
+                window.draw(TitulPackman);
+                window.draw(TitulFirstPlayer);
+                window.draw(TitulFirstNick);
+                window.draw(TitulFirstScore);
+                window.draw(TitulSecondPlayer);
+                window.draw(TitulSecondNick);
+                window.draw(TitulSecondScore);
+                window.draw(countdownText);
+                window.display();
+
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                isStart = false;
+            }
+        }
+        music.Music_play_always(index);
+
         if (process.__gameState == GameState::LOSE || process.__gameState == GameState::WIN) {
+            music.Music_stop_all();
+            Fon_music.Music_return(0);
             unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
             EndGame(window, font, width, height, process, scores);
         }
@@ -312,6 +382,43 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
     myMaps.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
 
+
+    // Button map
+    Texture map1_picture;
+    if (!map1_picture.loadFromFile("image/Map_1.png")) exit(1);
+
+    Texture map2_picture;
+    if (!map2_picture.loadFromFile("image/Map_2.png")) exit(1);
+
+    Texture map3_picture;
+    if (!map3_picture.loadFromFile("image/Map_3.png")) exit(1);
+
+    Sprite map1_button_sprite(map1_picture);
+    Sprite map2_button_sprite(map2_picture);
+    Sprite map3_button_sprite(map3_picture);
+
+    float scaleFactorX = 0.405f;
+    float scaleFactorY = 0.45f;
+    map1_button_sprite.setScale(scaleFactorX, scaleFactorY);
+    map2_button_sprite.setScale(scaleFactorX, scaleFactorY);
+    map3_button_sprite.setScale(scaleFactorX, scaleFactorY);
+
+    sf::Vector2u windowSize = window.getSize();
+    float button1X = windowSize.x - map1_picture.getSize().x - 305;
+    float button1Y = windowSize.y - map1_picture.getSize().y + 55;
+
+    float button2X = windowSize.x - map2_picture.getSize().x + 65;
+    float button2Y = windowSize.y - map2_picture.getSize().y + 55;
+
+    float button3X = windowSize.x - map3_picture.getSize().x + 438;
+    float button3Y = windowSize.y - map3_picture.getSize().y + 55;
+
+    map1_button_sprite.setPosition(button1X, button1Y);
+    map2_button_sprite.setPosition(button2X, button2Y);
+    map3_button_sprite.setPosition(button3X, button3Y);
+
+
+
     std::ifstream file("text.json");
     json data = json::parse(file);
     data["Start_game"].clear();
@@ -371,6 +478,7 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
                         std::ofstream file("text.json");
                         file << data;
                         file.close();
+                        Fon_music.Music_pause(0);
                         PlayGame(window, font, width, height);
                     }
                 }
@@ -388,6 +496,9 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
         window.draw(TitulCountBots);
         window.draw(TitulChoseMap);
         window.draw(TitulStartGame);
+        window.draw(map1_button_sprite);
+        window.draw(map2_button_sprite);
+        window.draw(map3_button_sprite);
         myGameSelection.draw();
         myBots.draw();
         myMaps.draw();
@@ -684,6 +795,10 @@ int main()
     file_close.close();
 
     RenderWindow window;
+
+    Fon_music.Music_stop(0);
+    Fon_music.Music_play(0);
+    Fon_music.Music_set_volume_all(10);
 
     window.create(VideoMode::getDesktopMode(), L"Packman", Style::Fullscreen);
 
