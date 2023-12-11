@@ -1,10 +1,14 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "hero.h"
-#include "bonus.h"
+#include "../include/hero.h"
+#include "../include/bonus.h"
+#include <fstream>
+using namespace sf;
+#include "../json/nlohmann/json.hpp"
+using json = nlohmann::json;
 
-// ñonstants
+// constants
 const int PHASE = 90;
 const float NUMBER_PI = 3.141592654f;
 const int PI_RADIAN = 180;
@@ -31,6 +35,7 @@ public:
 	void assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bottomShape, const float phaseAnimation);
 	void setSpeedMultiplier(float newSpeed);
 	void updateHeroDirection();
+	int directionOrientationDegrees(Direction direction);
 	void updateHero(float elapsedTime, Field& field);
 	void drawPackman(sf::RenderWindow& window);
 	sf::FloatRect getPackmanBounds();

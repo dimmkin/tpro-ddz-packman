@@ -1,5 +1,9 @@
-#include "gameprocess.h"
-#include "menuBase.h"
+#include "../include/gameprocess.h"
+#include <iostream>
+#include <fstream>
+using namespace sf;
+#include "../json/nlohmann/json.hpp"
+using json = nlohmann::json;
 
 bool GameProcess::initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID ghostID)
 {
@@ -26,16 +30,42 @@ void GameProcess::initializeGameProcess(const sf::Vector2f& processSize)
 	__field.initializeField();
 	__packman.initializePackman(__field, __packman, 150.f);
 
-	initializeGhostByID(__ghosts, GhostID::FIRST);
-	initializeGhostByID(__ghosts, GhostID::SECOND);
-	initializeGhostByID(__ghosts, GhostID::THIRD);
-	initializeGhostByID(__ghosts, GhostID::FORTH);
+	std::ifstream file("text.json");
+	json data = json::parse(file);
+	file.close();
+	int i = data["Start_game"][1];
+	switch (i)
+	{
+	case 1 :
+		initializeGhostByID(__ghosts, GhostID::FIRST);
+		break;
+	case 2:
+		initializeGhostByID(__ghosts, GhostID::FIRST);
+		initializeGhostByID(__ghosts, GhostID::SECOND);
+		break;
+	case 3:
+		initializeGhostByID(__ghosts, GhostID::FIRST);
+		initializeGhostByID(__ghosts, GhostID::SECOND);
+		initializeGhostByID(__ghosts, GhostID::THIRD);
+		break;
+	case 4:
+		initializeGhostByID(__ghosts, GhostID::FIRST);
+		initializeGhostByID(__ghosts, GhostID::SECOND);
+		initializeGhostByID(__ghosts, GhostID::THIRD);
+		initializeGhostByID(__ghosts, GhostID::FORTH);
+		break;
+	default:
+		break;
+	}
 
 	initializeBonusByType(__bonuses, TypesBonuses::BOMB, FRAME_BOMB);
 	initializeBonusByType(__bonuses, TypesBonuses::CYCLE, FRAME_CYCLE);
 
 	__gameState = GameState::PLAY;
 	__totalCookiesCount = __field.countRemainingCookies();
+
+	const sf::FloatRect titleBounds = __gameOverTitle.getLocalBounds();
+	__gameOverTitle.setOrigin(0.5f * titleBounds.width, 0.5f * titleBounds.height);
 }
 
 void GameProcess::killBotsAndChangePosition()
@@ -43,10 +73,34 @@ void GameProcess::killBotsAndChangePosition()
 	__ghosts.clear();
 	__field.clearMap(SYMBOLS_GHOSTS, __field.__map);
 	__field.randomizeMap(SYMBOLS_GHOSTS, __field.__map);
-	initializeGhostByID(__ghosts, GhostID::FIRST);
-	initializeGhostByID(__ghosts, GhostID::SECOND);
-	initializeGhostByID(__ghosts, GhostID::THIRD);
-	initializeGhostByID(__ghosts, GhostID::FORTH);
+
+	std::ifstream file("text.json");
+	json data = json::parse(file);
+	file.close();
+	int i = data["Start_game"][1];
+	switch (i)
+	{
+	case 1:
+		initializeGhostByID(__ghosts, GhostID::FIRST);
+		break;
+	case 2:
+		initializeGhostByID(__ghosts, GhostID::FIRST);
+		initializeGhostByID(__ghosts, GhostID::SECOND);
+		break;
+	case 3:
+		initializeGhostByID(__ghosts, GhostID::FIRST);
+		initializeGhostByID(__ghosts, GhostID::SECOND);
+		initializeGhostByID(__ghosts, GhostID::THIRD);
+		break;
+	case 4:
+		initializeGhostByID(__ghosts, GhostID::FIRST);
+		initializeGhostByID(__ghosts, GhostID::SECOND);
+		initializeGhostByID(__ghosts, GhostID::THIRD);
+		initializeGhostByID(__ghosts, GhostID::FORTH);
+		break;
+	default:
+		break;
+	}
 }
 
 void GameProcess::changedBonusesPosition()
@@ -86,8 +140,9 @@ void GameProcess::redrawingBonuses()
 	}
 }
 
-void GameProcess::updateGameProcess(float elapsedTime)
+void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes)
 {
+
 	if (__gameState == GameState::PLAY) {
 		__packman.updateHero(elapsedTime, __field);
 
@@ -98,12 +153,21 @@ void GameProcess::updateGameProcess(float elapsedTime)
 		}
 
 		const sf::FloatRect packmanBounds = __packman.getPackmanBounds();
-		for (const auto& pair : __ghosts) {
+		for ( auto& pair : __ghosts) {
 			if (pair.second.__figure.getGlobalBounds().intersects(packmanBounds)) {
-				__gameState = GameState::LOSE;
+				if (lifes == 1) {
+					__gameState = GameState::LOSE;
+				}
+				else
+				{
+					flag_lifes = true;
+					__packman.__direction = __packman.changeOfDirection(__packman.__direction);
+					__packman.__orientationDegrees = __packman.directionOrientationDegrees(__packman.__direction);
+					pair.second.__direction = pair.second.changeOfDirection(pair.second.__direction);
+					exit;
+				}
 			}
 		}
-
 		for (auto it = __packman.__activeBonuses.begin(); it != __packman.__activeBonuses.end(); ++it) {
 			if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman.__eatenCookies >= it->second.__eatenDots + 10) {
 				__packman.setSpeedMultiplier(120.f);

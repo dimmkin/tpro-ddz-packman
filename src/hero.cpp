@@ -1,5 +1,5 @@
-#include "hero.h"
-#include "field.h"
+#include "../include/hero.h"
+#include "../include/field.h"
 
 Direction Hero::randomDirection(Direction previousDirection)
 {
@@ -39,6 +39,29 @@ void Hero::updateHeroDirection()
 	if (__direction == Direction::NONE) {
 		__direction = Direction::UP;
 		return;
+	}
+}
+Direction Hero::changeOfDirection(Direction direction)
+{
+	if (direction == Direction::UP) {
+		direction =Direction::DOWN;
+		return Direction::DOWN;
+	}
+	if (direction == Direction::DOWN) {
+		direction = Direction::UP;
+		return Direction::UP;
+	}
+	if (direction == Direction::LEFT) {
+		direction = Direction::RIGHT;
+		return Direction::RIGHT;
+	}
+	if (direction == Direction::RIGHT) {
+		direction = Direction::LEFT;
+		return Direction::LEFT;
+	}
+	if (direction == Direction::NONE) {
+		direction = Direction::UP;
+		return Direction::UP;
 	}
 }
 
@@ -127,14 +150,16 @@ void Hero::updateHero(float elapsedTime, Field& field, const float speed)
 	static std::chrono::steady_clock::time_point lastDirectionChangeTime = std::chrono::steady_clock::now();
 	std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
 	std::chrono::seconds elapsedTimeSinceLastChange = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastDirectionChangeTime);
-	
+
 	const sf::FloatRect heroBounds = __figure.getGlobalBounds();
+
 	if (field.checkFieldWallsCollision(heroBounds, movement, speed) || elapsedTimeSinceLastChange.count() >= 0.01) {
 		updateHeroDirection();
 		lastDirectionChangeTime = std::chrono::steady_clock::now();
 	}
 
 	MovingOut(field, movement, speed);
+
 	__figure.move(movement);
 
 	drawEyes();

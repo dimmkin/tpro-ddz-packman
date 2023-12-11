@@ -1,2 +1,2 @@
-#include "ghost.h"
-#include "field.h"
+#include "../include/ghost.h"
+#include "../include/field.h"

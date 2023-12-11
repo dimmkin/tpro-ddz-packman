@@ -1,11 +1,11 @@
 #pragma once
 
-#include "bonus.h"
-#include "hero.h"
-#include "field.h"
-#include "packman.h"
-#include "ghost.h"
-#include <Windows.h>
+#include "../include/bonus.h"
+#include "../include/hero.h"
+#include "../include/field.h"
+#include "../include/packman.h"
+#include "../include/ghost.h"
+//#include <Windows.h>
 #include <thread>
 #include <cassert>
 #include <map>
@@ -49,7 +49,10 @@ public:
 	void killBotsAndChangePosition();
 	bool initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID ghostID);
 	bool initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, TypesBonuses type, const sf::IntRect frame, bool active = false);
-	void updateGameProcess(float elapsedTime);
+
+	void updateGameOverTitle(sf::Text& title, const std::string& text);
+	void updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes);
+
 	std::string getGameProcessWindowTitle();
 	void drawGameProcess(sf::RenderWindow& window);
 	void initializeGameProcess(const sf::Vector2f& processSize);

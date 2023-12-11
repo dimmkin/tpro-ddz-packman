@@ -1,8 +1,23 @@
-#include "field.h"
+#include "../include/field.h"
+
+void Field::setMap()
+{
+    std::ifstream file("text.json");
+    json startMap = json::parse(file);
+    file.close();
+    int index = startMap["Start_game"][2];
+    __field = FIELD[index];
+}
 
 void Field::randomizeMap(std::vector<char> symbols, std::string startMap)
 {
-    __map = startMap;
+    if(startMap == "") {
+        setMap();
+        __map = __field;
+    }
+    else {
+        __map = startMap;
+    }
     
     std::random_device rd;
     std::mt19937 generator(rd());
@@ -151,6 +166,7 @@ bool Field::checkFieldWallsCollision(const sf::FloatRect& oldBounds, sf::Vector2
         }
 
         sf::FloatRect blockBound = cell.__bounds;
+
         if (newBounds.intersects(blockBound))
         {
             const float bottomShift = getBottom(blockBound) - newBounds.top;

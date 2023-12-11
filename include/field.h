@@ -8,8 +8,8 @@
 #include <vector>
 #include <random>
 #include <algorithm>
-#include "bonus.h"
-#include "packman.h"
+#include "../include/bonus.h"
+#include "../include/packman.h"
 
 // constants
 static const float BLOCK_SIZE = 40.f;
@@ -19,23 +19,61 @@ const int LEFT_INDENTATION = 535;
 const int TOP_INDENTATION = 190;
 const std::vector<char> ALL_SYMBOLS = { '1','2','3','4','@', 'Q', 'W', 'E' };
 
-static char FIELD[] = "######  #############"
-"#                   #"
-"# #### ####### #### #"
-"#                   #"
-"# ##    #   #    ## #"
-"#       #   #       #"
-"####    #####    ####"
-"                     "
-"#### # ####### # ####"
-"#    #         #    #"
-"# ## # ####### # ## #"
-"#                   #"
-"#    #   ###   #    #"
-"#                   #"
-"# #### ####### #### #"
-"#                   #"
-"######  #############";
+static char* FIELD[] = {
+    "#####################"
+    "#                   #"
+    "# ##### ## ## ##### #"
+    "#    ## ## ## ##    #"
+    "# ## ## ## ## ## ## #"
+    "# ##             ## #"
+    "  #### ### ### ####  "
+    "###### #     # ######"
+    "  ##   #######   ##  "
+    "# ## #         # ## #"
+    "# ## # ####### # ## #"
+    "#    #         #    #"
+    "# ## ## ## ## ## ## #"
+    "#        # #        #"
+    "# ###### # # ###### #"
+    "#                   #"
+    "#####################",
+
+    "#####################"
+    "#                   #"
+    "# ##### # # # ##### #"
+    "# #     # # #     # #"
+    "# # ##### # ##### # #"
+    "# #               # #"
+    "# #### ### ### #### #"
+    "#      #     #      #"
+    "###### ####### ######"
+    "                     "
+    "### ############# ###"
+    "#                   #"
+    "# ##### ##### ##### #"
+    "#     #       #     #"
+    "# ### # ##### # ### #"
+    "#                   #"
+    "#####################",
+
+    "#####################"
+    "#                   #"
+    "# ##### # # # ##### #"
+    "# #     # # #     # #"
+    "# # ##### # ##### # #"
+    "# # #           # # #"
+    "# # #  ### ###  # # #"
+    "#   #           #   #"
+    "# #   #########   # #"
+    "# # #           # # #"
+    "# # # ######### # # #"
+    "                     "
+    "######### # #########"
+    "#         #         #"
+    "# ####### # ####### #"
+    "#                   #"
+    "#####################"
+};
 
 class FieldGraphics
 {
@@ -80,9 +118,11 @@ public:
     Cell* __cells = nullptr;
     std::string __map;
     bool __changed = false;
+    char* __field = FIELD[0]; 
 
     // methods
-    void randomizeMap(std::vector<char> symbols, std::string startMap = FIELD);
+    void setMap();
+    void randomizeMap(std::vector<char> symbols, std::string startMap = "");
     void clearMap(std::vector<char> symbols, std::string& startMap);
     sf::FloatRect moveRectangle(const sf::FloatRect& rectangle, sf::Vector2f& offset);
     float getArea(const sf::FloatRect& rectangle);
