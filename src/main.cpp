@@ -14,6 +14,7 @@ using json = nlohmann::json;
 GameMusic Fon_music;
 GameMusic Fon_Map_music;
 
+
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
 
@@ -127,7 +128,7 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
                 {
                     switch (myEndGame.getSelectedMenuNumber())
                     {
-                    case 0:PlayGame(window, font, width, height, 1);     break;
+                    case 0:PlayGame(window, font, width, height);     break;
                     case 1:MainMenu(window, font, width, height);     break;
                     }
                 }
@@ -148,6 +149,7 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
         window.display();
     }
 }
+
 
 void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter)
 {
@@ -252,18 +254,22 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     GameMusic music;
     Fon_music.Music_pause(0);
     music.Music_stop_all();
+
     int index = music.Random_music();
 
     unsigned stek = lifes;
     bool flag = false;
     int music_count = 0;
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::KeyPressed)
             {
                 if (event.key.code == Keyboard::Escape) {
+
                     Fon_Map_music.Music_pause_all();
+
                     music.Music_pause_all();
                     Pause(window, font, width, height); 
                 }
@@ -349,6 +355,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
             unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
             EndGame(window, font, width, height, process, scores);
         }
+        music.Music_play_always(index);
 
         if (process.__gameState == GameState::WIN) {
             ++RoundCounter;
@@ -550,6 +557,7 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
                         file.close();
                         Fon_music.Music_pause(0);
                         PlayGame(window, font, width, height, 1);
+
                     }
                 }
                 break;

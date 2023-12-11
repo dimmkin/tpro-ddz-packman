@@ -294,6 +294,46 @@ unsigned int Field::countRemainingCookies()
     return result;
 }
 
+
+void Field::drawField(sf::RenderWindow& window)
+{
+    FieldGraphics graphics;
+
+    for (size_t i = 0; i < __width * __height; i++) {
+        const Cell& cell = __cells[i];
+        const sf::Vector2f position = { cell.__bounds.left, cell.__bounds.top };
+        const sf::Vector2f center = position + sf::Vector2f(0.5f * cell.__bounds.width, 0.5f * cell.__bounds.height);
+
+        if (cell.__category == CellCategory::WALL) {
+            graphics.__wallFigure.setPosition(position);
+            window.draw(graphics.__wallFigure);
+        }
+        if (cell.__category == CellCategory::ROAD) {
+            graphics.__roadFigure.setPosition(position);
+            window.draw(graphics.__roadFigure);
+        }
+        if (cell.__category == CellCategory::DOT) {
+            graphics.__roadFigure.setPosition(position);
+            graphics.__cookieFigure.setPosition(center.x - 1.f, center.y - 1.f);
+            window.draw(graphics.__roadFigure);
+            window.draw(graphics.__cookieFigure);
+        }
+    }
+}
+
+unsigned int Field::countRemainingCookies()
+{
+    unsigned int result = 0;
+
+    for (size_t offset = 0; offset < __width * __height; offset++) {
+        const Cell& cell = __cells[offset];
+        if (cell.__category == CellCategory::DOT) {
+            ++result;
+        }
+    }
+    return result;
+}
+
 unsigned int Field::eatAllCookiesBounds(const sf::FloatRect& bounds)
 {
     unsigned int cookiesCount = 0;

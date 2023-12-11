@@ -139,3 +139,4 @@ public:
     unsigned int countRemainingCookies();
     unsigned int eatAllCookiesBounds(const sf::FloatRect& bounds);
 };
+

@@ -49,6 +49,7 @@ void GameMusic::Music_set_volume_all(int volume)
 		_game_musics[index].setVolume(volume);
 }
 
+
 int GameMusic::Random_music()
 {
 	int min = 2;
@@ -82,8 +83,8 @@ void GameMusic::Music_play_Map(bool isFirstMusic, int positionMusic)
     json startMap = json::parse(file);
     file.close();
     int index = startMap["Start_game"][2];
-	index = (isFirstMusic) ? index += 2 : positionMusic;
-	_game_musics[index].setLoop(true);
-	if (_game_musics[index].getStatus() == sf::Music::Stopped) { _game_musics[index].play(); }
-	if (_game_musics[index].getStatus() == sf::Music::Paused) { _game_musics[index].play(); }
+	  index = (isFirstMusic) ? index += 2 : positionMusic;
+	  _game_musics[index].setLoop(true);
+	  if (_game_musics[index].getStatus() == sf::Music::Stopped) { _game_musics[index].play(); }
+	  if (_game_musics[index].getStatus() == sf::Music::Paused) { _game_musics[index].play(); }
 }
