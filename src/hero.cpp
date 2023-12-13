@@ -136,9 +136,10 @@ void Hero::drawEyes()
 	}
 }
 
-void Hero::updateHero(float elapsedTime, Field& field, const float speed)
+void Hero::updateHero(float elapsedTime, Field& field, const float speed, bool stop)
 {
-	const float step = speed * elapsedTime;
+	const float step = (stop) ? 0 : speed * elapsedTime;
+	const float localspeed = (stop) ? 0 : speed;
 
 	sf::Vector2f movement(0.f, 0.f);
 
@@ -153,12 +154,12 @@ void Hero::updateHero(float elapsedTime, Field& field, const float speed)
 
 	const sf::FloatRect heroBounds = __figure.getGlobalBounds();
 
-	if (field.checkFieldWallsCollision(heroBounds, movement, speed) || elapsedTimeSinceLastChange.count() >= 0.01) {
+	if (field.checkFieldWallsCollision(heroBounds, movement, localspeed) || elapsedTimeSinceLastChange.count() >= 0.01) {
 		updateHeroDirection();
 		lastDirectionChangeTime = std::chrono::steady_clock::now();
 	}
 
-	MovingOut(field, movement, speed);
+	MovingOut(field, movement, localspeed);
 
 	__figure.move(movement);
 

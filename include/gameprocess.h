@@ -51,7 +51,7 @@ public:
 	bool initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, TypesBonuses type, const sf::IntRect frame, bool active = false);
 
 	void updateGameOverTitle(sf::Text& title, const std::string& text);
-	void updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes);
+	void updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes, bool stop = false);
 
 	std::string getGameProcessWindowTitle();
 	void drawGameProcess(sf::RenderWindow& window);

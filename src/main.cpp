@@ -3,6 +3,7 @@
 #include "../include/gameprocess.h"
 #include "../include/packman.h"
 #include "../include/Music.h"
+#include "../include/GameSelect.h"
 #include <string>
 #include <algorithm>
 #include <fstream>
@@ -12,11 +13,14 @@ using namespace sf;
 using json = nlohmann::json;
 
 GameMusic Fon_music;
+GameMusic Fon_Map_music;
+bool stop = false;
+
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
 
-void PlayGame(RenderWindow& window, Font& font, double width, double height);
+void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter = 1);
 
 void GameStart(RenderWindow& window, Font& font, double width, double height);
 
@@ -60,9 +64,9 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (myPause.getSelectedMenuNumber())
                     {
-                    case 0:PlayGame(window, font, width, height);      break;
+                    case 0: stop = false; return;                     break;
                     case 1:PlayGame(window, font, width, height);     break;
-                    case 2:MainMenu(window, font, width, height);                      break;
+                    case 2:MainMenu(window, font, width, height);     break;
                     }
                 }
             }
@@ -126,7 +130,7 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
                 {
                     switch (myEndGame.getSelectedMenuNumber())
                     {
-                    case 0:PlayGame(window, font, width, height);     break;
+                    case 0:PlayGame(window, font, width, height, 1);     break;
                     case 1:MainMenu(window, font, width, height);     break;
                     }
                 }
@@ -148,17 +152,36 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     }
 }
 
-void PlayGame(RenderWindow& window, Font& font, double width, double height)
+void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
+
+    std::ifstream file("text.json");
+    json data = json::parse(file);
+    file.close();
+    std::string gameSelect = data["Start_game"][0];
+
+    std::string Round = "";
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/play-game.png")) exit(1);
     backgroundPlay.setTexture(&texturePlay);
 
+    bool isFirstMusic = true;
     Text TitulRounds;
     TitulRounds.setFont(font);
-    InitText(TitulRounds, 690, -80, L"ROUND 1/3", 200, Color::Yellow, 3, Color::Black);
+
+    GameSelect game;
+    if(game.isClassic(gameSelect)){
+        Round = game.CurrentRound(RoundCounter);
+        isFirstMusic = (RoundCounter == 1) ? true : false; 
+        InitText(TitulRounds, 690, -80, Round, 200, Color::Yellow, 3, Color::Black);
+    }
+    else {
+        Round = game.CurrentRound(0);
+        isFirstMusic = false;
+        InitText(TitulRounds, 690, -80, Round, 200, Color::Yellow, 3, Color::Black);
+    }
 
     Text TitulPackman;
     TitulPackman.setFont(font);
@@ -168,9 +191,6 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     TitulFirstPlayer.setFont(font);
     InitText(TitulFirstPlayer, 150, 150, L"Player 1", 100, Color::Yellow, 3, Color::Blue);
 
-    std::ifstream file("text.json");
-    json data = json::parse(file);
-    file.close();
     std::string name_user = data["Option"][2];
     Text NikName1;
     NikName1.setString(name_user);
@@ -222,23 +242,44 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
     GameMusic music;
     Fon_music.Music_pause(0);
     music.Music_stop_all();
-    int index = music.Random_music(2, 8);
+    int index = music.Random_music();
 
     unsigned stek = lifes;
     bool flag = false;
+    int music_count = 0;
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == Event::KeyPressed)
             {
                 if (event.key.code == Keyboard::Escape) {
+                    Fon_Map_music.Music_pause_all();
                     music.Music_pause_all();
-                    Pause(window, font, width, height); 
+                    stop = true;
                 }
             }
         }
 
         if (isStart) {
+
+            countdownText.setString(Round);
+            sf::FloatRect textBounds = countdownText.getLocalBounds();
+            countdownText.setPosition((window.getSize().x - textBounds.width) / 2,
+                ((window.getSize().y - textBounds.height) / 2) - 65);
+            window.clear();
+            window.draw(backgroundPlay);
+            window.draw(TitulRounds);
+            window.draw(TitulPackman);
+            window.draw(TitulFirstPlayer);
+            window.draw(TitulFirstNick);
+            window.draw(TitulFirstScore);
+            window.draw(TitulSecondPlayer);
+            window.draw(TitulSecondNick);
+            window.draw(TitulSecondScore);
+            window.draw(countdownText);
+            window.display();
+
+            std::this_thread::sleep_for(std::chrono::seconds(1));
 
             music.Music_play(1);
             music.Music_set_volume_all(10);
@@ -249,6 +290,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
                 sf::FloatRect textBounds = countdownText.getLocalBounds();
                 countdownText.setPosition((window.getSize().x - textBounds.width) / 2,
                     ((window.getSize().y - textBounds.height) / 2) - 65);
+
                 if (i == 0) {
                     countdownText.setString("Start!");
                     sf::FloatRect textBounds = countdownText.getLocalBounds();
@@ -287,13 +329,31 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
                 isStart = false;
             }
         }
-        music.Music_play_always(index);
+        Fon_Map_music.Music_play_Map(isFirstMusic, index);
+        Fon_Map_music.Music_set_volume_all(20);
 
-        if (process.__gameState == GameState::LOSE || process.__gameState == GameState::WIN) {
+        if (process.__gameState == GameState::LOSE) {
             music.Music_stop_all();
+            Fon_Map_music.Music_stop_all();
             Fon_music.Music_return(0);
             unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
             EndGame(window, font, width, height, process, scores);
+        }
+
+        if (process.__gameState == GameState::WIN) {
+            ++RoundCounter;
+            if((game.isClassic(gameSelect) && RoundCounter > 3) || !game.isClassic(gameSelect))
+            {
+                music.Music_stop_all();
+                Fon_Map_music.Music_stop_all();
+                Fon_music.Music_return(0);
+                unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
+                EndGame(window, font, width, height, process, scores);
+            }
+            else {
+                Fon_Map_music.Music_stop_all();
+                PlayGame(window, font, width, height, RoundCounter);
+            }
         }
 
         Text Scores;
@@ -325,10 +385,14 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height)
         window.draw(TitulSecondScore);
         window.draw(heats1);
         window.draw(Heats_Count);
-        process.updateGameProcess(elapsedTime, flag, lifes);
+        process.updateGameProcess(elapsedTime, flag, lifes, stop);
         process.drawGameProcess(window);
         window.draw(Scores);
         window.display();
+        if (stop) {
+            process.updateGameProcess(elapsedTime, flag, lifes, true);
+            Pause(window, font, width, height); 
+        }
     }
 }
 void GameStart(RenderWindow& window, Font& font, double width, double height)
@@ -474,12 +538,12 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
                     if (eventPlay.key.code == Keyboard::Right) { myMaps.MoveNext(); }
                     if (eventPlay.key.code == Keyboard::Return)
                     {
-                        data["Start_game"].push_back(myMaps.getSelectedMenuNumber() + 1);
+                        data["Start_game"].push_back(myMaps.getSelectedMenuNumber());
                         std::ofstream file("text.json");
                         file << data;
                         file.close();
                         Fon_music.Music_pause(0);
-                        PlayGame(window, font, width, height);
+                        PlayGame(window, font, width, height, 1);
                     }
                 }
                 break;

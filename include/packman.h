@@ -36,7 +36,7 @@ public:
 	void setSpeedMultiplier(float newSpeed);
 	void updateHeroDirection();
 	int directionOrientationDegrees(Direction direction);
-	void updateHero(float elapsedTime, Field& field);
+	void updateHero(float elapsedTime, Field& field, bool stop = false);
 	void drawPackman(sf::RenderWindow& window);
 	sf::FloatRect getPackmanBounds();
 };

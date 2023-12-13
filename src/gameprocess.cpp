@@ -140,16 +140,19 @@ void GameProcess::redrawingBonuses()
 	}
 }
 
-void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes)
+void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes, bool stop)
 {
+	float localspeed_bonus = (stop) ? 0 : 240.f;
+	float localspeed_multiplier = (stop) ? 0 : 120.f;
+	float localspeed_ghost = (stop) ? 0 : 90.f;
 
 	if (__gameState == GameState::PLAY) {
-		__packman.updateHero(elapsedTime, __field);
+		__packman.updateHero(elapsedTime, __field, stop);
 
 		redrawingBonuses();
 
 		for (auto& pair : __ghosts) {
-			pair.second.updateHero(elapsedTime, __field, 90.f);
+			pair.second.updateHero(elapsedTime, __field, localspeed_ghost, stop);
 		}
 
 		const sf::FloatRect packmanBounds = __packman.getPackmanBounds();
@@ -170,7 +173,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 		}
 		for (auto it = __packman.__activeBonuses.begin(); it != __packman.__activeBonuses.end(); ++it) {
 			if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman.__eatenCookies >= it->second.__eatenDots + 10) {
-				__packman.setSpeedMultiplier(120.f);
+				__packman.setSpeedMultiplier(localspeed_multiplier);
 				it->second.__active = false;
 			}
 		}
@@ -182,7 +185,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 					killBotsAndChangePosition();
 				}
 				if (it->second.__bonusType == TypesBonuses::CYCLE) {
-					__packman.setSpeedMultiplier(240.f);
+					__packman.setSpeedMultiplier(localspeed_bonus);
 					it->second.__active = true;
 					it->second.__eatenDots = __packman.__eatenCookies;
 					__packman.__activeBonuses[it->first] = it->second;

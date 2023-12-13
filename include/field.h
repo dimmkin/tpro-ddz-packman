@@ -19,7 +19,7 @@ const int LEFT_INDENTATION = 535;
 const int TOP_INDENTATION = 190;
 const std::vector<char> ALL_SYMBOLS = { '1','2','3','4','@', 'Q', 'W', 'E' };
 
-static const char* FIELD[] = {
+static char* FIELD[] = {
     "#####################"
     "#                   #"
     "# ##### ## ## ##### #"
@@ -118,9 +118,11 @@ public:
     Cell* __cells = nullptr;
     std::string __map;
     bool __changed = false;
+    char* __field = FIELD[0]; 
 
     // methods
-    void randomizeMap(std::vector<char> symbols, std::string startMap = FIELD[0]);
+    void setMap();
+    void randomizeMap(std::vector<char> symbols, std::string startMap = "");
     void clearMap(std::vector<char> symbols, std::string& startMap);
     sf::FloatRect moveRectangle(const sf::FloatRect& rectangle, sf::Vector2f& offset);
     float getArea(const sf::FloatRect& rectangle);
