@@ -131,7 +131,6 @@ void GameProcess::redrawingBonuses()
 {
 	if (__packman1.__eatenCookies == 50 && !__field.__changed) {
 		changedBonusesPosition();
-		exit(1);
 	}
 	if (__packman1.__eatenCookies == 51) {
 		__field.__changed = false;
@@ -159,7 +158,7 @@ void GameProcess::redrawingBonuses()
 void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes, bool stop, bool multiplayer)
 {
 	float localspeed_bonus = (stop) ? 0 : 240.f;
-	float localspeed_multiplier = (stop) ? 0 : 120.f;
+	float localspeed_multiplier = (stop) ? 0 : 150.f;
 	float localspeed_ghost = (stop) ? 0 : 90.f;
 
 	if (__gameState == GameState::PLAY) {
@@ -256,5 +255,4 @@ void GameProcess::drawGameProcess(sf::RenderWindow& window, bool multiplayer)
 	for (auto& pair : __bonuses) {
 		pair.second.drawBonus(window);
 	}
-
 }

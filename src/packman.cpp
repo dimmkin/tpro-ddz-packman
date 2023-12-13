@@ -92,36 +92,12 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed, boo
 	json multiData = json::parse(multiFile);
 	multiFile.close();
 
-	int i = multiplayer ? multiData["firstPlayer"][1] : data["Option"][3];
 	sf::Color color_pacman;
-	switch (i)
-	{
-	case 1:
-		color_pacman = sf::Color::Red;
-		break;
-	case 2:
-		color_pacman = sf::Color::Magenta;
-		break;
-	case 3:
-		color_pacman = sf::Color::Green;
-		break;
-	case 4:
-		color_pacman = sf::Color::Yellow;
-		break;
-	case 5:
-		color_pacman = sf::Color(255, 165, 0);
-		break;
-	case 6:
-		color_pacman = sf::Color(255, 192, 203);
-		break;
-		
-	default:
-		break;
-	}
 	
 	if (multiplayer) {
+		int i = multiData["firstPlayer"][1];
 		int k = multiData["secondPlayer"][1];
-		switch (k)
+		switch (i)
 		{
 		case 1:
 			color_pacman = sf::Color::Red;
@@ -132,6 +108,11 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed, boo
 		case 3:
 			color_pacman = sf::Color::Green;
 			break;
+		default:
+			break;
+		}
+		switch (k)
+		{
 		case 4:
 			color_pacman = sf::Color::Yellow;
 			break;
@@ -146,6 +127,24 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed, boo
 			break;
 		}
 	}
+	else {
+		int i = data["Option"][3];
+		switch (i)
+		{
+		case 1:
+			color_pacman = sf::Color::Red;
+			break;
+		case 2:
+			color_pacman = sf::Color::Magenta;
+			break;
+		case 3:
+			color_pacman = sf::Color::Green;
+			break;
+		default:
+			break;
+		}
+	}
+
 	packman.__topShape.setFillColor(color_pacman);
 	packman.__bottomShape.setFillColor(color_pacman);
 }

@@ -395,14 +395,10 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         window.draw(Heats_Count);
         if (multiplayer) {
             process.updateGameProcess(elapsedTime, flag, lifes, stop, multiplayer);
-        }
-        else {
-            process.updateGameProcess(elapsedTime, flag, lifes, stop);
-        }
-        if (multiplayer) {
             process.drawGameProcess(window, multiplayer);
         }
         else {
+            process.updateGameProcess(elapsedTime, flag, lifes, stop);
             process.drawGameProcess(window);
         }
         window.draw(Scores);
