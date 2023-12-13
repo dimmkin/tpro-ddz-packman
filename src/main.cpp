@@ -814,11 +814,112 @@ void MultiplayerMenu(RenderWindow& window, Font& font, double width, double heig
     TitulMultiplayer.setFont(font);
     InitText(TitulMultiplayer, 600, -80, L"MULTIPLAYER", 200, Color::Yellow, 3, Color::Black);
 
+    Text TitulName;
+    TitulName.setFont(font);
+    InitText(TitulName, 825, 150, L"NAME", 200, Color::Yellow, 3, Color::Blue);
+
+    Text TitulGame;
+    TitulGame.setFont(font);
+    InitText(TitulGame, 825, 400, L"GAME", 200, Color::Yellow, 3, Color::Blue);
+
+    Text TitulColor;
+    TitulColor.setFont(font);
+    InitText(TitulColor, 800, 625, L"COLOR", 200, Color::Yellow, 3, Color::Blue);
+    
+    String countColors[]{ L"1",L"2", L"3" };
+
+    game::Settings firstPlayerColor(window, 175, 810, 3, countColors, 90, 150);
+
+    firstPlayerColor.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);  
+
+    game::Settings secondPlayerColor(window, 1375, 810, 3, countColors, 90, 150);
+
+    secondPlayerColor.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
+
+    int page = 0;
+    Text nameFirstPlayer("", font, 20);
+    Text nameSecondPlayer("", font, 20);
+
     while (window.isOpen())
     {
         Event event;
         while (window.pollEvent(event))
         {
+            switch (page)
+            {
+            case 0:
+                if (event.type == Event::TextEntered)
+                {
+                    std::string text = nameFirstPlayer.getString();
+                    int digit = event.text.unicode;
+                    if (text.length() < 12) {
+                        nameFirstPlayer.setString(text + (char)(digit));
+                    }
+                    if (digit == 57) {
+                        nameFirstPlayer.setString(text + '9');
+                    }
+                    if (digit == 8) {
+                        nameFirstPlayer.setString(text.substr(0, text.length() - 1));
+                    }
+                    InitText(nameFirstPlayer, 100, 230, nameFirstPlayer.getString(), 100, Color::Blue, 3, Color::Black);
+                }
+                if (event.type == Event::KeyReleased)
+                {
+                    if (event.key.code == Keyboard::Return)
+                    {
+                        page = 1;
+                    }
+                }
+                break;
+            case 1 :
+                if (event.type == Event::KeyReleased)
+                {
+                    if (event.key.code == Keyboard::Left) { firstPlayerColor.MovePrev(); }
+                    if (event.key.code == Keyboard::Right) { firstPlayerColor.MoveNext(); }
+
+                    if (event.key.code == Keyboard::Return)
+                    {
+                        page = 2;
+                    }
+                }
+                break;
+            case 2:
+                if (event.type == Event::TextEntered)
+                {
+                    std::string text = nameSecondPlayer.getString();
+                    int digit = event.text.unicode;
+                    if (text.length() < 12) {
+                        nameSecondPlayer.setString(text + (char)(digit));
+                    }
+                    if (digit == 57) {
+                        nameSecondPlayer.setString(text + '9');
+                    }
+                    if (digit == 8) {
+                        nameSecondPlayer.setString(text.substr(0, text.length() - 1));
+                    }
+                    InitText(nameSecondPlayer, 1300, 230, nameSecondPlayer.getString(), 100, Color::Blue, 3, Color::Black);
+                }
+                if (event.type == Event::KeyReleased)
+                {
+                    if (event.key.code == Keyboard::Return)
+                    {
+                        page = 3;
+                    }
+                }
+                break;
+            case 3:
+                if (event.type == Event::KeyReleased)
+                {
+                    if (event.key.code == Keyboard::Left) { secondPlayerColor.MovePrev(); }
+                    if (event.key.code == Keyboard::Right) { secondPlayerColor.MoveNext(); }
+                    if (event.key.code == Keyboard::Return)
+                    {
+                        PlayGame(window, font, width, height);
+                    }
+                }
+                break;
+            };
+
            if (event.type == Event::KeyPressed)
             {
                 if (event.key.code == Keyboard::Escape) { MainMenu(window, font, 1920, 1080); }
@@ -827,6 +928,13 @@ void MultiplayerMenu(RenderWindow& window, Font& font, double width, double heig
         window.clear();
         window.draw(background);
         window.draw(TitulMultiplayer);
+        window.draw(TitulName);
+        window.draw(TitulGame);
+        window.draw(TitulColor);
+        window.draw(nameFirstPlayer);
+        window.draw(nameSecondPlayer);
+        firstPlayerColor.draw();
+        secondPlayerColor.draw();
         window.display();
     }
 }
