@@ -802,6 +802,35 @@ void Exit(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
+void MultiplayerMenu(RenderWindow& window, Font& font, double width, double height)
+{
+    RectangleShape background(Vector2f(width, height));
+
+    Texture textureWindow;
+    if (!textureWindow.loadFromFile("image/multiplayer-menu.png")) exit(1);
+    background.setTexture(&textureWindow);
+
+    Text TitulMultiplayer;
+    TitulMultiplayer.setFont(font);
+    InitText(TitulMultiplayer, 600, -80, L"MULTIPLAYER", 200, Color::Yellow, 3, Color::Black);
+
+    while (window.isOpen())
+    {
+        Event event;
+        while (window.pollEvent(event))
+        {
+           if (event.type == Event::KeyPressed)
+            {
+                if (event.key.code == Keyboard::Escape) { MainMenu(window, font, 1920, 1080); }
+            }
+        }
+        window.clear();
+        window.draw(background);
+        window.draw(TitulMultiplayer);
+        window.display();
+    }
+}
+
 void MainMenu(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape background(Vector2f(width, height));
@@ -810,9 +839,9 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
     if (!textureWindow.loadFromFile("image/packman-menu.png")) exit(1);
     background.setTexture(&textureWindow);
 
-    String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
+    String nameMenu[]{ L"START", L"MULTIPLAYER", L"SETTINGS",L"EXIT" };
 
-    game::Menu mymenu(window, 1400, 250, 3, nameMenu, 150, 160);
+    game::Menu mymenu(window, 1400, 190, 4, nameMenu, 150, 160);
 
     mymenu.setColorTextMenu(Color::Blue, Color::Yellow, Color::Blue);
 
@@ -833,9 +862,10 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (mymenu.getSelectedMenuNumber())
                     {
-                    case 0:GameStart(window, font, width, height);    break;
-                    case 1:Settings(window, font, width, height);     break;
-                    case 2:Exit(window, font, width, height);         break;
+                    case 0:GameStart(window, font, width, height);       break;
+                    case 1:MultiplayerMenu(window, font, width, height); break;
+                    case 2:Settings(window, font, width, height);        break;
+                    case 3:Exit(window, font, width, height);            break;
                     }
                 }
             }
