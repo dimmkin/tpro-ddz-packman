@@ -133,7 +133,7 @@ public:
     sf::Vector2f getPackmanStartPosition();
     sf::Vector2f getGhostsStartPosition(GhostID& ghostID);
     sf::Vector2f getBonusesStartPosition(TypesBonuses& type);
-    bool checkFieldWallsCollision(const sf::FloatRect& oldBounds, sf::Vector2f& movement, const float& speed);
+    bool checkFieldWallsCollision(const sf::FloatRect& oldBounds, sf::Vector2f& movement, const float& speed, bool stop = false);
     void initializeField();
     void drawField(sf::RenderWindow& window);
     unsigned int countRemainingCookies();

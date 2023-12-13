@@ -15,6 +15,8 @@ using json = nlohmann::json;
 GameMusic Fon_music;
 GameMusic Fon_Map_music;
 bool stop = false;
+bool lifes_flag = false;
+unsigned int global_lifes = 0;
 
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
@@ -29,6 +31,14 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height);
 void Pause(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
+
+
+    GameProcess process;
+    process.initializeGameProcess(sf::Vector2f(window.getSize()));
+    stop = false;
+    process.updateGameProcess(0, lifes_flag, global_lifes, true);
+    process.drawGameProcess(window);
+
 
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
@@ -53,6 +63,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
         {
 
             Fon_music.Music_return(0);
+            Fon_Map_music.Music_pause_all();
 
             if (event.type == Event::KeyReleased)
             {
@@ -64,7 +75,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (myPause.getSelectedMenuNumber())
                     {
-                    case 0: stop = false; return;                     break;
+                    case 0:return;                     break;
                     case 1:PlayGame(window, font, width, height);     break;
                     case 2:MainMenu(window, font, width, height);     break;
                     }
@@ -332,6 +343,18 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         Fon_Map_music.Music_play_Map(isFirstMusic, index);
         Fon_Map_music.Music_set_volume_all(20);
 
+        if (stop) {
+            Fon_Map_music.Music_pause_all();
+            while(stop){
+                clock.restart();
+                window.clear();
+                window.display();
+                Pause(window, font, width, height); 
+            }
+            Fon_Map_music.Music_return_all();
+            Fon_music.Music_pause_all();
+        }
+
         if (process.__gameState == GameState::LOSE) {
             music.Music_stop_all();
             Fon_Map_music.Music_stop_all();
@@ -389,10 +412,6 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         process.drawGameProcess(window);
         window.draw(Scores);
         window.display();
-        if (stop) {
-            process.updateGameProcess(elapsedTime, flag, lifes, true);
-            Pause(window, font, width, height); 
-        }
     }
 }
 void GameStart(RenderWindow& window, Font& font, double width, double height)

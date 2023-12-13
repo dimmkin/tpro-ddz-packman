@@ -79,8 +79,11 @@ bool Hero::initializeHero(const sf::Vector2f& position, const std::string& textu
 	return true;
 }
 
-sf::Vector2f Hero::buildMovement(sf::Vector2f& movement, Hero& hero, const float step)
+sf::Vector2f Hero::buildMovement(sf::Vector2f& movement, Hero& hero, const float step, bool stop)
 {
+	if(stop){
+		return movement;
+	}
 	if (hero.__direction == Direction::UP) {
 		movement.y -= step;
 	}
@@ -96,8 +99,11 @@ sf::Vector2f Hero::buildMovement(sf::Vector2f& movement, Hero& hero, const float
 	return movement;
 }
 
-void Hero::MovingOut(Field& field, sf::Vector2f& movement, const float speed)
+void Hero::MovingOut(Field& field, sf::Vector2f& movement, const float speed, bool stop)
 {
+	if(stop){
+		return;
+	}
 	if (__figure.getPosition().x < LEFT_INDENTATION) {
 		__figure.setPosition(__figure.getPosition().x + field.__width * BLOCK_SIZE - 35, __figure.getPosition().y);
 	}
@@ -143,7 +149,7 @@ void Hero::updateHero(float elapsedTime, Field& field, const float speed, bool s
 
 	sf::Vector2f movement(0.f, 0.f);
 
-	movement = buildMovement(movement, *this, step);
+	movement = buildMovement(movement, *this, step, stop);
 
 	if (__direction == Direction::NONE)
 		updateHeroDirection();
@@ -154,12 +160,12 @@ void Hero::updateHero(float elapsedTime, Field& field, const float speed, bool s
 
 	const sf::FloatRect heroBounds = __figure.getGlobalBounds();
 
-	if (field.checkFieldWallsCollision(heroBounds, movement, localspeed) || elapsedTimeSinceLastChange.count() >= 0.01) {
+	if (field.checkFieldWallsCollision(heroBounds, movement, localspeed, stop) || elapsedTimeSinceLastChange.count() >= 0.01) {
 		updateHeroDirection();
 		lastDirectionChangeTime = std::chrono::steady_clock::now();
 	}
 
-	MovingOut(field, movement, localspeed);
+	MovingOut(field, movement, localspeed, stop);
 
 	__figure.move(movement);
 

@@ -107,9 +107,9 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed)
 	packman.__bottomShape.setFillColor(color_pacman);
 }
 
-void Packman::setSpeedMultiplier(float newSpeed)
+void Packman::setSpeedMultiplier(float newSpeed, bool stop)
 {
-	__speed = newSpeed;
+	__speed = (stop) ? 0 : newSpeed;
 }
 
 void Packman::updateHero(float elapsedTime, Field& field, bool stop)
@@ -119,29 +119,31 @@ void Packman::updateHero(float elapsedTime, Field& field, bool stop)
 	updateHeroDirection();
 
 	sf::Vector2f movement(0.f, 0.f);
-	movement = buildMovement(movement, *this, step);
+	movement = buildMovement(movement, *this, step, stop);
 	
 	const sf::FloatRect packmanBounds = getPackmanBounds();
-	if (field.checkFieldWallsCollision(packmanBounds, movement, localspeed)) {
+	if (field.checkFieldWallsCollision(packmanBounds, movement, localspeed, stop)) {
 	}
-	if (__position.x < LEFT_INDENTATION) {
-		__position.x = __position.x + field.__width * BLOCK_SIZE - 35;
-	}
-	else if (__position.x > LEFT_INDENTATION - 35  + field.__width * BLOCK_SIZE) {
-		__position.x = LEFT_INDENTATION;
-	}
-	if (__position.y < TOP_INDENTATION) {
-		__position.y = __position.y + field.__width * BLOCK_SIZE - TOP_INDENTATION;
-	}
-	else if (__position.y > field.__width * BLOCK_SIZE) {
-		__position.y = TOP_INDENTATION;
+	if(!stop){
+		if (__position.x < LEFT_INDENTATION) {
+			__position.x = __position.x + field.__width * BLOCK_SIZE - 35;
+		}
+		else if (__position.x > LEFT_INDENTATION - 35  + field.__width * BLOCK_SIZE) {
+			__position.x = LEFT_INDENTATION;
+		}
+		if (__position.y < TOP_INDENTATION) {
+			__position.y = __position.y + field.__width * BLOCK_SIZE - TOP_INDENTATION;
+		}
+		else if (__position.y > field.__width * BLOCK_SIZE) {
+			__position.y = TOP_INDENTATION;
+		}
 	}
 	
 	__eatenCookies += field.eatAllCookiesBounds(getPackmanBounds());
 	
 	__position += movement;
 	
-	if (__direction == Direction::NONE) {
+	if (__direction == Direction::NONE || stop) {
 		__phaseAnimation = 0;
 	}
 	else {

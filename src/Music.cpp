@@ -87,3 +87,11 @@ void GameMusic::Music_play_Map(bool isFirstMusic, int positionMusic)
 	if (_game_musics[index].getStatus() == sf::Music::Stopped) { _game_musics[index].play(); }
 	if (_game_musics[index].getStatus() == sf::Music::Paused) { _game_musics[index].play(); }
 }
+
+void GameMusic::Music_return_all()
+{
+	for (int index = 0; index != _count_game_music; ++index)
+	{
+		if (_game_musics[index].getStatus() == sf::Music::Paused) { _game_musics[index].play(); }
+	}
+}

@@ -153,8 +153,11 @@ sf::Vector2f Field::getBonusesStartPosition(TypesBonuses& type)
     }
 }
 
-bool Field::checkFieldWallsCollision(const sf::FloatRect& oldBounds, sf::Vector2f& movement, const float& speed)
+bool Field::checkFieldWallsCollision(const sf::FloatRect& oldBounds, sf::Vector2f& movement, const float& speed, bool stop)
 {
+    sf::Vector2f localmovement(0.f, 0.f);
+    movement = (stop) ? localmovement : movement;
+
     sf::FloatRect newBounds = moveRectangle(oldBounds, movement);
     bool changed = false;
     for (size_t i = 0; i < __width * __height; i++)
@@ -200,7 +203,7 @@ bool Field::checkFieldWallsCollision(const sf::FloatRect& oldBounds, sf::Vector2
             newBounds = moveRectangle(oldBounds, movement);
         }
     }
-    return changed;
+    return (stop) ? false : changed;
 }
 
 void Field::initializeField()

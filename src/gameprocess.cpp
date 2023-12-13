@@ -173,7 +173,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 		}
 		for (auto it = __packman.__activeBonuses.begin(); it != __packman.__activeBonuses.end(); ++it) {
 			if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman.__eatenCookies >= it->second.__eatenDots + 10) {
-				__packman.setSpeedMultiplier(localspeed_multiplier);
+				__packman.setSpeedMultiplier(localspeed_multiplier, stop);
 				it->second.__active = false;
 			}
 		}
@@ -185,7 +185,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 					killBotsAndChangePosition();
 				}
 				if (it->second.__bonusType == TypesBonuses::CYCLE) {
-					__packman.setSpeedMultiplier(localspeed_bonus);
+					__packman.setSpeedMultiplier(localspeed_bonus, stop);
 					it->second.__active = true;
 					it->second.__eatenDots = __packman.__eatenCookies;
 					__packman.__activeBonuses[it->first] = it->second;

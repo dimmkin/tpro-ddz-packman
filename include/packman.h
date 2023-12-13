@@ -33,7 +33,7 @@ public:
 	void assignFigure(sf::ConvexShape& shape, std::vector<sf::Vector2f> const& points);
 	void initializePackman(Field& field, Packman& packman, float speed = 120.f);
 	void assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bottomShape, const float phaseAnimation);
-	void setSpeedMultiplier(float newSpeed);
+	void setSpeedMultiplier(float newSpeed, bool stop = false);
 	void updateHeroDirection();
 	int directionOrientationDegrees(Direction direction);
 	void updateHero(float elapsedTime, Field& field, bool stop = false);
