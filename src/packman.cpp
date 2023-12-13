@@ -75,7 +75,7 @@ int Packman::directionOrientationDegrees(Direction direction)
   }
 }
   
-void Packman::initializePackman(Field& field, Packman& packman, float speed)
+void Packman::initializePackman(Field& field, Packman& packman, float speed, bool multiplayer)
 {
 	packman.__direction = Direction::NONE;
 	packman.__position = field.getPackmanStartPosition();
@@ -87,7 +87,12 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed)
 	std::ifstream file("text.json");
 	json data = json::parse(file);
 	file.close();
-	int i = data["Option"][3];
+	
+	std::ifstream multiFile("multiplayer.json");
+	json multiData = json::parse(multiFile);
+	multiFile.close();
+
+	int i = multiplayer ? multiData["firstPlayer"][1] : data["Option"][3];
 	sf::Color color_pacman;
 	switch (i)
 	{
@@ -100,8 +105,46 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed)
 	case 3:
 		color_pacman = sf::Color::Green;
 		break;
+	case 4:
+		color_pacman = sf::Color::Yellow;
+		break;
+	case 5:
+		color_pacman = sf::Color(255, 165, 0);
+		break;
+	case 6:
+		color_pacman = sf::Color(255, 192, 203);
+		break;
+		
 	default:
 		break;
+	}
+	
+	if (multiplayer) {
+		int k = multiData["secondPlayer"][1];
+		switch (k)
+		{
+		case 1:
+			color_pacman = sf::Color::Red;
+			break;
+		case 2:
+			color_pacman = sf::Color::Magenta;
+			break;
+		case 3:
+			color_pacman = sf::Color::Green;
+			break;
+		case 4:
+			color_pacman = sf::Color::Yellow;
+			break;
+		case 5:
+			color_pacman = sf::Color(255, 165, 0);
+			break;
+		case 6:
+			color_pacman = sf::Color(255, 192, 203);
+			break;
+			
+		default:
+			break;
+		}
 	}
 	packman.__topShape.setFillColor(color_pacman);
 	packman.__bottomShape.setFillColor(color_pacman);

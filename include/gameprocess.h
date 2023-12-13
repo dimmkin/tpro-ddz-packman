@@ -34,7 +34,8 @@ public:
 
 	// fields 
 	Field __field;
-	Packman __packman;
+	Packman __packman1;
+	Packman __packman2;
 	std::map<GhostID, Ghost> __ghosts;
 	std::map<TypesBonuses, Bonus> __bonuses;
 	GameState __gameState = GameState::PLAY;
@@ -51,9 +52,9 @@ public:
 	bool initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, TypesBonuses type, const sf::IntRect frame, bool active = false);
 
 	void updateGameOverTitle(sf::Text& title, const std::string& text);
-	void updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes, bool stop = false);
+	void updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes, bool stop = false, bool multiplayer = false);
 
 	std::string getGameProcessWindowTitle();
-	void drawGameProcess(sf::RenderWindow& window);
-	void initializeGameProcess(const sf::Vector2f& processSize);
+	void drawGameProcess(sf::RenderWindow& window, bool multiplayer = false);
+	void initializeGameProcess(const sf::Vector2f& processSize, bool multiplayer);
 };

@@ -20,7 +20,7 @@ bool stop = false;
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
 
-void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter = 1);
+void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter = 1, bool multiplayer = false);
 
 void GameStart(RenderWindow& window, Font& font, double width, double height);
 
@@ -152,13 +152,18 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     }
 }
 
-void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter)
+void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter, bool multiplayer)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
 
     std::ifstream file("text.json");
     json data = json::parse(file);
     file.close();
+
+    std::ifstream multiFile("multiplayer.json");
+    json multiData = json::parse(multiFile);
+    multiFile.close();
+
     std::string gameSelect = data["Start_game"][0];
 
     std::string Round = "";
@@ -191,12 +196,12 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     TitulFirstPlayer.setFont(font);
     InitText(TitulFirstPlayer, 150, 150, L"Player 1", 100, Color::Yellow, 3, Color::Blue);
 
-    std::string name_user = data["Option"][2];
-    Text NikName1;
-    NikName1.setString(name_user);
+    std::string nameFirstPlayer = multiplayer ? multiData["firstPlayer"][0] : data["Option"][2];
+    Text NickName1;
+    NickName1.setString(nameFirstPlayer);
     Text TitulFirstNick;
     TitulFirstNick.setFont(font);
-    InitText(TitulFirstNick, 120, 250, NikName1.getString(), 90, Color::Yellow, 3, Color::Blue);
+    InitText(TitulFirstNick, 120, 250, NickName1.getString(), 90, Color::Yellow, 3, Color::Blue);
     RectangleShape heats1(Vector2f(100, 100));
     Texture heats_image1;
     if (!heats_image1.loadFromFile("image/lifes.png")) exit(23);
@@ -220,9 +225,12 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     TitulSecondPlayer.setFont(font);
     InitText(TitulSecondPlayer, 1550, 150, L"Player 2", 100, Color::Yellow, 3, Color::Blue);
 
+    std::string nameSecondPlayer = multiplayer ? multiData["secondPlayer"][0] : "Nickname 2";
+    Text NickName2;
+    NickName2.setString(nameSecondPlayer);
     Text TitulSecondNick;
     TitulSecondNick.setFont(font);
-    InitText(TitulSecondNick, 1520, 250, L"Nickname 2", 90, Color::Yellow, 3, Color::Blue);
+    InitText(TitulSecondNick, 1550, 250, NickName2.getString(), 90, Color::Yellow, 3, Color::Blue);
 
     Text TitulSecondScore;
     TitulSecondScore.setFont(font);
@@ -231,8 +239,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     sf::Clock clock;
     GameProcess process;
 
-    process.initializeGameProcess(sf::Vector2f(window.getSize()));
-
+    process.initializeGameProcess(sf::Vector2f(window.getSize()), multiplayer);
 
     sf::Text countdownText;
     countdownText.setFont(font);
@@ -249,13 +256,15 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     int music_count = 0;
     while (window.isOpen()) {
         sf::Event event;
+        const float elapsedTime = clock.getElapsedTime().asSeconds();
         while (window.pollEvent(event)) {
             if (event.type == Event::KeyPressed)
             {
                 if (event.key.code == Keyboard::Escape) {
                     Fon_Map_music.Music_pause_all();
                     music.Music_pause_all();
-                    stop = true;
+                    process.updateGameProcess(elapsedTime, flag, lifes, true);
+                    Pause(window, font, width, height); 
                 }
             }
         }
@@ -336,7 +345,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
             music.Music_stop_all();
             Fon_Map_music.Music_stop_all();
             Fon_music.Music_return(0);
-            unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
+            unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
             EndGame(window, font, width, height, process, scores);
         }
 
@@ -347,7 +356,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
                 music.Music_stop_all();
                 Fon_Map_music.Music_stop_all();
                 Fon_music.Music_return(0);
-                unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
+                unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
                 EndGame(window, font, width, height, process, scores);
             }
             else {
@@ -360,7 +369,6 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         Scores.setFont(font);
         InitText(Scores, 225, 500, process.getGameProcessWindowTitle(), 80, Color::Yellow, 3, Color::Blue);
 
-        const float elapsedTime = clock.getElapsedTime().asSeconds();
 
         if (flag) {
             --lifes;
@@ -385,14 +393,21 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         window.draw(TitulSecondScore);
         window.draw(heats1);
         window.draw(Heats_Count);
-        process.updateGameProcess(elapsedTime, flag, lifes, stop);
-        process.drawGameProcess(window);
+        if (multiplayer) {
+            process.updateGameProcess(elapsedTime, flag, lifes, stop, multiplayer);
+        }
+        else {
+            process.updateGameProcess(elapsedTime, flag, lifes, stop);
+        }
+        if (multiplayer) {
+            process.drawGameProcess(window, multiplayer);
+        }
+        else {
+            process.drawGameProcess(window);
+        }
         window.draw(Scores);
         window.display();
-        if (stop) {
-            process.updateGameProcess(elapsedTime, flag, lifes, true);
-            Pause(window, font, width, height); 
-        }
+        
     }
 }
 void GameStart(RenderWindow& window, Font& font, double width, double height)
@@ -445,8 +460,6 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
 
     myMaps.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
-
-
     // Button map
     Texture map1_picture;
     if (!map1_picture.loadFromFile("image/Map_1.png")) exit(1);
@@ -480,8 +493,6 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
     map1_button_sprite.setPosition(button1X, button1Y);
     map2_button_sprite.setPosition(button2X, button2Y);
     map3_button_sprite.setPosition(button3X, button3Y);
-
-
 
     std::ifstream file("text.json");
     json data = json::parse(file);
@@ -804,6 +815,8 @@ void Exit(RenderWindow& window, Font& font, double width, double height)
 
 void MultiplayerMenu(RenderWindow& window, Font& font, double width, double height)
 {
+    bool multiplayer = true;
+
     RectangleShape background(Vector2f(width, height));
 
     Texture textureWindow;
@@ -840,6 +853,12 @@ void MultiplayerMenu(RenderWindow& window, Font& font, double width, double heig
     Text nameFirstPlayer("", font, 20);
     Text nameSecondPlayer("", font, 20);
 
+    std::ifstream file("multiplayer.json");
+    json data = json::parse(file);
+    data["firstPlayer"].clear();
+    data["secondPlayer"].clear();
+    file.close();
+
     while (window.isOpen())
     {
         Event event;
@@ -867,6 +886,7 @@ void MultiplayerMenu(RenderWindow& window, Font& font, double width, double heig
                 {
                     if (event.key.code == Keyboard::Return)
                     {
+                        data["firstPlayer"].push_back(nameFirstPlayer.getString());
                         page = 1;
                     }
                 }
@@ -879,6 +899,10 @@ void MultiplayerMenu(RenderWindow& window, Font& font, double width, double heig
 
                     if (event.key.code == Keyboard::Return)
                     {
+                        data["firstPlayer"].push_back(firstPlayerColor.getSelectedMenuNumber() + 1);
+                        std::ofstream file("multiplayer.json");
+                        file << data;
+                        file.close();
                         page = 2;
                     }
                 }
@@ -903,6 +927,7 @@ void MultiplayerMenu(RenderWindow& window, Font& font, double width, double heig
                 {
                     if (event.key.code == Keyboard::Return)
                     {
+                        data["secondPlayer"].push_back(nameSecondPlayer.getString());
                         page = 3;
                     }
                 }
@@ -914,7 +939,11 @@ void MultiplayerMenu(RenderWindow& window, Font& font, double width, double heig
                     if (event.key.code == Keyboard::Right) { secondPlayerColor.MoveNext(); }
                     if (event.key.code == Keyboard::Return)
                     {
-                        PlayGame(window, font, width, height);
+                        data["secondPlayer"].push_back(secondPlayerColor.getSelectedMenuNumber() + 4);
+                        std::ofstream file("multiplayer.json");
+                        file << data;
+                        file.close();
+                        PlayGame(window, font, width, height, 1, multiplayer);
                     }
                 }
                 break;

@@ -31,7 +31,7 @@ public:
 	// methods
 	sf::Vector2f getRadialPoint(float angle, float radius);
 	void assignFigure(sf::ConvexShape& shape, std::vector<sf::Vector2f> const& points);
-	void initializePackman(Field& field, Packman& packman, float speed = 120.f);
+	void initializePackman(Field& field, Packman& packman, float speed = 120.f, bool multiplayer = false);
 	void assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bottomShape, const float phaseAnimation);
 	void setSpeedMultiplier(float newSpeed);
 	void updateHeroDirection();
