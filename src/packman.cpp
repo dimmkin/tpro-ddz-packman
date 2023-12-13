@@ -112,17 +112,17 @@ void Packman::setSpeedMultiplier(float newSpeed)
 	__speed = newSpeed;
 }
 
-void Packman::updateHero(float elapsedTime, Field& field)
+void Packman::updateHero(float elapsedTime, Field& field, bool stop)
 {
-	const float step = __speed * elapsedTime;
-
+	const float step = (stop) ? 0 : __speed * elapsedTime;
+	const float localspeed = (stop) ? 0 : __speed;
 	updateHeroDirection();
 
 	sf::Vector2f movement(0.f, 0.f);
 	movement = buildMovement(movement, *this, step);
 	
 	const sf::FloatRect packmanBounds = getPackmanBounds();
-	if (field.checkFieldWallsCollision(packmanBounds, movement, __speed)) {
+	if (field.checkFieldWallsCollision(packmanBounds, movement, localspeed)) {
 	}
 	if (__position.x < LEFT_INDENTATION) {
 		__position.x = __position.x + field.__width * BLOCK_SIZE - 35;
