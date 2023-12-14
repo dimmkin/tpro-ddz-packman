@@ -28,11 +28,14 @@ void GameProcess::initializeGameProcess(const sf::Vector2f& processSize, bool mu
 	bool succeed = __font.loadFromFile("font/EightBits.ttf");
 
 	__field.initializeField();
-
-	__packman1.initializePackman(__field, __packman1, 150.f);
 	if (multiplayer) {
+		__packman1.initializePackman(__field, __packman1, 150.f, multiplayer, true);
 		__packman2.initializePackman(__field, __packman2, 150.f, multiplayer);
 	}
+	else {
+		__packman1.initializePackman(__field, __packman1, 150.f);
+	}
+
 
 	std::ifstream file("text.json");
 	json data = json::parse(file);

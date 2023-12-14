@@ -95,7 +95,7 @@ int Packman::directionOrientationDegrees(Direction direction)
   }
 }
   
-void Packman::initializePackman(Field& field, Packman& packman, float speed, bool multiplayer)
+void Packman::initializePackman(Field& field, Packman& packman, float speed, bool multiplayer, bool first)
 {
 	packman.__direction = Direction::NONE;
 	packman.__position = field.getPackmanStartPosition();
@@ -112,48 +112,68 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed, boo
 	json multiData = json::parse(multiFile);
 	multiFile.close();
 
-	sf::Color color_pacman;
-	
 	if (multiplayer) {
-		int k = multiData["secondPlayer"][1];
-		switch (k)
+		if (first) {
+			int i = multiData["firstPlayer"][1];
+			switch (i)
+			{
+			case 1:
+				__color = sf::Color::Red;
+				break;
+			case 2:
+				__color = sf::Color::Magenta;
+				break;
+			case 3:
+				__color = sf::Color::Green;
+				break;
+			default:
+				break;
+			}
+			packman.__topShape.setFillColor(__color);
+			packman.__bottomShape.setFillColor(__color);
+			return;
+		} else {
+			int k = multiData["secondPlayer"][1];
+			switch (k)
+			{
+			case 4:
+				__color = sf::Color::Yellow;
+				break;
+			case 5:
+				__color = sf::Color(255, 165, 0);
+				break;
+			case 6:
+				__color = sf::Color(255, 192, 203);
+				break;
+				
+			default:
+				break;
+			}
+			packman.__topShape.setFillColor(__color);
+			packman.__bottomShape.setFillColor(__color);
+			return;
+		}
+	}
+	else {
+		int i = data["Option"][3];
+		switch (i)
 		{
-		case 4:
-			color_pacman = sf::Color::Yellow;
+		case 1:
+			__color = sf::Color::Red;
 			break;
-		case 5:
-			color_pacman = sf::Color(255, 165, 0);
+		case 2:
+			__color = sf::Color::Magenta;
 			break;
-		case 6:
-			color_pacman = sf::Color(255, 192, 203);
+		case 3:
+			__color = sf::Color::Green;
 			break;
-			
 		default:
 			break;
 		}
-		packman.__topShape.setFillColor(color_pacman);
-		packman.__bottomShape.setFillColor(color_pacman);
-		return;
-	}
 
-	int i = multiplayer ? multiData["firstPlayer"][1] : data["Option"][3];
-	switch (i)
-	{
-	case 1:
-		color_pacman = sf::Color::Red;
-		break;
-	case 2:
-		color_pacman = sf::Color::Magenta;
-		break;
-	case 3:
-		color_pacman = sf::Color::Green;
-		break;
-	default:
-		break;
+		packman.__topShape.setFillColor(__color);
+		packman.__bottomShape.setFillColor(__color);
 	}
-
-	packman.__topShape.setFillColor(color_pacman);
-	packman.__bottomShape.setFillColor(color_pacman);
 }
 
 void Packman::setSpeedMultiplier(float newSpeed)
