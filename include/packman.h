@@ -34,9 +34,9 @@ public:
 	void initializePackman(Field& field, Packman& packman, float speed = 120.f, bool multiplayer = false);
 	void assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bottomShape, const float phaseAnimation);
 	void setSpeedMultiplier(float newSpeed);
-	void updateHeroDirection();
+	void updateHeroDirection(bool multiplayer = false);
 	int directionOrientationDegrees(Direction direction);
-	void updateHero(float elapsedTime, Field& field, bool stop = false);
+	void updateHero(float elapsedTime, Field& field, bool stop = false, bool multiplayer = false);
 	void drawPackman(sf::RenderWindow& window);
 	sf::FloatRect getPackmanBounds();
 };

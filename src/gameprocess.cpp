@@ -164,7 +164,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 	if (__gameState == GameState::PLAY) {
 		__packman1.updateHero(elapsedTime, __field, stop);
 		if (multiplayer) {
-			__packman2.updateHero(elapsedTime, __field, stop);
+			__packman2.updateHero(elapsedTime, __field, stop, multiplayer);
 		}
 
 		redrawingBonuses();
