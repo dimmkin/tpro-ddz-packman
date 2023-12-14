@@ -39,26 +39,6 @@ void Packman::assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bo
 	assignFigure(bottomShape, points);
 }
 
-// void Packman::updateHeroDirection(bool multiplayer)
-// {
-// 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-// 		__direction = Direction::UP;
-// 		__orientationDegrees = 0;
-// 	}
-// 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-// 		__direction = Direction::DOWN;
-// 		__orientationDegrees = 180;
-// 	}
-// 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-// 		__direction = Direction::LEFT;
-// 		__orientationDegrees = 270;
-// 	}
-// 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-// 		__direction = Direction::RIGHT;
-// 		__orientationDegrees = 90;
-// 	}
-// }
-
 void Packman::updateHeroDirection(bool multiplayer)
 {
   if (multiplayer) {
@@ -135,22 +115,7 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed, boo
 	sf::Color color_pacman;
 	
 	if (multiplayer) {
-		int i = multiData["firstPlayer"][1];
 		int k = multiData["secondPlayer"][1];
-		switch (i)
-		{
-		case 1:
-			color_pacman = sf::Color::Red;
-			break;
-		case 2:
-			color_pacman = sf::Color::Magenta;
-			break;
-		case 3:
-			color_pacman = sf::Color::Green;
-			break;
-		default:
-			break;
-		}
 		switch (k)
 		{
 		case 4:
@@ -166,23 +131,25 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed, boo
 		default:
 			break;
 		}
+		packman.__topShape.setFillColor(color_pacman);
+		packman.__bottomShape.setFillColor(color_pacman);
+		return;
 	}
-	else {
-		int i = data["Option"][3];
-		switch (i)
-		{
-		case 1:
-			color_pacman = sf::Color::Red;
-			break;
-		case 2:
-			color_pacman = sf::Color::Magenta;
-			break;
-		case 3:
-			color_pacman = sf::Color::Green;
-			break;
-		default:
-			break;
-		}
+
+	int i = multiplayer ? multiData["firstPlayer"][1] : data["Option"][3];
+	switch (i)
+	{
+	case 1:
+		color_pacman = sf::Color::Red;
+		break;
+	case 2:
+		color_pacman = sf::Color::Magenta;
+		break;
+	case 3:
+		color_pacman = sf::Color::Green;
+		break;
+	default:
+		break;
 	}
 
 	packman.__topShape.setFillColor(color_pacman);

@@ -79,7 +79,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
-void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double height, GameProcess& process, unsigned int scores)
+void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double height, GameProcess& process, unsigned int scores, bool multiplayer)
 {
     sf::RectangleShape backgrounGameOver(sf::Vector2f(width, height));
 
@@ -130,8 +130,8 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
                 {
                     switch (myEndGame.getSelectedMenuNumber())
                     {
-                    case 0:PlayGame(window, font, width, height, 1);     break;
-                    case 1:MainMenu(window, font, width, height);     break;
+                    case 0:PlayGame(window, font, width, height, 1, multiplayer); break;
+                    case 1:MainMenu(window, font, width, height);                 break;
                     }
                 }
             }
@@ -346,7 +346,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
             Fon_Map_music.Music_stop_all();
             Fon_music.Music_return(0);
             unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
-            EndGame(window, font, width, height, process, scores);
+            EndGame(window, font, width, height, process, scores, multiplayer);
         }
 
         if (process.__gameState == GameState::WIN) {
@@ -357,11 +357,11 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
                 Fon_Map_music.Music_stop_all();
                 Fon_music.Music_return(0);
                 unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
-                EndGame(window, font, width, height, process, scores);
+                EndGame(window, font, width, height, process, scores, multiplayer);
             }
             else {
                 Fon_Map_music.Music_stop_all();
-                PlayGame(window, font, width, height, RoundCounter);
+                PlayGame(window, font, width, height, RoundCounter, multiplayer);
             }
         }
 
