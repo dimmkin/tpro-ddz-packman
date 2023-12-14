@@ -45,9 +45,9 @@ public:
 	sf::Text __gameOverTitle;
 
 	// methods
-	void redrawingBonuses();
+	void redrawingBonuses(bool multiplayer = false);
 	void changedBonusesPosition();
-	void killBotsAndChangePosition();
+	void killBotsAndChangePosition(bool multiplayer = false);
 	bool initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID ghostID);
 	bool initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, TypesBonuses type, const sf::IntRect frame, bool active = false);
 

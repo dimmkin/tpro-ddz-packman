@@ -80,7 +80,7 @@ void GameProcess::initializeGameProcess(const sf::Vector2f& processSize, bool mu
 	__gameOverTitle.setOrigin(0.5f * titleBounds.width, 0.5f * titleBounds.height);
 }
 
-void GameProcess::killBotsAndChangePosition()
+void GameProcess::killBotsAndChangePosition(bool multiplayer)
 {
 	__ghosts.clear();
 	__field.clearMap(SYMBOLS_GHOSTS, __field.__map);
@@ -89,29 +89,38 @@ void GameProcess::killBotsAndChangePosition()
 	std::ifstream file("text.json");
 	json data = json::parse(file);
 	file.close();
-	int i = data["Start_game"][1];
-	switch (i)
-	{
-	case 1:
-		initializeGhostByID(__ghosts, GhostID::FIRST);
-		break;
-	case 2:
-		initializeGhostByID(__ghosts, GhostID::FIRST);
-		initializeGhostByID(__ghosts, GhostID::SECOND);
-		break;
-	case 3:
-		initializeGhostByID(__ghosts, GhostID::FIRST);
-		initializeGhostByID(__ghosts, GhostID::SECOND);
-		initializeGhostByID(__ghosts, GhostID::THIRD);
-		break;
-	case 4:
+
+	if (multiplayer ) {
 		initializeGhostByID(__ghosts, GhostID::FIRST);
 		initializeGhostByID(__ghosts, GhostID::SECOND);
 		initializeGhostByID(__ghosts, GhostID::THIRD);
 		initializeGhostByID(__ghosts, GhostID::FORTH);
-		break;
-	default:
-		break;
+	}
+	else {
+		int i = data["Start_game"][1];
+		switch (i)
+		{
+		case 1:
+			initializeGhostByID(__ghosts, GhostID::FIRST);
+			break;
+		case 2:
+			initializeGhostByID(__ghosts, GhostID::FIRST);
+			initializeGhostByID(__ghosts, GhostID::SECOND);
+			break;
+		case 3:
+			initializeGhostByID(__ghosts, GhostID::FIRST);
+			initializeGhostByID(__ghosts, GhostID::SECOND);
+			initializeGhostByID(__ghosts, GhostID::THIRD);
+			break;
+		case 4:
+			initializeGhostByID(__ghosts, GhostID::FIRST);
+			initializeGhostByID(__ghosts, GhostID::SECOND);
+			initializeGhostByID(__ghosts, GhostID::THIRD);
+			initializeGhostByID(__ghosts, GhostID::FORTH);
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -124,35 +133,59 @@ void GameProcess::changedBonusesPosition()
 	__field.__changed = true;
 }
 
-void GameProcess::redrawingBonuses()
+void GameProcess::redrawingBonuses(bool multiplayer)
 {
-	if (__packman1.__eatenCookies == 30 && !__field.__changed ||
-	__packman2.__eatenCookies == 30) {
-		changedBonusesPosition();
+	if (multiplayer) {
+		if ((__packman1.__eatenCookies + __packman2.__eatenCookies) == 50 && !__field.__changed) {
+			changedBonusesPosition();
+		}
+		if ((__packman1.__eatenCookies + __packman2.__eatenCookies) == 51) {
+			__field.__changed = false;
+		}
+		if ((__packman1.__eatenCookies + __packman2.__eatenCookies) == 100 && !__field.__changed) {
+			changedBonusesPosition();
+		}
+		if ((__packman1.__eatenCookies + __packman2.__eatenCookies) == 101) {
+			__field.__changed = false;
+		}
+		if ((__packman1.__eatenCookies + __packman2.__eatenCookies) == 150 && !__field.__changed) {
+			changedBonusesPosition();
+		}
+		if ((__packman1.__eatenCookies + __packman2.__eatenCookies) == 151) {
+			__field.__changed = false;
+		}
+		if ((__packman1.__eatenCookies + __packman2.__eatenCookies) == 200 && !__field.__changed) {
+			changedBonusesPosition();
+		}
+		if ((__packman1.__eatenCookies + __packman2.__eatenCookies) == 201) {
+			__field.__changed = false;
+		}
 	}
-	if (__packman1.__eatenCookies == 31 || __packman2.__eatenCookies == 31) {
-		__field.__changed = false;
-	}
-	if (__packman1.__eatenCookies == 60 && !__field.__changed ||
-	__packman2.__eatenCookies == 60) {
-		changedBonusesPosition();
-	}
-	if (__packman1.__eatenCookies == 61 || __packman2.__eatenCookies == 61) {
-		__field.__changed = false;
-	}
-	if (__packman1.__eatenCookies == 100 && !__field.__changed ||
-	__packman2.__eatenCookies == 100) {
-		changedBonusesPosition();
-	}
-	if (__packman1.__eatenCookies == 101 || __packman2.__eatenCookies == 101) {
-		__field.__changed = false;
-	}
-	if (__packman1.__eatenCookies == 120 && !__field.__changed ||
-	__packman2.__eatenCookies == 120) {
-		changedBonusesPosition();
-	}
-	if (__packman1.__eatenCookies == 121 || __packman2.__eatenCookies == 121) {
-		__field.__changed = false;
+	else {
+		if (__packman1.__eatenCookies == 50 && !__field.__changed) {
+			changedBonusesPosition();
+		}
+		if (__packman1.__eatenCookies == 51) {
+			__field.__changed = false;
+		}
+		if (__packman1.__eatenCookies == 100 && !__field.__changed) {
+			changedBonusesPosition();
+		}
+		if (__packman1.__eatenCookies == 101) {
+			__field.__changed = false;
+		}
+		if (__packman1.__eatenCookies == 150 && !__field.__changed) {
+			changedBonusesPosition();
+		}
+		if (__packman1.__eatenCookies == 151) {
+			__field.__changed = false;
+		}
+		if (__packman1.__eatenCookies == 200 && !__field.__changed) {
+			changedBonusesPosition();
+		}
+		if (__packman1.__eatenCookies == 201) {
+			__field.__changed = false;
+		}
 	}
 }
 
@@ -168,7 +201,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 			__packman2.updateHero(elapsedTime, __field, stop, multiplayer);
 		}
 
-		redrawingBonuses();
+		redrawingBonuses(multiplayer);
 
 		for (auto& pair : __ghosts) {
 			pair.second.updateHero(elapsedTime, __field, localspeed_ghost, stop);
@@ -199,7 +232,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 				if (it->second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
 					if (it->second.__bonusType == TypesBonuses::BOMB) {
 						it->second.__active = true;
-						killBotsAndChangePosition();
+						killBotsAndChangePosition(multiplayer);
 					}
 					if (it->second.__bonusType == TypesBonuses::CYCLE) {
 						__packman1.setSpeedMultiplier(localspeed_bonus);
@@ -251,7 +284,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 				if (it->second.__figure.getGlobalBounds().intersects(packmanBounds2)) {
 					if (it->second.__bonusType == TypesBonuses::BOMB) {
 						it->second.__active = true;
-						killBotsAndChangePosition();
+						killBotsAndChangePosition(multiplayer);
 					}
 					if (it->second.__bonusType == TypesBonuses::CYCLE) {
 						__packman2.setSpeedMultiplier(localspeed_bonus);
