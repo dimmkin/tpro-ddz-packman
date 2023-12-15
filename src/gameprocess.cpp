@@ -193,9 +193,9 @@ void GameProcess::redrawingBonuses(bool multiplayer)
 
 void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes, bool stop, bool multiplayer)
 {
-	float localspeed_bonus = (stop) ? 0 : 240.f;
+	float localspeed_bonus = (stop) ? 0 : 250.f;
 	float localspeed_multiplier = (stop) ? 0 : 150.f;
-	float localspeed_ghost = (stop) ? 0 : 90.f;
+	float localspeed_ghost = (stop) ? 0 : 100.f;
 
 	if (__gameState == GameState::PLAY) {
 		__packman1.updateHero(elapsedTime, __field, stop);

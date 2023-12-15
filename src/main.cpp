@@ -223,18 +223,26 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
 
     Text TitulSecondPlayer;
     TitulSecondPlayer.setFont(font);
-    InitText(TitulSecondPlayer, 1550, 150, L"Player 2", 100, Color::Yellow, 3, Color::Blue);
 
-    std::string nameSecondPlayer = multiplayer ? multiData["secondPlayer"][0] : "Nickname 2";
+    std::string nameSecondPlayer = multiplayer ? multiData["secondPlayer"][0] : "TO";
     Text NickName2;
     NickName2.setString(nameSecondPlayer);
+
     Text TitulSecondNick;
     TitulSecondNick.setFont(font);
-    InitText(TitulSecondNick, 1550, 250, NickName2.getString(), 90, Color::Yellow, 3, Color::Blue);
 
     Text TitulSecondScore;
     TitulSecondScore.setFont(font);
-    InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
+    if (multiplayer) {
+        InitText(TitulSecondPlayer, 1550, 150, L"Player 2", 100, Color::Yellow, 3, Color::Blue);
+        InitText(TitulSecondNick, 1550, 250, NickName2.getString(), 90, Color::Yellow, 3, Color::Blue);
+        InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
+    }
+    else {
+        InitText(TitulSecondPlayer, 1515, 350, L"WELCOME", 120, Color::Yellow, 3, Color::Blue);
+        InitText(TitulSecondNick, 1620, 450, NickName2.getString(), 120, Color::Yellow, 3, Color::Blue);
+        InitText(TitulSecondScore, 1480, 575, L"SIGMA PACKMAN", 90, Color::Yellow, 3, Color::Blue);
+    }
 
     sf::Clock clock;
     GameProcess process;
