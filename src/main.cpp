@@ -202,6 +202,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     Text TitulFirstNick;
     TitulFirstNick.setFont(font);
     InitText(TitulFirstNick, 120, 250, NickName1.getString(), 90, Color::Yellow, 3, Color::Blue);
+
     RectangleShape heats1(Vector2f(100, 100));
     Texture heats_image1;
     if (!heats_image1.loadFromFile("image/lifes.png")) exit(23);
@@ -209,13 +210,45 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     heats1.setPosition(110, 400);
     std::string heat_file_count = data["Option"][1];
     std::string heat_panel1 = "x" + heat_file_count;
-    Text heat_text;
-    heat_text.setString(heat_panel1);
-    unsigned int lifes = std::stoi(heat_file_count);
+    Text heat_text1;
+    heat_text1.setString(heat_panel1);
+    unsigned int lifes1 = std::stoi(heat_file_count);
 
-    Text Heats_Count;
-    Heats_Count.setFont(font);
-    InitText(Heats_Count, 250, 380, heat_text.getString(), 90, Color::Yellow, 3, Color::Blue);
+    Text Heats_Count1;
+    Heats_Count1.setFont(font);
+    InitText(Heats_Count1, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
+
+    RectangleShape heats2(Vector2f(100, 100));
+    Texture heats_image2;
+
+    heats2.setTexture(&heats_image1);
+    heats2.setPosition(1550, 400);
+    std::string heat_panel2 = "x" + heat_file_count;
+    Text heat_text2;
+    heat_text2.setString(heat_panel2);
+    unsigned int lifes2 = std::stoi(heat_file_count);
+
+    Text Heats_Count2;
+    Heats_Count2.setFont(font);
+    InitText(Heats_Count2, 1690, 380, heat_text2.getString(), 90, Color::Yellow, 3, Color::Blue);
+    // if(multiplayer) {
+        
+
+    // }
+    // else {
+    // Text heat_text2;
+    // heat_text2.setString("");
+    // unsigned int lifes2 = 0;
+    // Text Heats_Count2;
+    // Heats_Count2.setFont(font);
+    // InitText(Heats_Count2, 250, 380, heat_text2.getString(), 90, Color::Yellow, 3, Color::Blue);
+    // }
+
+
+
+    // Text Heats_Count;
+    // Heats_Count.setFont(font);
+    // InitText(Heats_Count, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
 
     Text TitulFirstScore;
     TitulFirstScore.setFont(font);
@@ -259,7 +292,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     music.Music_stop_all();
     int index = music.Random_music();
 
-    unsigned stek = lifes;
+    unsigned stek = lifes1;
     bool flag = false;
     int music_count = 0;
     while (window.isOpen()) {
@@ -271,7 +304,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
                 if (event.key.code == Keyboard::Escape) {
                     Fon_Map_music.Music_pause_all();
                     music.Music_pause_all();
-                    process.updateGameProcess(elapsedTime, flag, lifes, true);
+                    process.updateGameProcess(elapsedTime, flag, lifes1, true);
                     Pause(window, font, width, height); 
                 }
             }
@@ -379,13 +412,38 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
 
 
         if (flag) {
-            --lifes;
-            std::string heat_panel1 = "x" + std::to_string(lifes);
-            heat_text.setString(heat_panel1);
-            stek = lifes;
-            InitText(Heats_Count, 250, 380, heat_text.getString(), 90, Color::Yellow, 3, Color::Blue);
+            --lifes1;
+            std::string heat_panel1 = "x" + std::to_string(lifes1);
+            heat_text1.setString(heat_panel1);
+            stek = lifes1;
+            InitText(Heats_Count1, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
             flag = false;
 
+        }
+        if(multiplayer) {
+            if (flag) {
+            --lifes1;
+            std::string heat_panel1 = "x" + std::to_string(lifes1);
+            heat_text1.setString(heat_panel1);
+            stek = lifes1;
+            InitText(Heats_Count1, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
+            --lifes2;
+            std::string heat_panel2 = "x" + std::to_string(lifes2);
+            heat_text2.setString(heat_panel2);
+            stek = lifes2;
+            InitText(Heats_Count1, 250, 380, heat_text2.getString(), 90, Color::Yellow, 3, Color::Blue);
+            flag = false;
+            }
+        }
+        else {
+            if (flag) {
+            --lifes1;
+            std::string heat_panel1 = "x" + std::to_string(lifes1);
+            heat_text1.setString(heat_panel1);
+            stek = lifes1;
+            InitText(Heats_Count1, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
+            flag = false;
+            }
         }
 
         clock.restart();
@@ -399,14 +457,23 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         window.draw(TitulSecondPlayer);
         window.draw(TitulSecondNick);
         window.draw(TitulSecondScore);
-        window.draw(heats1);
-        window.draw(Heats_Count);
+
+        if(multiplayer) {
+            window.draw(heats1);
+            window.draw(Heats_Count1);
+            window.draw(heats2);
+            window.draw(Heats_Count2);
+        }
+        else {
+            window.draw(heats1);
+            window.draw(Heats_Count1);
+        }
         if (multiplayer) {
-            process.updateGameProcess(elapsedTime, flag, lifes, stop, multiplayer);
+            process.updateGameProcess(elapsedTime, flag, lifes1, stop, multiplayer);
             process.drawGameProcess(window, multiplayer);
         }
         else {
-            process.updateGameProcess(elapsedTime, flag, lifes, stop);
+            process.updateGameProcess(elapsedTime, flag, lifes1, stop);
             process.drawGameProcess(window);
         }
         window.draw(Scores);
@@ -1023,7 +1090,7 @@ int main()
     std::ifstream file_open("text.json");
     json data = json::parse(file_open);
     data["Start_game"] = { "Classic", 1, 1 };
-    data["Option"] = { 1, "1","User",1 };
+    data["Option"] = { 1, "2","User",1 };
     file_open.close();
     std::ofstream file_close("text.json");
     file_close << data;
