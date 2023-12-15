@@ -36,7 +36,6 @@ void GameProcess::initializeGameProcess(const sf::Vector2f& processSize, bool mu
 		__packman1.initializePackman(__field, __packman1, 150.f);
 	}
 
-
 	std::ifstream file("text.json");
 	json data = json::parse(file);
 	file.close();
@@ -255,7 +254,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 				++it;
 			}
 
-			if (__totalCookiesCount - __packman1.__eatenCookies == 0) {
+			if (__totalCookiesCount - (__packman1.__eatenCookies + __packman2.__eatenCookies) == 0) {
 				__gameState = GameState::WIN;
 			}
 		}

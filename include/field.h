@@ -17,6 +17,7 @@ static const size_t WIDTH_OF_FIELD = 21;
 static const size_t HEIGHT_OF_FIELD = 17;
 const int LEFT_INDENTATION = 535;
 const int TOP_INDENTATION = 190;
+const int OFFSET = 10;
 const std::vector<char> ALL_SYMBOLS = { '1','2','3','4','@', 'Q', 'W', 'E' };
 
 static char* FIELD[] = {

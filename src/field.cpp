@@ -115,6 +115,9 @@ sf::Vector2f Field::getStartPosition(char marker)
         for (size_t x = 0; x < WIDTH_OF_FIELD; ++x) {
             const size_t offset = x + y * WIDTH_OF_FIELD;
             if (__map[offset] == marker) {
+                if (marker == '@') {
+                    return { x * BLOCK_SIZE + LEFT_INDENTATION + OFFSET, y * BLOCK_SIZE + TOP_INDENTATION + OFFSET};
+                }
                 return { x * BLOCK_SIZE + LEFT_INDENTATION, y * BLOCK_SIZE + TOP_INDENTATION};
             }
         }
