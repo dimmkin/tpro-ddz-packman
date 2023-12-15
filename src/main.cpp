@@ -20,7 +20,7 @@ bool stop = false;
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
     Color menuTextColor = Color::Yellow, int bord = 0, Color borderColor = Color::Blue);
 
-void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter = 1);
+void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter = 1, bool multiplayer = false);
 
 void GameStart(RenderWindow& window, Font& font, double width, double height);
 
@@ -79,7 +79,7 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
-void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double height, GameProcess& process, unsigned int scores)
+void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double height, GameProcess& process, unsigned int scores, bool multiplayer)
 {
     sf::RectangleShape backgrounGameOver(sf::Vector2f(width, height));
 
@@ -130,8 +130,8 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
                 {
                     switch (myEndGame.getSelectedMenuNumber())
                     {
-                    case 0:PlayGame(window, font, width, height, 1);     break;
-                    case 1:MainMenu(window, font, width, height);     break;
+                    case 0:PlayGame(window, font, width, height, 1, multiplayer); break;
+                    case 1:MainMenu(window, font, width, height);                 break;
                     }
                 }
             }
@@ -152,13 +152,18 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     }
 }
 
-void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter)
+void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter, bool multiplayer)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
 
     std::ifstream file("text.json");
     json data = json::parse(file);
     file.close();
+
+    std::ifstream multiFile("multiplayer.json");
+    json multiData = json::parse(multiFile);
+    multiFile.close();
+
     std::string gameSelect = data["Start_game"][0];
 
     std::string Round = "";
@@ -191,12 +196,12 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     TitulFirstPlayer.setFont(font);
     InitText(TitulFirstPlayer, 150, 150, L"Player 1", 100, Color::Yellow, 3, Color::Blue);
 
-    std::string name_user = data["Option"][2];
-    Text NikName1;
-    NikName1.setString(name_user);
+    std::string nameFirstPlayer = multiplayer ? multiData["firstPlayer"][0] : data["Option"][2];
+    Text NickName1;
+    NickName1.setString(nameFirstPlayer);
     Text TitulFirstNick;
     TitulFirstNick.setFont(font);
-    InitText(TitulFirstNick, 120, 250, NikName1.getString(), 90, Color::Yellow, 3, Color::Blue);
+    InitText(TitulFirstNick, 120, 250, NickName1.getString(), 90, Color::Yellow, 3, Color::Blue);
     RectangleShape heats1(Vector2f(100, 100));
     Texture heats_image1;
     if (!heats_image1.loadFromFile("image/lifes.png")) exit(23);
@@ -218,21 +223,31 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
 
     Text TitulSecondPlayer;
     TitulSecondPlayer.setFont(font);
-    InitText(TitulSecondPlayer, 1550, 150, L"Player 2", 100, Color::Yellow, 3, Color::Blue);
+
+    std::string nameSecondPlayer = multiplayer ? multiData["secondPlayer"][0] : "TO";
+    Text NickName2;
+    NickName2.setString(nameSecondPlayer);
 
     Text TitulSecondNick;
     TitulSecondNick.setFont(font);
-    InitText(TitulSecondNick, 1520, 250, L"Nickname 2", 90, Color::Yellow, 3, Color::Blue);
 
     Text TitulSecondScore;
     TitulSecondScore.setFont(font);
-    InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
+    if (multiplayer) {
+        InitText(TitulSecondPlayer, 1550, 150, L"Player 2", 100, Color::Yellow, 3, Color::Blue);
+        InitText(TitulSecondNick, 1550, 250, NickName2.getString(), 90, Color::Yellow, 3, Color::Blue);
+        InitText(TitulSecondScore, 1475, 500, L"Score: ", 80, Color::Yellow, 3, Color::Blue);
+    }
+    else {
+        InitText(TitulSecondPlayer, 1515, 350, L"WELCOME", 120, Color::Yellow, 3, Color::Blue);
+        InitText(TitulSecondNick, 1620, 450, NickName2.getString(), 120, Color::Yellow, 3, Color::Blue);
+        InitText(TitulSecondScore, 1480, 575, L"SIGMA PACKMAN", 90, Color::Yellow, 3, Color::Blue);
+    }
 
     sf::Clock clock;
     GameProcess process;
 
-    process.initializeGameProcess(sf::Vector2f(window.getSize()));
-
+    process.initializeGameProcess(sf::Vector2f(window.getSize()), multiplayer);
 
     sf::Text countdownText;
     countdownText.setFont(font);
@@ -249,13 +264,15 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     int music_count = 0;
     while (window.isOpen()) {
         sf::Event event;
+        const float elapsedTime = clock.getElapsedTime().asSeconds();
         while (window.pollEvent(event)) {
             if (event.type == Event::KeyPressed)
             {
                 if (event.key.code == Keyboard::Escape) {
                     Fon_Map_music.Music_pause_all();
                     music.Music_pause_all();
-                    stop = true;
+                    process.updateGameProcess(elapsedTime, flag, lifes, true);
+                    Pause(window, font, width, height); 
                 }
             }
         }
@@ -336,8 +353,8 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
             music.Music_stop_all();
             Fon_Map_music.Music_stop_all();
             Fon_music.Music_return(0);
-            unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
-            EndGame(window, font, width, height, process, scores);
+            unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
+            EndGame(window, font, width, height, process, scores, multiplayer);
         }
 
         if (process.__gameState == GameState::WIN) {
@@ -347,12 +364,12 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
                 music.Music_stop_all();
                 Fon_Map_music.Music_stop_all();
                 Fon_music.Music_return(0);
-                unsigned int scores = floor(static_cast<double>(process.__packman.__eatenCookies) / process.__totalCookiesCount * 100);
-                EndGame(window, font, width, height, process, scores);
+                unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
+                EndGame(window, font, width, height, process, scores, multiplayer);
             }
             else {
                 Fon_Map_music.Music_stop_all();
-                PlayGame(window, font, width, height, RoundCounter);
+                PlayGame(window, font, width, height, RoundCounter, multiplayer);
             }
         }
 
@@ -360,7 +377,6 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         Scores.setFont(font);
         InitText(Scores, 225, 500, process.getGameProcessWindowTitle(), 80, Color::Yellow, 3, Color::Blue);
 
-        const float elapsedTime = clock.getElapsedTime().asSeconds();
 
         if (flag) {
             --lifes;
@@ -385,14 +401,17 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         window.draw(TitulSecondScore);
         window.draw(heats1);
         window.draw(Heats_Count);
-        process.updateGameProcess(elapsedTime, flag, lifes, stop);
-        process.drawGameProcess(window);
+        if (multiplayer) {
+            process.updateGameProcess(elapsedTime, flag, lifes, stop, multiplayer);
+            process.drawGameProcess(window, multiplayer);
+        }
+        else {
+            process.updateGameProcess(elapsedTime, flag, lifes, stop);
+            process.drawGameProcess(window);
+        }
         window.draw(Scores);
         window.display();
-        if (stop) {
-            process.updateGameProcess(elapsedTime, flag, lifes, true);
-            Pause(window, font, width, height); 
-        }
+        
     }
 }
 void GameStart(RenderWindow& window, Font& font, double width, double height)
@@ -445,8 +464,6 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
 
     myMaps.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
 
-
-
     // Button map
     Texture map1_picture;
     if (!map1_picture.loadFromFile("image/Map_1.png")) exit(1);
@@ -480,8 +497,6 @@ void GameStart(RenderWindow& window, Font& font, double width, double height)
     map1_button_sprite.setPosition(button1X, button1Y);
     map2_button_sprite.setPosition(button2X, button2Y);
     map3_button_sprite.setPosition(button3X, button3Y);
-
-
 
     std::ifstream file("text.json");
     json data = json::parse(file);
@@ -802,6 +817,161 @@ void Exit(RenderWindow& window, Font& font, double width, double height)
     }
 }
 
+void MultiplayerMenu(RenderWindow& window, Font& font, double width, double height)
+{
+    bool multiplayer = true;
+
+    RectangleShape background(Vector2f(width, height));
+
+    Texture textureWindow;
+    if (!textureWindow.loadFromFile("image/multiplayer-menu.png")) exit(1);
+    background.setTexture(&textureWindow);
+
+    Text TitulMultiplayer;
+    TitulMultiplayer.setFont(font);
+    InitText(TitulMultiplayer, 600, -80, L"MULTIPLAYER", 200, Color::Yellow, 3, Color::Black);
+
+    Text TitulName;
+    TitulName.setFont(font);
+    InitText(TitulName, 825, 150, L"NAME", 200, Color::Yellow, 3, Color::Blue);
+
+    Text TitulGame;
+    TitulGame.setFont(font);
+    InitText(TitulGame, 825, 400, L"GAME", 200, Color::Yellow, 3, Color::Blue);
+
+    Text TitulColor;
+    TitulColor.setFont(font);
+    InitText(TitulColor, 800, 625, L"COLOR", 200, Color::Yellow, 3, Color::Blue);
+    
+    String countColors[]{ L"1",L"2", L"3" };
+
+    game::Settings firstPlayerColor(window, 175, 810, 3, countColors, 90, 150);
+
+    firstPlayerColor.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);  
+
+    game::Settings secondPlayerColor(window, 1375, 810, 3, countColors, 90, 150);
+
+    secondPlayerColor.setColorTextMenu(Color::Blue, Color::Yellow, Color::Black);
+
+    int page = 0;
+    Text nameFirstPlayer("", font, 20);
+    Text nameSecondPlayer("", font, 20);
+
+    std::ifstream file("multiplayer.json");
+    json data = json::parse(file);
+    data["firstPlayer"].clear();
+    data["secondPlayer"].clear();
+    file.close();
+
+    while (window.isOpen())
+    {
+        Event event;
+        while (window.pollEvent(event))
+        {
+            switch (page)
+            {
+            case 0:
+                if (event.type == Event::TextEntered)
+                {
+                    std::string text = nameFirstPlayer.getString();
+                    int digit = event.text.unicode;
+                    if (text.length() < 12) {
+                        nameFirstPlayer.setString(text + (char)(digit));
+                    }
+                    if (digit == 57) {
+                        nameFirstPlayer.setString(text + '9');
+                    }
+                    if (digit == 8) {
+                        nameFirstPlayer.setString(text.substr(0, text.length() - 1));
+                    }
+                    InitText(nameFirstPlayer, 100, 230, nameFirstPlayer.getString(), 100, Color::Blue, 3, Color::Black);
+                }
+                if (event.type == Event::KeyReleased)
+                {
+                    if (event.key.code == Keyboard::Return)
+                    {
+                        data["firstPlayer"].push_back(nameFirstPlayer.getString());
+                        page = 1;
+                    }
+                }
+                break;
+            case 1 :
+                if (event.type == Event::KeyReleased)
+                {
+                    if (event.key.code == Keyboard::Left) { firstPlayerColor.MovePrev(); }
+                    if (event.key.code == Keyboard::Right) { firstPlayerColor.MoveNext(); }
+
+                    if (event.key.code == Keyboard::Return)
+                    {
+                        data["firstPlayer"].push_back(firstPlayerColor.getSelectedMenuNumber() + 1);
+                        std::ofstream file("multiplayer.json");
+                        file << data;
+                        file.close();
+                        page = 2;
+                    }
+                }
+                break;
+            case 2:
+                if (event.type == Event::TextEntered)
+                {
+                    std::string text = nameSecondPlayer.getString();
+                    int digit = event.text.unicode;
+                    if (text.length() < 12) {
+                        nameSecondPlayer.setString(text + (char)(digit));
+                    }
+                    if (digit == 57) {
+                        nameSecondPlayer.setString(text + '9');
+                    }
+                    if (digit == 8) {
+                        nameSecondPlayer.setString(text.substr(0, text.length() - 1));
+                    }
+                    InitText(nameSecondPlayer, 1300, 230, nameSecondPlayer.getString(), 100, Color::Blue, 3, Color::Black);
+                }
+                if (event.type == Event::KeyReleased)
+                {
+                    if (event.key.code == Keyboard::Return)
+                    {
+                        data["secondPlayer"].push_back(nameSecondPlayer.getString());
+                        page = 3;
+                    }
+                }
+                break;
+            case 3:
+                if (event.type == Event::KeyReleased)
+                {
+                    if (event.key.code == Keyboard::Left) { secondPlayerColor.MovePrev(); }
+                    if (event.key.code == Keyboard::Right) { secondPlayerColor.MoveNext(); }
+                    if (event.key.code == Keyboard::Return)
+                    {
+                        data["secondPlayer"].push_back(secondPlayerColor.getSelectedMenuNumber() + 4);
+                        std::ofstream file("multiplayer.json");
+                        file << data;
+                        file.close();
+                        PlayGame(window, font, width, height, 1, multiplayer);
+                    }
+                }
+                break;
+            };
+
+           if (event.type == Event::KeyPressed)
+            {
+                if (event.key.code == Keyboard::Escape) { MainMenu(window, font, 1920, 1080); }
+            }
+        }
+        window.clear();
+        window.draw(background);
+        window.draw(TitulMultiplayer);
+        window.draw(TitulName);
+        window.draw(TitulGame);
+        window.draw(TitulColor);
+        window.draw(nameFirstPlayer);
+        window.draw(nameSecondPlayer);
+        firstPlayerColor.draw();
+        secondPlayerColor.draw();
+        window.display();
+    }
+}
+
 void MainMenu(RenderWindow& window, Font& font, double width, double height)
 {
     RectangleShape background(Vector2f(width, height));
@@ -810,9 +980,9 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
     if (!textureWindow.loadFromFile("image/packman-menu.png")) exit(1);
     background.setTexture(&textureWindow);
 
-    String nameMenu[]{ L"START",L"SETTINGS",L"EXIT" };
+    String nameMenu[]{ L"START", L"MULTIPLAYER", L"SETTINGS",L"EXIT" };
 
-    game::Menu mymenu(window, 1400, 250, 3, nameMenu, 150, 160);
+    game::Menu mymenu(window, 1400, 190, 4, nameMenu, 150, 160);
 
     mymenu.setColorTextMenu(Color::Blue, Color::Yellow, Color::Blue);
 
@@ -833,9 +1003,10 @@ void MainMenu(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (mymenu.getSelectedMenuNumber())
                     {
-                    case 0:GameStart(window, font, width, height);    break;
-                    case 1:Settings(window, font, width, height);     break;
-                    case 2:Exit(window, font, width, height);         break;
+                    case 0:GameStart(window, font, width, height);       break;
+                    case 1:MultiplayerMenu(window, font, width, height); break;
+                    case 2:Settings(window, font, width, height);        break;
+                    case 3:Exit(window, font, width, height);            break;
                     }
                 }
             }

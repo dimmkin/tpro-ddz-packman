@@ -39,24 +39,44 @@ void Packman::assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bo
 	assignFigure(bottomShape, points);
 }
 
-void Packman::updateHeroDirection()
+void Packman::updateHeroDirection(bool multiplayer)
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+  if (multiplayer) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		__direction = Direction::UP;
 		__orientationDegrees = 0;
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 		__direction = Direction::DOWN;
 		__orientationDegrees = 180;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		__direction = Direction::LEFT;
 		__orientationDegrees = 270;
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		__direction = Direction::RIGHT;
 		__orientationDegrees = 90;
-	}
+    }
+  }
+  else {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+      __direction = Direction::UP;
+      __orientationDegrees = 0;
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+      __direction = Direction::DOWN;
+      __orientationDegrees = 180;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+      __direction = Direction::LEFT;
+      __orientationDegrees = 270;
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+      __direction = Direction::RIGHT;
+      __orientationDegrees = 90;
+    }
+  }
 }
 
 int Packman::directionOrientationDegrees(Direction direction)
@@ -75,7 +95,7 @@ int Packman::directionOrientationDegrees(Direction direction)
   }
 }
   
-void Packman::initializePackman(Field& field, Packman& packman, float speed)
+void Packman::initializePackman(Field& field, Packman& packman, float speed, bool multiplayer, bool first)
 {
 	packman.__direction = Direction::NONE;
 	packman.__position = field.getPackmanStartPosition();
@@ -87,24 +107,73 @@ void Packman::initializePackman(Field& field, Packman& packman, float speed)
 	std::ifstream file("text.json");
 	json data = json::parse(file);
 	file.close();
-	int i = data["Option"][3];
-	sf::Color color_pacman;
-	switch (i)
-	{
-	case 1:
-		color_pacman = sf::Color::Red;
-		break;
-	case 2:
-		color_pacman = sf::Color::Magenta;
-		break;
-	case 3:
-		color_pacman = sf::Color::Green;
-		break;
-	default:
-		break;
+	
+	std::ifstream multiFile("multiplayer.json");
+	json multiData = json::parse(multiFile);
+	multiFile.close();
+
+	if (multiplayer) {
+		if (first) {
+			int i = multiData["firstPlayer"][1];
+			switch (i)
+			{
+			case 1:
+				__color = sf::Color::Red;
+				break;
+			case 2:
+				__color = sf::Color::Magenta;
+				break;
+			case 3:
+				__color = sf::Color::Green;
+				break;
+			default:
+				break;
+			}
+			packman.__topShape.setFillColor(__color);
+			packman.__bottomShape.setFillColor(__color);
+			return;
+		} else {
+			int k = multiData["secondPlayer"][1];
+			switch (k)
+			{
+			case 4:
+				__color = sf::Color::Yellow;
+				break;
+			case 5:
+				__color = sf::Color(255, 165, 0);
+				break;
+			case 6:
+				__color = sf::Color(255, 192, 203);
+				break;
+				
+			default:
+				break;
+			}
+			packman.__topShape.setFillColor(__color);
+			packman.__bottomShape.setFillColor(__color);
+			return;
+		}
 	}
-	packman.__topShape.setFillColor(color_pacman);
-	packman.__bottomShape.setFillColor(color_pacman);
+	else {
+		int i = data["Option"][3];
+		switch (i)
+		{
+		case 1:
+			__color = sf::Color::Red;
+			break;
+		case 2:
+			__color = sf::Color::Magenta;
+			break;
+		case 3:
+			__color = sf::Color::Green;
+			break;
+		default:
+			break;
+		}
+
+		packman.__topShape.setFillColor(__color);
+		packman.__bottomShape.setFillColor(__color);
+	}
 }
 
 void Packman::setSpeedMultiplier(float newSpeed)
@@ -112,11 +181,17 @@ void Packman::setSpeedMultiplier(float newSpeed)
 	__speed = newSpeed;
 }
 
-void Packman::updateHero(float elapsedTime, Field& field, bool stop)
+void Packman::updateHero(float elapsedTime, Field& field, bool stop, bool multiplayer)
 {
 	const float step = (stop) ? 0 : __speed * elapsedTime;
 	const float localspeed = (stop) ? 0 : __speed;
-	updateHeroDirection();
+
+	if (multiplayer) {
+		updateHeroDirection(multiplayer);
+	}
+	else {
+		updateHeroDirection();
+	}
 
 	sf::Vector2f movement(0.f, 0.f);
 	movement = buildMovement(movement, *this, step);
