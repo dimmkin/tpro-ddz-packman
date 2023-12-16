@@ -99,9 +99,43 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     TitulFirstPlayerForGameOver.setFont(font);
     InitText(TitulFirstPlayerForGameOver, 550, 350, L"Player 1", 90, sf::Color::Yellow, 3, sf::Color::Blue);
 
-    sf::Text TitulFirstPlayerForGameWon;
-    TitulFirstPlayerForGameWon.setFont(font);
-    InitText(TitulFirstPlayerForGameWon, 750, 400, L"Player 1", 140, sf::Color::Yellow, 3, sf::Color::Blue);
+    sf::Text TitulFirstPlayerForGameWon1;
+    TitulFirstPlayerForGameWon1.setFont(font);
+    InitText(TitulFirstPlayerForGameWon1, 450, 350, L"Player 1", 140, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::Text TitulFirstPlayerForGameWon2;
+    TitulFirstPlayerForGameWon2.setFont(font);
+    InitText(TitulFirstPlayerForGameWon2, 450, 450, L"Player 2", 140, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    std::ifstream file("multiplayer.json");
+    json user = json::parse(file);
+    file.close();
+    std::string name_user_1 = user["firstPlayer"][0];
+    std::string name_user_2 = user["secondPlayer"][0];
+
+    sf::Text NameUser1;
+    NameUser1.setFont(font);
+    InitText(NameUser1, 850, 350, name_user_1, 140, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::Text NameUser2;
+    NameUser2.setFont(font);
+    InitText(NameUser2, 850, 450, name_user_2, 140, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    std::ifstream file_game("multiplayer_game.json");
+    json date_game = json::parse(file_game);
+    file_game.close();
+    std::string game_vin_1 = to_string(date_game["Game"][0]);
+    std::string game_vin_2 = to_string(date_game["Game"][1]);
+
+    sf::Text User1Vin;
+    std::string vin1 = game_vin_1 + "\\" + "3";
+    User1Vin.setFont(font);
+    InitText(User1Vin, 1250, 340, vin1, 140, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    sf::Text User2Vin;
+    std::string vin2 = game_vin_2 + "\\" + "3";
+    User2Vin.setFont(font);
+    InitText(User2Vin, 1250, 440, vin2, 140, sf::Color::Yellow, 3, sf::Color::Blue);
 
     sf::Text TitulScores;
     TitulScores.setFont(font);
@@ -138,14 +172,23 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
         }
         window.clear();
         window.draw(backgrounGameOver);
-        if (process.__gameState == GameState::LOSE) {
+        if (process.__gameState == GameState::LOSE && !multiplayer) {
             window.draw(TitulGameOver);
             window.draw(TitulScores);
             window.draw(TitulFirstPlayerForGameOver);
         }
-        if (process.__gameState == GameState::WIN) {
+        if (process.__gameState == GameState::LOSE && multiplayer) {
             window.draw(TitulGameWon);
-            window.draw(TitulFirstPlayerForGameWon);
+            window.draw(TitulFirstPlayerForGameWon1);
+            window.draw(TitulFirstPlayerForGameWon2);
+            window.draw(NameUser1);
+            window.draw(NameUser2);
+            window.draw(User1Vin);
+            window.draw(User2Vin);
+        }
+        if (process.__gameState == GameState::WIN ) {
+            window.draw(TitulGameWon);
+            window.draw(TitulFirstPlayerForGameWon1);
         }
         myEndGame.draw();
         window.display();
@@ -219,7 +262,6 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     InitText(Heats_Count1, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
 
     RectangleShape heats2(Vector2f(100, 100));
-    Texture heats_image2;
 
     heats2.setTexture(&heats_image1);
     heats2.setPosition(1550, 400);
@@ -231,24 +273,6 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     Text Heats_Count2;
     Heats_Count2.setFont(font);
     InitText(Heats_Count2, 1690, 380, heat_text2.getString(), 90, Color::Yellow, 3, Color::Blue);
-    // if(multiplayer) {
-        
-
-    // }
-    // else {
-    // Text heat_text2;
-    // heat_text2.setString("");
-    // unsigned int lifes2 = 0;
-    // Text Heats_Count2;
-    // Heats_Count2.setFont(font);
-    // InitText(Heats_Count2, 250, 380, heat_text2.getString(), 90, Color::Yellow, 3, Color::Blue);
-    // }
-
-
-
-    // Text Heats_Count;
-    // Heats_Count.setFont(font);
-    // InitText(Heats_Count, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
 
     Text TitulFirstScore;
     TitulFirstScore.setFont(font);
@@ -292,7 +316,6 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     music.Music_stop_all();
     int index = music.Random_music();
 
-    unsigned stek = lifes1;
     bool flag = false;
     int music_count = 0;
     while (window.isOpen()) {
@@ -381,14 +404,36 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         }
         Fon_Map_music.Music_play_Map(isFirstMusic, index);
         Fon_Map_music.Music_set_volume_all(20);
-
-        if (process.__gameState == GameState::LOSE) {
+        if (process.__gameState == GameState::LOSE && multiplayer && RoundCounter < 3) {
+            ++RoundCounter;
+            if((game.isClassic(gameSelect) && RoundCounter > 3) || !game.isClassic(gameSelect))
+            {
+                music.Music_stop_all();
+                Fon_Map_music.Music_stop_all();
+                Fon_music.Music_return(0);
+                unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
+                EndGame(window, font, width, height, process, scores, multiplayer);
+            }
+            else {
+                Fon_Map_music.Music_stop_all();
+                PlayGame(window, font, width, height, RoundCounter, multiplayer);
+            }
+        }
+        else if (process.__gameState == GameState::LOSE && multiplayer && RoundCounter > 3) {
+                music.Music_stop_all();
+                Fon_Map_music.Music_stop_all();
+                Fon_music.Music_return(0);
+                unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
+                EndGame(window, font, width, height, process, scores, multiplayer);
+        }
+        else if (process.__gameState == GameState::LOSE) {
             music.Music_stop_all();
             Fon_Map_music.Music_stop_all();
             Fon_music.Music_return(0);
             unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
             EndGame(window, font, width, height, process, scores, multiplayer);
         }
+        
 
         if (process.__gameState == GameState::WIN) {
             ++RoundCounter;
@@ -410,42 +455,13 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         Scores.setFont(font);
         InitText(Scores, 225, 500, process.getGameProcessWindowTitle(), 80, Color::Yellow, 3, Color::Blue);
 
-
         if (flag) {
             --lifes1;
             std::string heat_panel1 = "x" + std::to_string(lifes1);
             heat_text1.setString(heat_panel1);
-            stek = lifes1;
             InitText(Heats_Count1, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
             flag = false;
-
         }
-        if(multiplayer) {
-            if (flag) {
-            --lifes1;
-            std::string heat_panel1 = "x" + std::to_string(lifes1);
-            heat_text1.setString(heat_panel1);
-            stek = lifes1;
-            InitText(Heats_Count1, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
-            --lifes2;
-            std::string heat_panel2 = "x" + std::to_string(lifes2);
-            heat_text2.setString(heat_panel2);
-            stek = lifes2;
-            InitText(Heats_Count1, 250, 380, heat_text2.getString(), 90, Color::Yellow, 3, Color::Blue);
-            flag = false;
-            }
-        }
-        else {
-            if (flag) {
-            --lifes1;
-            std::string heat_panel1 = "x" + std::to_string(lifes1);
-            heat_text1.setString(heat_panel1);
-            stek = lifes1;
-            InitText(Heats_Count1, 250, 380, heat_text1.getString(), 90, Color::Yellow, 3, Color::Blue);
-            flag = false;
-            }
-        }
-
         clock.restart();
         window.clear();
         window.draw(backgroundPlay);
@@ -1090,11 +1106,19 @@ int main()
     std::ifstream file_open("text.json");
     json data = json::parse(file_open);
     data["Start_game"] = { "Classic", 1, 1 };
-    data["Option"] = { 1, "2","User",1 };
+    data["Option"] = { 1, "1","User",1 };
     file_open.close();
     std::ofstream file_close("text.json");
     file_close << data;
     file_close.close();
+
+    std::ifstream file_user_open("multiplayer_game.json");
+    json user = json::parse(file_user_open);
+    user["Game"] = {0, 0};
+    file_user_open.close();
+    std::ofstream file_user_close("multiplayer_game.json");
+    file_user_close << user;
+    file_user_close.close();
 
     RenderWindow window;
 
