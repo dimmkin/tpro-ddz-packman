@@ -41,6 +41,9 @@ void Hero::updateHeroDirection()
 		return;
 	}
 }
+// Direction Hero::changeOfDirectionMultiplayer(Direction) {
+
+// }
 Direction Hero::changeOfDirection(Direction direction)
 {
 	if (direction == Direction::UP) {
