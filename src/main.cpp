@@ -26,7 +26,7 @@ void GameStart(RenderWindow& window, Font& font, double width, double height);
 
 void MainMenu(RenderWindow& window, Font& font, double width, double height);
 
-void Pause(RenderWindow& window, Font& font, double width, double height)
+void Pause(RenderWindow& window, Font& font, double width, double height, bool multiplayer)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
 
@@ -64,9 +64,9 @@ void Pause(RenderWindow& window, Font& font, double width, double height)
                 {
                     switch (myPause.getSelectedMenuNumber())
                     {
-                    case 0: stop = false; return;                     break;
-                    case 1:PlayGame(window, font, width, height);     break;
-                    case 2:MainMenu(window, font, width, height);     break;
+                    case 0: stop = false; return;                                 break;
+                    case 1:PlayGame(window, font, width, height, 1, multiplayer); break;
+                    case 2:MainMenu(window, font, width, height);                 break;
                     }
                 }
             }
@@ -95,17 +95,25 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     TitulGameWon.setFont(font);
     InitText(TitulGameWon, 600, 200, L"CONGRATULATION!", 150, sf::Color::Yellow, 3, sf::Color::Blue);
 
+    std::ifstream file("text.json");
+    json data = json::parse(file);
+    file.close();
+    
+    std::string name = data["Option"][2];
+    Text nickname;
+    nickname.setString(name);
+
     sf::Text TitulFirstPlayerForGameOver;
     TitulFirstPlayerForGameOver.setFont(font);
-    InitText(TitulFirstPlayerForGameOver, 550, 350, L"Player 1", 90, sf::Color::Yellow, 3, sf::Color::Blue);
+    InitText(TitulFirstPlayerForGameOver, 850, 350, nickname.getString(), 140, sf::Color::Yellow, 3, sf::Color::Blue);
 
     sf::Text TitulFirstPlayerForGameWon;
     TitulFirstPlayerForGameWon.setFont(font);
-    InitText(TitulFirstPlayerForGameWon, 750, 400, L"Player 1", 140, sf::Color::Yellow, 3, sf::Color::Blue);
+    InitText(TitulFirstPlayerForGameWon, 825, 400, nickname.getString(), 160, sf::Color::Yellow, 3, sf::Color::Blue);
 
     sf::Text TitulScores;
     TitulScores.setFont(font);
-    InitText(TitulScores, 550, 500, L"SCORES: " + std::to_string(scores) + "%", 90, sf::Color::Yellow, 3, sf::Color::Blue);
+    InitText(TitulScores, 750, 500, L"SCORES: " + std::to_string(scores) + "%", 120, sf::Color::Yellow, 3, sf::Color::Blue);
 
     sf::String nameEndGame[]{ L"RESTART",L"EXIT" };
 
@@ -151,7 +159,16 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
         window.display();
     }
 }
-
+/**
+ * @brief 
+ * 
+ * @param window 
+ * @param font 
+ * @param width 
+ * @param height 
+ * @param RoundCounter 
+ * @param multiplayer 
+ */
 void PlayGame(RenderWindow& window, Font& font, double width, double height, int RoundCounter, bool multiplayer)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
@@ -272,7 +289,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
                     Fon_Map_music.Music_pause_all();
                     music.Music_pause_all();
                     process.updateGameProcess(elapsedTime, flag, lifes, true);
-                    Pause(window, font, width, height); 
+                    Pause(window, font, width, height, multiplayer); 
                 }
             }
         }
