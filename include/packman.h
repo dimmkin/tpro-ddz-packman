@@ -13,6 +13,7 @@ const int PHASE = 90;
 const float NUMBER_PI = 3.141592654f;
 const int PI_RADIAN = 180;
 const float RADIUS_OF_PACKMAN = 20.f;
+const float temp_speed = 120.f;
 
 class Packman : public Hero
 {
@@ -34,9 +35,11 @@ public:
 	void initializePackman(Field& field, Packman& packman, float speed = 120.f);
 	void assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bottomShape, const float phaseAnimation);
 	void setSpeedMultiplier(float newSpeed, bool stop = false);
-	void updateHeroDirection();
-	int directionOrientationDegrees(Direction direction);
-	void updateHero(float elapsedTime, Field& field, bool stop = false);
+	void updateHeroDirection(bool stop = false);
+	int directionOrientationDegrees(Direction direction, bool stop = false);
+	void updateHero(float elapsedTime, Field& field, Packman& packman, bool stop = false);
 	void drawPackman(sf::RenderWindow& window);
 	sf::FloatRect getPackmanBounds();
+	void stop_moving();
+	void start_moving(float speed = temp_speed);
 };

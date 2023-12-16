@@ -39,8 +39,12 @@ void Packman::assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bo
 	assignFigure(bottomShape, points);
 }
 
-void Packman::updateHeroDirection()
+void Packman::updateHeroDirection(bool stop)
 {
+	if(stop){
+		__direction = Direction::NONE;
+		__orientationDegrees = -1;
+	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 		__direction = Direction::UP;
 		__orientationDegrees = 0;
@@ -59,8 +63,11 @@ void Packman::updateHeroDirection()
 	}
 }
 
-int Packman::directionOrientationDegrees(Direction direction)
+int Packman::directionOrientationDegrees(Direction direction, bool stop)
 {
+	if (__direction == Direction::NONE) {
+		return -1;
+	}
 	if (__direction == Direction::UP) {
 		return 0;
 	}
@@ -112,11 +119,20 @@ void Packman::setSpeedMultiplier(float newSpeed, bool stop)
 	__speed = (stop) ? 0 : newSpeed;
 }
 
-void Packman::updateHero(float elapsedTime, Field& field, bool stop)
+void Packman::updateHero(float elapsedTime, Field& field, Packman& packman, bool stop)
 {
 	const float step = (stop) ? 0 : __speed * elapsedTime;
 	const float localspeed = (stop) ? 0 : __speed;
-	updateHeroDirection();
+
+
+
+	updateHeroDirection(stop);
+	packman.setSpeedMultiplier(localspeed, stop);
+	if(stop){
+		packman.initializePackman(field, packman, 0);
+		packman.__speed = 0;
+		elapsedTime = 0;
+	}
 
 	sf::Vector2f movement(0.f, 0.f);
 	movement = buildMovement(movement, *this, step, stop);
@@ -168,4 +184,15 @@ void Packman::drawPackman(sf::RenderWindow& window)
 sf::FloatRect Packman::getPackmanBounds()
 {
 	return sf::FloatRect(__position.x - RADIUS_OF_PACKMAN, __position.y - RADIUS_OF_PACKMAN, 2.f * RADIUS_OF_PACKMAN, 2.f * RADIUS_OF_PACKMAN);
+}
+
+
+void Packman::stop_moving()
+{
+	__speed = 0;
+}
+
+void Packman::start_moving(float speed)
+{
+	__speed = speed;
 }

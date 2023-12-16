@@ -7,6 +7,7 @@
 #include "../include/ghost.h"
 //#include <Windows.h>
 #include <thread>
+#include <iostream>
 #include <cassert>
 #include <map>
 
@@ -25,7 +26,8 @@ enum class GameState
 {
 	PLAY,
 	LOSE,
-	WIN
+	WIN,
+	PAUSE
 };
 
 class GameProcess
@@ -50,10 +52,10 @@ public:
 	bool initializeGhostByID(std::map<GhostID, Ghost>& ghosts, GhostID ghostID);
 	bool initializeBonusByType(std::map<TypesBonuses, Bonus>& bonuses, TypesBonuses type, const sf::IntRect frame, bool active = false);
 
-	void updateGameOverTitle(sf::Text& title, const std::string& text);
+	//void updateGameOverTitle(sf::Text& title, const std::string& text);
 	void updateGameProcess(float elapsedTime, bool &flag_lifes, unsigned int lifes, bool stop = false);
 
 	std::string getGameProcessWindowTitle();
-	void drawGameProcess(sf::RenderWindow& window);
+	void drawGameProcess(sf::RenderWindow& window, bool stop = false);
 	void initializeGameProcess(const sf::Vector2f& processSize);
 };

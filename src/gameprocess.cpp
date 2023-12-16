@@ -145,14 +145,20 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 	float localspeed_bonus = (stop) ? 0 : 240.f;
 	float localspeed_multiplier = (stop) ? 0 : 120.f;
 	float localspeed_ghost = (stop) ? 0 : 90.f;
+	float local_elapsedTime = (stop) ? 0 : elapsedTime;
+
+	if(__gameState == GameState::PAUSE){
+		__packman.__speed = 0;
+	}
+	
 
 	if (__gameState == GameState::PLAY) {
-		__packman.updateHero(elapsedTime, __field, stop);
+		__packman.updateHero(local_elapsedTime, __field, __packman, stop);
 
 		redrawingBonuses();
 
 		for (auto& pair : __ghosts) {
-			pair.second.updateHero(elapsedTime, __field, localspeed_ghost, stop);
+			pair.second.updateHero(local_elapsedTime, __field, localspeed_ghost, stop);
 		}
 
 		const sf::FloatRect packmanBounds = __packman.getPackmanBounds();
@@ -165,7 +171,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 				{
 					flag_lifes = true;
 					__packman.__direction = __packman.changeOfDirection(__packman.__direction);
-					__packman.__orientationDegrees = __packman.directionOrientationDegrees(__packman.__direction);
+					__packman.__orientationDegrees = __packman.directionOrientationDegrees(__packman.__direction, stop);
 					pair.second.__direction = pair.second.changeOfDirection(pair.second.__direction);
 					exit;
 				}
@@ -178,7 +184,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 			}
 		}
 
-		for (auto it = __bonuses.begin(); it != __bonuses.end();) {
+		for (auto it = __bonuses.begin(); it != __bonuses.end() && !stop;) {
 			if (it->second.__figure.getGlobalBounds().intersects(packmanBounds)) {
 				if (it->second.__bonusType == TypesBonuses::BOMB) {
 					it->second.__active = true;
@@ -222,8 +228,11 @@ std::string GameProcess::getGameProcessWindowTitle()
 	return title;
 }
 
-void GameProcess::drawGameProcess(sf::RenderWindow& window)
+void GameProcess::drawGameProcess(sf::RenderWindow& window, bool stop)
 {
+	if(__gameState == GameState::PAUSE){
+		return;
+	}
 	__field.drawField(window);
 	__packman.drawPackman(window);
 
@@ -236,3 +245,5 @@ void GameProcess::drawGameProcess(sf::RenderWindow& window)
 	}
 
 }
+
+

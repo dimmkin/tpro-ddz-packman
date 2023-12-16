@@ -4,6 +4,7 @@
 #include <random>
 #include <array>
 #include <chrono>
+#include <thread>
 
 class Field;
 

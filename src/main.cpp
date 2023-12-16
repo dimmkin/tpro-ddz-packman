@@ -4,10 +4,12 @@
 #include "../include/packman.h"
 #include "../include/Music.h"
 #include "../include/GameSelect.h"
+#include "../include/GameProcessWorking.h"
 #include <string>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <thread>
 using namespace sf;
 #include "../json/nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -16,7 +18,7 @@ GameMusic Fon_music;
 GameMusic Fon_Map_music;
 bool stop = false;
 bool lifes_flag = false;
-unsigned int global_lifes = 0;
+unsigned int global_lifes = 1;
 
 
 void InitText(Text& mtext, float xpos, float ypos, String str, int size_font = 60,
@@ -28,16 +30,14 @@ void GameStart(RenderWindow& window, Font& font, double width, double height);
 
 void MainMenu(RenderWindow& window, Font& font, double width, double height);
 
-void Pause(RenderWindow& window, Font& font, double width, double height)
+void Pause(RenderWindow& window, Font& font, double width, double height, GameProcess& process)
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
 
-
-    GameProcess process;
-    process.initializeGameProcess(sf::Vector2f(window.getSize()));
+    //process.initializeGameProcess(sf::Vector2f(window.getSize()));
     stop = false;
-    process.updateGameProcess(0, lifes_flag, global_lifes, true);
-    process.drawGameProcess(window);
+    //process.updateGameProcess(0, lifes_flag, global_lifes, true);
+    //process.drawGameProcess(window, true);
 
 
     Texture texturePlay;
@@ -241,8 +241,9 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
 
     sf::Clock clock;
     GameProcess process;
-
     process.initializeGameProcess(sf::Vector2f(window.getSize()));
+    
+    GameProcessWorking new_process;
 
 
     sf::Text countdownText;
@@ -258,6 +259,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     unsigned stek = lifes;
     bool flag = false;
     int music_count = 0;
+    bool itWasStoping = false;
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -266,6 +268,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
                 if (event.key.code == Keyboard::Escape) {
                     Fon_Map_music.Music_pause_all();
                     music.Music_pause_all();
+                    process.__gameState = GameState::PAUSE;
                     stop = true;
                 }
             }
@@ -343,17 +346,19 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         Fon_Map_music.Music_play_Map(isFirstMusic, index);
         Fon_Map_music.Music_set_volume_all(20);
 
-        if (stop) {
+        new_process.saveProcess(process);
+        if (process.__gameState == GameState::PAUSE) {
+
+            new_process.saveProcess(process);
             Fon_Map_music.Music_pause_all();
-            while(stop){
-                clock.restart();
-                window.clear();
-                window.display();
-                Pause(window, font, width, height); 
-            }
+            Pause(window, font, width, height, process); 
+
             Fon_Map_music.Music_return_all();
             Fon_music.Music_pause_all();
+
+            process.__gameState = GameState::PLAY;
         }
+        GameProcess temp = new_process.getProcess();
 
         if (process.__gameState == GameState::LOSE) {
             music.Music_stop_all();
@@ -395,6 +400,8 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
 
         }
 
+        
+
         clock.restart();
         window.clear();
         window.draw(backgroundPlay);
@@ -408,8 +415,8 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         window.draw(TitulSecondScore);
         window.draw(heats1);
         window.draw(Heats_Count);
-        process.updateGameProcess(elapsedTime, flag, lifes, stop);
-        process.drawGameProcess(window);
+        temp.updateGameProcess(elapsedTime, flag, lifes, stop);
+        temp.drawGameProcess(window, stop);
         window.draw(Scores);
         window.display();
     }
