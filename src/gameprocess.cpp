@@ -197,6 +197,10 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 	float localspeed_multiplier = (stop) ? 0 : 150.f;
 	float localspeed_ghost = (stop) ? 0 : 100.f;
 
+	std::ifstream file("multiplayer_game.json");
+    json user = json::parse(file);
+    file.close();
+
 	if (__gameState == GameState::PLAY) {
 		__packman1.updateHero(elapsedTime, __field, stop);
 		if (multiplayer) {
@@ -210,19 +214,44 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 		}
 
 		const sf::FloatRect packmanBounds1 = __packman1.getPackmanBounds();
+		const sf::FloatRect packmanBounds2 = __packman2.getPackmanBounds();
+
 		for ( auto& pair : __ghosts) {
-			if (pair.second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
-				if (lifes == 1) {
-					__gameState = GameState::LOSE;
+			if (multiplayer) {
+					if (pair.second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
+						unsigned int count = user["Game"][1];
+						++count;
+						user["Game"][1] = count;
+						std::ofstream file_close("multiplayer_game.json");
+						file_close << user;
+    					file_close.close();
+						__gameState = GameState::LOSE;
+					}
+					if (pair.second.__figure.getGlobalBounds().intersects(packmanBounds2)) {
+						unsigned int count = user["Game"][0];
+						++count;
+						user["Game"][0] = count;
+						std::ofstream file_close("multiplayer_game.json");
+						file_close << user;
+    					file_close.close();
+						__gameState = GameState::LOSE;
+					}
+			}
+			else  {
+				if (pair.second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
+					if (lifes == 1) {
+						__gameState = GameState::LOSE;
+					}
+					else
+					{
+						flag_lifes = true;
+						__packman1.__direction = __packman1.changeOfDirection(__packman1.__direction);
+						__packman1.__orientationDegrees = __packman1.directionOrientationDegrees(__packman1.__direction);
+						pair.second.__direction = pair.second.changeOfDirection(pair.second.__direction);
+						exit;
+					}
 				}
-				else
-				{
-					flag_lifes = true;
-					__packman1.__direction = __packman1.changeOfDirection(__packman1.__direction);
-					__packman1.__orientationDegrees = __packman1.directionOrientationDegrees(__packman1.__direction);
-					pair.second.__direction = pair.second.changeOfDirection(pair.second.__direction);
-					exit;
-				}
+				
 			}
 			for (auto it = __packman1.__activeBonuses.begin(); it != __packman1.__activeBonuses.end(); ++it) {
 				if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman1.__eatenCookies >= it->second.__eatenDots + 10) {
