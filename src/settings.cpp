@@ -1,3 +1,7 @@
+/**
+ * @file settings.cpp
+ */
+
 #include "../include/menuBase.h"
 
 game::Settings::Settings(sf::RenderWindow& window, double settingsmenux, double settingsy,
