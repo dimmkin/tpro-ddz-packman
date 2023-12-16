@@ -130,12 +130,12 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     sf::Text User1Vin;
     std::string vin1 = game_vin_1 + "\\" + "3";
     User1Vin.setFont(font);
-    InitText(User1Vin, 1250, 340, vin1, 140, sf::Color::Yellow, 3, sf::Color::Blue);
+    InitText(User1Vin, 1300, 350, vin1, 140, sf::Color::Yellow, 3, sf::Color::Blue);
 
     sf::Text User2Vin;
     std::string vin2 = game_vin_2 + "\\" + "3";
     User2Vin.setFont(font);
-    InitText(User2Vin, 1250, 440, vin2, 140, sf::Color::Yellow, 3, sf::Color::Blue);
+    InitText(User2Vin, 1300, 450, vin2, 140, sf::Color::Yellow, 3, sf::Color::Blue);
 
     sf::Text TitulScores;
     TitulScores.setFont(font);
@@ -310,6 +310,10 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     countdownText.setFont(font);
     InitText(countdownText, 1475, 500, L"Score: ", 150, Color::Yellow, 3, Color::Blue);
 
+    sf::Text multiplayerCookies;
+    multiplayerCookies.setFont(font);
+    InitText(multiplayerCookies, 1625, 500 , "", 80, Color::Yellow, 3, Color::Blue);
+
     bool isStart = true;
     GameMusic music;
     Fon_music.Music_pause(0);
@@ -434,7 +438,40 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
             EndGame(window, font, width, height, process, scores, multiplayer);
         }
         
-
+        if (process.__gameState == GameState::WIN && multiplayer) {
+            ++RoundCounter;
+            std::ifstream file("multiplayer_game.json");
+            json user = json::parse(file);
+            file.close();
+            if (process.__packman1.__eatenCookies > process.__packman2.__eatenCookies) {
+                unsigned int count = user["Game"][0]; 
+                ++count;
+                user["Game"][0] = count;
+                std::ofstream file_close("multiplayer_game.json");
+                file_close << user;
+                file_close.close();
+            }
+            else {
+                unsigned int count = user["Game"][1]; 
+                ++count;
+                user["Game"][1] = count; 
+                std::ofstream file_close("multiplayer_game.json");
+                file_close << user;
+                file_close.close();
+            }
+            if((game.isClassic(gameSelect) && RoundCounter > 3) || !game.isClassic(gameSelect))
+            {
+                music.Music_stop_all();
+                Fon_Map_music.Music_stop_all();
+                Fon_music.Music_return(0);
+                unsigned int scores = floor(static_cast<double>(process.__packman1.__eatenCookies) / process.__totalCookiesCount * 100);
+                EndGame(window, font, width, height, process, scores, multiplayer);
+            }
+            else {
+                Fon_Map_music.Music_stop_all();
+                PlayGame(window, font, width, height, RoundCounter, multiplayer);
+            }
+        }
         if (process.__gameState == GameState::WIN) {
             ++RoundCounter;
             if((game.isClassic(gameSelect) && RoundCounter > 3) || !game.isClassic(gameSelect))
@@ -454,6 +491,11 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
         Text Scores;
         Scores.setFont(font);
         InitText(Scores, 225, 500, process.getGameProcessWindowTitle(), 80, Color::Yellow, 3, Color::Blue);
+        if (multiplayer) {
+            unsigned int count_cookies_user_2 = process.__packman2.__eatenCookies;
+            std::string str_count = std::to_string(count_cookies_user_2) + '%';
+            InitText(multiplayerCookies, 1625, 500 , str_count, 80, Color::Yellow, 3, Color::Blue);
+        }
 
         if (flag) {
             --lifes1;
@@ -479,6 +521,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
             window.draw(Heats_Count1);
             window.draw(heats2);
             window.draw(Heats_Count2);
+            window.draw(multiplayerCookies);
         }
         else {
             window.draw(heats1);
