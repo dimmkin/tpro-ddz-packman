@@ -2,28 +2,19 @@
 
 GameMusic::GameMusic()
 {
-	// Array of file names and music paths
 	std::array<std::string, _count_game_music>nameFile{ "sound/PacMan_Tem.ogg", "sound/Staring_fun.ogg", 
 	"sound/f_Map_1.ogg", "sound/f_Map_2.ogg", "sound/f_Map_3.ogg", "sound/f_1.ogg",  
 	"sound/f_2.ogg", "sound/f_3.ogg", "sound/f_4.ogg", "sound/f_4.ogg", "sound/f_6.ogg", "sound/f_7.ogg" };
 
-	// Assigning music to music objects
 	for (int index = 0; index != _count_game_music; ++index) {
 		if (!_game_musics[index].openFromFile(nameFile[index])) exit(1);
 	}
-
-	// Background music should be playing constantly
+	
 	_game_musics[0].setLoop(true);
 }
 
 void GameMusic::Music_play(int index)
 {
-	if (_game_musics[index].getStatus() == sf::Music::Stopped) { _game_musics[index].play(); }
-}
-
-void GameMusic::Music_play_always(int index)
-{
-	_game_musics[0].setLoop(true);
 	if (_game_musics[index].getStatus() == sf::Music::Stopped) { _game_musics[index].play(); }
 }
 
@@ -86,4 +77,20 @@ void GameMusic::Music_play_Map(bool isFirstMusic, int positionMusic)
 	_game_musics[index].setLoop(true);
 	if (_game_musics[index].getStatus() == sf::Music::Stopped) { _game_musics[index].play(); }
 	if (_game_musics[index].getStatus() == sf::Music::Paused) { _game_musics[index].play(); }
+}
+
+
+void GameMusic::Music_return_all()
+{
+	for (int index = 0; index != _count_game_music; ++index)
+	{
+		if (_game_musics[index].getStatus() == sf::Music::Paused) { _game_musics[index].play(); }
+	}
+}
+void GameMusic::Music_stop_paused_all()
+{
+	for (int index = 0; index != _count_game_music; ++index)
+	{
+		if (_game_musics[index].getStatus() == sf::Music::Paused) { _game_musics[index].stop(); }
+	}
 }

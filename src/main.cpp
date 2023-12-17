@@ -30,6 +30,8 @@ void Pause(RenderWindow& window, Font& font, double width, double height, bool m
 {
     RectangleShape backgroundPlay(Vector2f(width, height));
 
+    stop = false;
+
     Texture texturePlay;
     if (!texturePlay.loadFromFile("image/pause.png")) exit(1);
     backgroundPlay.setTexture(&texturePlay);
@@ -64,9 +66,13 @@ void Pause(RenderWindow& window, Font& font, double width, double height, bool m
                 {
                     switch (myPause.getSelectedMenuNumber())
                     {
-                    case 0: stop = false; return;                                 break;
-                    case 1:PlayGame(window, font, width, height, 1, multiplayer); break;
-                    case 2:MainMenu(window, font, width, height);                 break;
+                    case 0:return;                                             break;
+                    case 1:
+                        Fon_Map_music.Music_stop_paused_all();
+                        PlayGame(window, font, width, height, 1, multiplayer); break;
+                    case 2:
+                        Fon_Map_music.Music_stop_paused_all();
+                        MainMenu(window, font, width, height);                 break;
                     }
                 }
             }
@@ -95,9 +101,9 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     TitulGameWon.setFont(font);
     InitText(TitulGameWon, 600, 200, L"CONGRATULATION!", 150, sf::Color::Yellow, 3, sf::Color::Blue);
 
-    std::ifstream file("text.json");
-    json data = json::parse(file);
-    file.close();
+    std::ifstream file_text("text.json");
+    json data = json::parse(file_text);
+    file_text.close();
     
     std::string name = data["Option"][2];
     Text nickname;
@@ -122,6 +128,7 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     std::ifstream multifile("multiplayer.json");
     json user = json::parse(multifile);
     multifile.close();
+
     std::string name_user_1 = user["firstPlayer"][0];
     std::string name_user_2 = user["secondPlayer"][0];
 
@@ -352,10 +359,11 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
                 if (event.key.code == Keyboard::Escape) {
                     Fon_Map_music.Music_pause_all();
                     music.Music_pause_all();
-
-                    process.updateGameProcess(elapsedTime, flag, lifes1, true);
+                    process.__gameState = GameState::PAUSE;
                     Pause(window, font, width, height, multiplayer); 
-
+                    process.__gameState = GameState::PLAY;
+                    Fon_Map_music.Music_return_all();
+                    Fon_music.Music_pause_all();
                 }
             }
         }
