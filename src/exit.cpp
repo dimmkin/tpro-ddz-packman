@@ -1,3 +1,6 @@
+/**
+ * @file exit.cpp
+ */
 #include "../include/menuBase.h"
 
 game::Exit::Exit(sf::RenderWindow& window, double menux, double menuy,

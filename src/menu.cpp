@@ -1,3 +1,7 @@
+/**
+ * @file menu.cpp
+ */
+
 #include "../include/menuBase.h"
 
 game::Menu::Menu(sf::RenderWindow& window, double menux, double menuy,

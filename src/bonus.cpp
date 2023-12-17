@@ -1,3 +1,7 @@
+/**
+ * @file bonus.cpp
+ */
+
 #include "../include/bonus.h"
 #include "../include/field.h"
 #include "../include/packman.h"
