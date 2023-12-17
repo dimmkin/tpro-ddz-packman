@@ -24,4 +24,6 @@ public:
 	void Music_pause_all();
 	void Music_play_always(int index);
 	void Music_play_Map(bool isFirstMusic, int positionMusic = 8);
+	void Music_return_all();
+	void Music_stop_paused_all();
 };

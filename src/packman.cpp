@@ -206,8 +206,8 @@ void Packman::setSpeedMultiplier(float newSpeed)
 
 void Packman::updateHero(float elapsedTime, Field& field, bool stop, bool multiplayer)
 {
-	const float step = (stop) ? 0 : __speed * elapsedTime;
-	const float localspeed = (stop) ? 0 : __speed;
+	const float step = __speed * elapsedTime;
+	const float localspeed = __speed;
 
 	if (multiplayer) {
 		updateHeroDirection(multiplayer);

@@ -196,6 +196,12 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 	float localspeed_bonus = (stop) ? 0 : 250.f;
 	float localspeed_multiplier = (stop) ? 0 : 150.f;
 	float localspeed_ghost = (stop) ? 0 : 100.f;
+	__packman1.__speed = (stop) ? 0 : __packman1.__speed;
+
+	if(multiplayer) {
+		__packman1.__speed = (stop) ? 0 : __packman1.__speed;
+		__packman2.__speed = (stop) ? 0 : __packman2.__speed;
+	}
 
 	std::ifstream file("multiplayer_game.json");
     json user = json::parse(file);

@@ -25,7 +25,8 @@ enum class GameState
 {
 	PLAY,
 	LOSE,
-	WIN
+	WIN,
+	PAUSE
 };
 
 class GameProcess
