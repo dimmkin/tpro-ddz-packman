@@ -41,7 +41,7 @@ void Packman::assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bo
 
 void Packman::updateHeroDirection(bool multiplayer)
 {
-  if (multiplayer) {
+  	if (multiplayer) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		__direction = Direction::UP;
 		__orientationDegrees = 0;
@@ -60,22 +60,45 @@ void Packman::updateHeroDirection(bool multiplayer)
     }
   }
   else {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-      __direction = Direction::UP;
-      __orientationDegrees = 0;
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-      __direction = Direction::DOWN;
-      __orientationDegrees = 180;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-      __direction = Direction::LEFT;
-      __orientationDegrees = 270;
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-      __direction = Direction::RIGHT;
-      __orientationDegrees = 90;
-    }
+	std::ifstream file_option("text.json");
+	json data = json::parse(file_option);
+	file_option.close();
+	if (data["Option"][0] == 2) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+      		__direction = Direction::UP;
+      		__orientationDegrees = 0;
+    	}
+    	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+      		__direction = Direction::DOWN;
+      		__orientationDegrees = 180;
+    	}
+    	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+      		__direction = Direction::LEFT;
+      		__orientationDegrees = 270;
+    	}
+    	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+      		__direction = Direction::RIGHT;
+     		 __orientationDegrees = 90;
+    	}
+	}
+    if (data["Option"][0] == 1) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			__direction = Direction::UP;
+			__orientationDegrees = 0;
+    	}
+    	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+			__direction = Direction::DOWN;
+			__orientationDegrees = 180;
+    	}
+    	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+			__direction = Direction::LEFT;
+			__orientationDegrees = 270;
+    	}
+    	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+			__direction = Direction::RIGHT;
+			__orientationDegrees = 90;
+    	}
+	}
   }
 }
 
