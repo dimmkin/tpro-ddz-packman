@@ -1,4 +1,0 @@
-<map id="game::Pause" name="game::Pause">
-<area shape="rect" id="node1" title="Представляет меню паузы в игре." alt="" coords="20,80,125,107"/>
-<area shape="rect" id="node2" href="$classgame_1_1_menu_base.html" title=" " alt="" coords="5,5,140,32"/>
-</map>

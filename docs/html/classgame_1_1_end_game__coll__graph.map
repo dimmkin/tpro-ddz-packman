@@ -1,5 +1,0 @@
-<map id="game::EndGame" name="game::EndGame">
-<area shape="rect" id="node1" title="Представляет собой пункт меню для завершения игры." alt="" coords="23,155,154,181"/>
-<area shape="rect" id="node2" href="$classgame_1_1_game_selection.html" title="Представляет меню выбора игры." alt="" coords="5,80,172,107"/>
-<area shape="rect" id="node3" href="$classgame_1_1_menu_base.html" title=" " alt="" coords="21,5,156,32"/>
-</map>
