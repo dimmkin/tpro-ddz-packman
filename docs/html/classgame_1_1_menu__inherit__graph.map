@@ -1,4 +1,0 @@
-<map id="game::Menu" name="game::Menu">
-<area shape="rect" id="node1" title="Представляет главное меню игры." alt="" coords="21,80,124,107"/>
-<area shape="rect" id="node2" href="$classgame_1_1_menu_base.html" title=" " alt="" coords="5,5,140,32"/>
-</map>
