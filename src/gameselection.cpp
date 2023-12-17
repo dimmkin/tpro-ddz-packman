@@ -1,3 +1,7 @@
+/**
+ * @file gameselection.cpp
+ */
+
 #include "../include/menuBase.h"
 
 game::GameSelection::GameSelection(sf::RenderWindow& window, double menux, double menuy,

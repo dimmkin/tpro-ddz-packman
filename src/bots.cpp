@@ -1,3 +1,7 @@
+/**
+ * @file bots.cpp
+ */
+
 #include "../include/menuBase.h"
 
 game::ChoseBots::ChoseBots(sf::RenderWindow& window, double menux, double menuy,

@@ -13,6 +13,10 @@
 # Файлы исходного кода библиотеки
 !src/*.cpp
 
+# Документация
+!docs/html/*
+!docs/html/search/*
+
 # Картинки
 !image/*.png
 
@@ -27,5 +31,4 @@
 !CMakeLists.txt
 
 # Json
-!multiplayer.json
-!text.json
+!*.json

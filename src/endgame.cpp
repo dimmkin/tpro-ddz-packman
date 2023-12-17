@@ -1,3 +1,7 @@
+/**
+ * @file endgame.cpp
+ */
+
 #include "../include/menuBase.h"
 
 game::EndGame::EndGame(sf::RenderWindow& window, double menux, double menuy,

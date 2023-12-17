@@ -1,3 +1,7 @@
+/**
+ * @file maps.cpp
+ */
+
 #include "../include/menuBase.h"
 
 game::Maps::Maps(sf::RenderWindow& window, double menux, double menuy,
