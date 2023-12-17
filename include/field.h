@@ -1,5 +1,9 @@
+/**
+ * @file field.h
+ * 
+ * @brief Содержит объявление класса FieldGraphics, GhostID, CellCategory, Cell и Field .
+ */
 #pragma once
-
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <limits>
@@ -20,6 +24,7 @@ const int TOP_INDENTATION = 190;
 const int OFFSET = 10;
 const std::vector<char> ALL_SYMBOLS = { '1','2','3','4','@', 'Q', 'W', 'E' };
 
+// Массив с картами для игры.
 static char* FIELD[] = {
     "#####################"
     "#                   #"
@@ -76,6 +81,12 @@ static char* FIELD[] = {
     "#####################"
 };
 
+/**
+ * @class FieldGraphics
+ * 
+ * @brief Представляет графическое представление карты.
+ * 
+ */
 class FieldGraphics
 {
 public:
