@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['Правила_20проекта_72',['Правила проекта',['../md__r_u_l_e_s.html',1,'']]]
+  ['_7emenubase_88',['~MenuBase',['../classgame_1_1_menu_base.html#a7657b01bd785d907fd011ac3e5898359',1,'game::MenuBase']]]
 ];

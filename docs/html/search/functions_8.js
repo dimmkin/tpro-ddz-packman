@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['setcolortextmenu_129',['setColorTextMenu',['../classgame_1_1_menu_base.html#a47b484549a631f004022f7abbe54f482',1,'game::MenuBase']]],
-  ['setinittextmenu_130',['setInitTextMenu',['../classgame_1_1_menu_base.html#a6cbea2adab4393a15883bfc505339c2e',1,'game::MenuBase']]],
-  ['setspeedmultiplier_131',['setSpeedMultiplier',['../class_packman.html#ab058f566c7cb65e71a9e037d1248eca9',1,'Packman']]],
-  ['settings_132',['Settings',['../classgame_1_1_settings.html#a628b7f388795ecdc4159170b194f3936',1,'game::Settings']]]
+  ['maps_155',['Maps',['../classgame_1_1_maps.html#ac2643d9239db62edbef2031f5e843ee3',1,'game::Maps']]],
+  ['menu_156',['Menu',['../classgame_1_1_menu.html#ac83f220fcceae6ce771d32064cb6a314',1,'game::Menu']]],
+  ['menubase_157',['MenuBase',['../classgame_1_1_menu_base.html#a2393bfc4ca4141d56e33aa9461b132eb',1,'game::MenuBase']]],
+  ['movenext_158',['MoveNext',['../classgame_1_1_menu_base.html#a1018bc912815c3f7f17db0c2c4acecd0',1,'game::MenuBase']]],
+  ['moveprev_159',['MovePrev',['../classgame_1_1_menu_base.html#ae767b2b17011a9ec001db9ee4fc54c19',1,'game::MenuBase']]],
+  ['movingout_160',['MovingOut',['../class_hero.html#aba5eae45a7af23a8d850a254e70b440d',1,'Hero']]]
 ];

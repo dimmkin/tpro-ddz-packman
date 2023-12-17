@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['settings_2ecpp_106',['settings.cpp',['../settings_8cpp.html',1,'']]]
+  ['packman_2ecpp_122',['packman.cpp',['../packman_8cpp.html',1,'']]],
+  ['packman_2eh_123',['packman.h',['../packman_8h.html',1,'']]],
+  ['pause_2ecpp_124',['pause.cpp',['../pause_8cpp.html',1,'']]]
 ];

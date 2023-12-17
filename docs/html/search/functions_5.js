@@ -1,5 +1,9 @@
 var searchData=
 [
-  ['initializebonus_121',['initializeBonus',['../class_bonus.html#a6ac5bc5fe855e0cb512dbbc0e0132c4c',1,'Bonus']]],
-  ['initializepackman_122',['initializePackman',['../class_packman.html#a5200a5614923e68da7960427b0e823a9',1,'Packman']]]
+  ['gameselection_142',['GameSelection',['../classgame_1_1_game_selection.html#aa67cb3998e40377fc19783c914fd9937',1,'game::GameSelection']]],
+  ['getdirection_143',['getDirection',['../class_hero.html#af52a71ab416685fce9059402ae26cbcf',1,'Hero']]],
+  ['getgameprocesswindowtitle_144',['getGameProcessWindowTitle',['../class_game_process.html#a4f738349a0fa70ea5fa6e273d78d1ecd',1,'GameProcess']]],
+  ['getpackmanbounds_145',['getPackmanBounds',['../class_packman.html#a10c1ff46d513757c4de8981be4334b70',1,'Packman']]],
+  ['getradialpoint_146',['getRadialPoint',['../class_packman.html#af8279f5d666a9f6a16e8887fe324df12',1,'Packman']]],
+  ['getselectedmenunumber_147',['getSelectedMenuNumber',['../classgame_1_1_menu_base.html#af65cfa511f4002e191ab8e6a533f5ef9',1,'game::MenuBase']]]
 ];

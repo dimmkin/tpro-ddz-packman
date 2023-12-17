@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['typesbonuses_67',['TypesBonuses',['../bonus_8h.html#a46375ef6fc4f4233a9ea3e3ad4e9f21c',1,'bonus.h']]]
+  ['randomdirection_77',['randomDirection',['../class_hero.html#afb083cec97c68e59caaa19379ede7675',1,'Hero']]],
+  ['redrawingbonuses_78',['redrawingBonuses',['../class_game_process.html#a973f6fb8462da793e1e8e245d87b5c25',1,'GameProcess']]]
 ];
