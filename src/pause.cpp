@@ -1,3 +1,7 @@
+/**
+ * @file pause.cpp
+ */
+
 #include "../include/menuBase.h"
 
 game::Pause::Pause(sf::RenderWindow& window, double menux, double menuy,
