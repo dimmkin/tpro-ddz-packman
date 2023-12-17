@@ -25,3 +25,7 @@
 
 # CMakeLists
 !CMakeLists.txt
+
+# Json
+!multiplayer.json
+!text.json

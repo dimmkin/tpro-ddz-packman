@@ -42,10 +42,11 @@ public:
 	Direction randomDirection(Direction previousDirection);
 	void updateHeroDirection();
 	Direction changeOfDirection(Direction direction);
+	//Direction changeOfDirectionMultiplayer(Direction direction);
 	bool initializeHero(const sf::Vector2f& position, const std::string& texturePath);
 	sf::Vector2f buildMovement(sf::Vector2f& movement, Hero& hero, const float step);
 	void MovingOut(Field& field, sf::Vector2f& movement, const float speed);
-	void updateHero(float elapsedTime, Field& field, const float speed);
+	void updateHero(float elapsedTime, Field& field, const float speed, bool stop = false);
 	void drawHero(sf::RenderWindow& window);
 	void drawEyes();
 	void getDirection(Direction direction) { __direction = direction; }

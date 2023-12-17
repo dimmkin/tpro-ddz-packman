@@ -1,8 +1,23 @@
 #include "../include/field.h"
 
+void Field::setMap()
+{
+    std::ifstream file("text.json");
+    json startMap = json::parse(file);
+    file.close();
+    int index = startMap["Start_game"][2];
+    __field = FIELD[index];
+}
+
 void Field::randomizeMap(std::vector<char> symbols, std::string startMap)
 {
-    __map = startMap;
+    if(startMap == "") {
+        setMap();
+        __map = __field;
+    }
+    else {
+        __map = startMap;
+    }
     
     std::random_device rd;
     std::mt19937 generator(rd());
@@ -100,6 +115,9 @@ sf::Vector2f Field::getStartPosition(char marker)
         for (size_t x = 0; x < WIDTH_OF_FIELD; ++x) {
             const size_t offset = x + y * WIDTH_OF_FIELD;
             if (__map[offset] == marker) {
+                if (marker == '@') {
+                    return { x * BLOCK_SIZE + LEFT_INDENTATION + OFFSET, y * BLOCK_SIZE + TOP_INDENTATION + OFFSET};
+                }
                 return { x * BLOCK_SIZE + LEFT_INDENTATION, y * BLOCK_SIZE + TOP_INDENTATION};
             }
         }
