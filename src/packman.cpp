@@ -43,67 +43,92 @@ void Packman::assignPackmanFigure(sf::ConvexShape& topShape, sf::ConvexShape& bo
 	assignFigure(bottomShape, points);
 }
 
-void Packman::updateHeroDirection(bool multiplayer)
+void Packman::updateHeroDirection(bool multiplayer, bool first)
 {
-  	if (multiplayer) {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		__direction = Direction::UP;
-		__orientationDegrees = 0;
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		__direction = Direction::DOWN;
-		__orientationDegrees = 180;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		__direction = Direction::LEFT;
-		__orientationDegrees = 270;
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		__direction = Direction::RIGHT;
-		__orientationDegrees = 90;
-    }
-  }
-  else {
 	std::ifstream file_option("text.json");
 	json data = json::parse(file_option);
 	file_option.close();
-	if (data["Option"][0] == 2) {
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-      		__direction = Direction::UP;
-      		__orientationDegrees = 0;
-    	}
-    	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-      		__direction = Direction::DOWN;
-      		__orientationDegrees = 180;
-    	}
-    	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-      		__direction = Direction::LEFT;
-      		__orientationDegrees = 270;
-    	}
-    	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-      		__direction = Direction::RIGHT;
-     		 __orientationDegrees = 90;
-    	}
+
+	if (multiplayer && data["Option"][0] == 2) {
+		data["Option"][0] = 1;
 	}
-    if (data["Option"][0] == 1) {
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			__direction = Direction::UP;
-			__orientationDegrees = 0;
-    	}
-    	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			__direction = Direction::DOWN;
-			__orientationDegrees = 180;
-    	}
-    	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			__direction = Direction::LEFT;
-			__orientationDegrees = 270;
-    	}
-    	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-			__direction = Direction::RIGHT;
-			__orientationDegrees = 90;
-    	}
+
+	if (multiplayer) {
+		if (first) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				__direction = Direction::UP;
+				__orientationDegrees = 0;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+				__direction = Direction::DOWN;
+				__orientationDegrees = 180;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+				__direction = Direction::LEFT;
+				__orientationDegrees = 270;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+				__direction = Direction::RIGHT;
+				__orientationDegrees = 90;
+			}
+		}
+		else {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+				__direction = Direction::UP;
+				__orientationDegrees = 0;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+				__direction = Direction::DOWN;
+				__orientationDegrees = 180;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+				__direction = Direction::LEFT;
+				__orientationDegrees = 270;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+				__direction = Direction::RIGHT;
+				__orientationDegrees = 90;
+			}
+		}
 	}
-  }
+	else {
+		if (data["Option"][0] == 1) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				__direction = Direction::UP;
+				__orientationDegrees = 0;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+				__direction = Direction::DOWN;
+				__orientationDegrees = 180;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+				__direction = Direction::LEFT;
+				__orientationDegrees = 270;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+				__direction = Direction::RIGHT;
+				__orientationDegrees = 90;
+			}
+		}
+		else {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+				__direction = Direction::UP;
+				__orientationDegrees = 0;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+				__direction = Direction::DOWN;
+				__orientationDegrees = 180;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+				__direction = Direction::LEFT;
+				__orientationDegrees = 270;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+				__direction = Direction::RIGHT;
+				__orientationDegrees = 90;
+			}
+		}
+	}
 }
 
 int Packman::directionOrientationDegrees(Direction direction)
@@ -208,15 +233,15 @@ void Packman::setSpeedMultiplier(float newSpeed)
 	__speed = newSpeed;
 }
 
-void Packman::updateHero(float elapsedTime, Field& field, bool stop, bool multiplayer)
+void Packman::updateHero(float elapsedTime, Field& field, bool stop, bool multiplayer, bool first)
 {
 	const float step = __speed * elapsedTime;
 	const float localspeed = __speed;
 
 	if (multiplayer) {
-		updateHeroDirection(multiplayer);
+		updateHeroDirection(multiplayer, first);
 	}
-	else {
+	else {	
 		updateHeroDirection();
 	}
 

@@ -13,9 +13,9 @@
 # Файлы исходного кода библиотеки
 !src/*.cpp
 
-# Документация
-!docs/html/*
-!docs/html/search/*
+# # Документация
+# !docs/html/*
+# !docs/html/search/*
 
 # Картинки
 !image/*.png

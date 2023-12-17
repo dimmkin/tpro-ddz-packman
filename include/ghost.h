@@ -1,3 +1,7 @@
+/**
+ * @file ghost.h
+ */
+
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "../include/hero.h"
