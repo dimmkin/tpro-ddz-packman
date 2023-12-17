@@ -1,0 +1,8 @@
+<map id="game::GameSelection" name="game::GameSelection">
+<area shape="rect" id="node1" title="Представляет меню выбора игры." alt="" coords="283,80,450,107"/>
+<area shape="rect" id="node3" href="$classgame_1_1_chose_bots.html" title="Представляет меню для выбора ботов в меню выбора игры." alt="" coords="5,155,141,181"/>
+<area shape="rect" id="node4" href="$classgame_1_1_end_game.html" title="Представляет собой пункт меню для завершения игры." alt="" coords="165,155,296,181"/>
+<area shape="rect" id="node5" href="$classgame_1_1_exit.html" title="Представляет пункт меню для выхода из игры." alt="" coords="321,155,413,181"/>
+<area shape="rect" id="node6" href="$classgame_1_1_maps.html" title="Представляет меню для выбора карт в меню выбора игры." alt="" coords="437,155,539,181"/>
+<area shape="rect" id="node2" href="$classgame_1_1_menu_base.html" title=" " alt="" coords="299,5,434,32"/>
+</map>
