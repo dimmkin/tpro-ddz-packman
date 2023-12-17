@@ -242,49 +242,97 @@ public:
 	 * @param multiplayer Логическое значение, указывающее, является ли игра многопользовательской.(По умолчанию false).
 	 * 
 	 * @code 
-	 * void Packman::updateHeroDirection(bool multiplayer)
+     *	 void Packman::updateHeroDirection(bool multiplayer, bool first)
      *{
-     *  if (multiplayer) {
-     *    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-     *		__direction = Direction::UP;
-     *		__orientationDegrees = 0;
-     *    }
-     *    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-     *		__direction = Direction::DOWN;
-     *		__orientationDegrees = 180;
-     *    }
-     *    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-     *		__direction = Direction::LEFT;
-     *		__orientationDegrees = 270;
-     *    }
-     *    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-     *		__direction = Direction::RIGHT;
-     *		__orientationDegrees = 90;
-     *    }
-     *  }
-     *  else {
-     *    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-     *      __direction = Direction::UP;
-     *      __orientationDegrees = 0;
-     *    }
-     *    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-     *      __direction = Direction::DOWN;
-     *      __orientationDegrees = 180;
-     *    }
-     *    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-     *      __direction = Direction::LEFT;
-     *      __orientationDegrees = 270;
-     *    }
-     *    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-     *      __direction = Direction::RIGHT;
-     *      __orientationDegrees = 90;
-     *    }
-     *  }
+     *	std::ifstream file_option("text.json");
+     *	json data = json::parse(file_option);
+     *	file_option.close();
+     *
+     *	if (multiplayer && data["Option"][0] == 2) {
+     *		data["Option"][0] = 1;
+     *	}
+     *
+     *	if (multiplayer) {
+     *		if (first) {
+     *			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+     *				__direction = Direction::UP;
+     *				__orientationDegrees = 0;
+     *			}
+     *			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+     *				__direction = Direction::DOWN;
+     *				__orientationDegrees = 180;
+     *			}
+     *			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+     *				__direction = Direction::LEFT;
+     *				__orientationDegrees = 270;
+     *			}
+     *			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+     *				__direction = Direction::RIGHT;
+     *				__orientationDegrees = 90;
+     *			}
+     *		}
+     *		else {
+     *			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+     *				__direction = Direction::UP;
+     *				__orientationDegrees = 0;
+     *			}
+     *			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+     *				__direction = Direction::DOWN;
+     *				__orientationDegrees = 180;
+     *			}
+     *			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+     *				__direction = Direction::LEFT;
+     *				__orientationDegrees = 270;
+     *			}
+     *			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+     *				__direction = Direction::RIGHT;
+     *				__orientationDegrees = 90;
+     *			}
+     *		}
+     *	}
+     *	else {
+     *		if (data["Option"][0] == 1) {
+     *			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+     *				__direction = Direction::UP;
+     *				__orientationDegrees = 0;
+     *			}
+     *			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+     *				__direction = Direction::DOWN;
+     *				__orientationDegrees = 180;
+     *			}
+     *			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+     *				__direction = Direction::LEFT;
+     *				__orientationDegrees = 270;
+     *			}
+     *			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+     *				__direction = Direction::RIGHT;
+     *				__orientationDegrees = 90;
+     *			}
+     *		}
+     *		else {
+     *			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+     *				__direction = Direction::UP;
+     *				__orientationDegrees = 0;
+     *			}
+     *			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+     *				__direction = Direction::DOWN;
+     *				__orientationDegrees = 180;
+     *			}
+     *			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+     *				__direction = Direction::LEFT;
+     *				__orientationDegrees = 270;
+     *			}
+     *			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+     *				__direction = Direction::RIGHT;
+     *				__orientationDegrees = 90;
+     *			}
+     *		}
+     *	}
      *}
 	 * @endcode
 	 * 
 	 */
-	void updateHeroDirection(bool multiplayer = false);
+	void updateHeroDirection(bool multiplayer = false, bool first = false);
 	
 	/**
 	 * @brief Преобразует направление в ориентацию в градусах.
@@ -322,13 +370,13 @@ public:
 	 * @param multiplayer Логическое значение, указывающее, является ли игра многопользовательской.(По умолчанию false).
 	 * 
 	 * @code 
-	 * void Packman::updateHero(float elapsedTime, Field& field, bool stop, bool multiplayer)
+	 * void Packman::updateHero(float elapsedTime, Field& field, bool stop, bool multiplayer, bool first)
      *{
      *	const float step = (stop) ? 0 : __speed * elapsedTime;
      *	const float localspeed = (stop) ? 0 : __speed;
      *
      *	if (multiplayer) {
-     *		updateHeroDirection(multiplayer);
+     *		updateHeroDirection(multiplayer, first);
      *	}
      *	else {
      *		updateHeroDirection();
@@ -368,7 +416,7 @@ public:
      *}
      * @endcode
 	 */
-	void updateHero(float elapsedTime, Field& field, bool stop = false, bool multiplayer = false);
+	void updateHero(float elapsedTime, Field& field, bool stop = false, bool multiplayer = false, bool first = false);
 	
 	/**
 	 * @brief Рисует пакмана в данном окне.

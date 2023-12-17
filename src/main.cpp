@@ -207,7 +207,7 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
         }
         if (process.__gameState == GameState::WIN ) {
             window.draw(TitulGameWon);
-            window.draw(TitulFirstPlayerForGameWon1);
+            window.draw(TitulFirstPlayerForGameWon);
         }
         myEndGame.draw();
         window.display();
@@ -279,7 +279,7 @@ void PlayGame(RenderWindow& window, Font& font, double width, double height, int
     if (!heats_image1.loadFromFile("image/lifes.png")) exit(23);
     heats1.setTexture(&heats_image1);
     heats1.setPosition(110, 400);
-    std::string heat_file_count = data["Option"][1];
+    std::string heat_file_count = !multiplayer ? data["Option"][1] : "1";
     std::string heat_panel1 = "x" + heat_file_count;
     Text heat_text1;
     heat_text1.setString(heat_panel1);
@@ -1180,7 +1180,7 @@ int main()
     std::ifstream file_open("text.json");
     json data = json::parse(file_open);
     data["Start_game"] = { "Classic", 1, 1 };
-    data["Option"] = { 1, "1","User",1 };
+    data["Option"] = { 1, "2","User",1 };
     file_open.close();
     std::ofstream file_close("text.json");
     file_close << data;
