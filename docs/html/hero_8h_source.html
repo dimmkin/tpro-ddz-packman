@@ -69,61 +69,81 @@ $(function() {
 <div class="title">hero.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;SFML/Graphics.hpp&gt;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;random&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;chrono&gt;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">class </span><a class="code" href="class_field.html">Field</a>;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">// constants</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> sf::IntRect FRAME_EYES_LEFT(0, 0, 32, 32);</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> sf::IntRect FRAME_EYES_TOP(32, 0, 32, 32);</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> sf::IntRect FRAME_EYES_RIGHT(64, 0, 32, 32);</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> sf::IntRect FRAME_EYES_BOTTOM(96, 0, 32, 32);</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">// paths</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> GREEN_GHOST_TEXTURE[] = <span class="stringliteral">&quot;image/ghost-green.png&quot;</span>;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> PINK_GHOST_TEXTURE[] = <span class="stringliteral">&quot;image/ghost-pink.png&quot;</span>;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> RED_GHOST_TEXTURE[] = <span class="stringliteral">&quot;image/ghost-red.png&quot;</span>;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> ORANGE_GHOST_TEXTURE[] = <span class="stringliteral">&quot;image/ghost-orange.png&quot;</span>;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">enum class</span> Direction</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    NONE,</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    UP,</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    DOWN,</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    LEFT,</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    RIGHT</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;};</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="class_hero.html">   32</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_hero.html">Hero</a></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">public</span>:</div>
+<a href="hero_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;SFML/Graphics.hpp&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;random&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;chrono&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">class </span><a class="code" href="class_field.html">Field</a>;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">// Константы определяющие позиции глаз</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> sf::IntRect FRAME_EYES_LEFT(0, 0, 32, 32);</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> sf::IntRect FRAME_EYES_TOP(32, 0, 32, 32);</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> sf::IntRect FRAME_EYES_RIGHT(64, 0, 32, 32);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> sf::IntRect FRAME_EYES_BOTTOM(96, 0, 32, 32);</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">// Загрузка свех текстур для ботов</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> GREEN_GHOST_TEXTURE[] = <span class="stringliteral">&quot;image/ghost-green.png&quot;</span>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> PINK_GHOST_TEXTURE[] = <span class="stringliteral">&quot;image/ghost-pink.png&quot;</span>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> RED_GHOST_TEXTURE[] = <span class="stringliteral">&quot;image/ghost-red.png&quot;</span>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> ORANGE_GHOST_TEXTURE[] = <span class="stringliteral">&quot;image/ghost-orange.png&quot;</span>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// Класс перечисляющий направления</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">enum class</span> Direction</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    NONE,</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    UP,</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    DOWN,</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    LEFT,</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    RIGHT</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;};</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">// fields</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    sf::RectangleShape __figure;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    sf::Texture __texture;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    Direction __direction;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="comment">// methods</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    Direction randomDirection(Direction previousDirection);</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordtype">void</span> updateHeroDirection();</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    Direction changeOfDirection(Direction direction);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="comment">//Direction changeOfDirectionMultiplayer(Direction direction);</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">bool</span> initializeHero(<span class="keyword">const</span> sf::Vector2f&amp; position, <span class="keyword">const</span> std::string&amp; texturePath);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    sf::Vector2f buildMovement(sf::Vector2f&amp; movement, <a class="code" href="class_hero.html">Hero</a>&amp; hero, <span class="keyword">const</span> <span class="keywordtype">float</span> step);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> MovingOut(<a class="code" href="class_field.html">Field</a>&amp; field, sf::Vector2f&amp; movement, <span class="keyword">const</span> <span class="keywordtype">float</span> speed);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> updateHero(<span class="keywordtype">float</span> elapsedTime, <a class="code" href="class_field.html">Field</a>&amp; field, <span class="keyword">const</span> <span class="keywordtype">float</span> speed, <span class="keywordtype">bool</span> stop = <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> drawHero(sf::RenderWindow&amp; window);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">void</span> drawEyes();</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> getDirection(Direction direction) { __direction = direction; }</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;};</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="class_hero.html">   40</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_hero.html">Hero</a></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;{</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// fields</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    sf::RectangleShape __figure; <span class="comment">// Фигура персонажа</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    sf::Texture __texture;       <span class="comment">// Текстура персонажа</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    Direction __direction;       <span class="comment">// Направления движения персонажа</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="comment">// Методы</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    Direction <a class="code" href="class_hero.html#afb083cec97c68e59caaa19379ede7675">randomDirection</a>(Direction previousDirection);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hero.html#a2598429df3e05650391e97b3facc95e9">updateHeroDirection</a>();</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    Direction <a class="code" href="class_hero.html#a420e98f529b8311508a4e10ca2dd4e26">changeOfDirection</a>(Direction direction);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_hero.html#a727921bd9c760b2405664a262ba79e7e">initializeHero</a>(<span class="keyword">const</span> sf::Vector2f&amp; position, <span class="keyword">const</span> std::string&amp; texturePath);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    sf::Vector2f <a class="code" href="class_hero.html#af4ffe799dbaddeffbda0692ece97451c">buildMovement</a>(sf::Vector2f&amp; movement, <a class="code" href="class_hero.html">Hero</a>&amp; hero, <span class="keyword">const</span> <span class="keywordtype">float</span> step);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hero.html#aba5eae45a7af23a8d850a254e70b440d">MovingOut</a>(<a class="code" href="class_field.html">Field</a>&amp; field, sf::Vector2f&amp; movement, <span class="keyword">const</span> <span class="keywordtype">float</span> speed);</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hero.html#ab7511236552673557a1c5c8b47f48948">updateHero</a>(<span class="keywordtype">float</span> elapsedTime, <a class="code" href="class_field.html">Field</a>&amp; field, <span class="keyword">const</span> <span class="keywordtype">float</span> speed, <span class="keywordtype">bool</span> stop = <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hero.html#a3a1959d09c0284214ad2946bd49b2faf">drawHero</a>(sf::RenderWindow&amp; window);</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hero.html#a25151892f5bf4b2d24e188cdc50071ba">drawEyes</a>();</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160; </div>
+<div class="line"><a name="l00325"></a><span class="lineno"><a class="line" href="class_hero.html#af52a71ab416685fce9059402ae26cbcf">  325</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_hero.html#af52a71ab416685fce9059402ae26cbcf">getDirection</a>(Direction direction) { __direction = direction; }</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;};</div>
 <div class="ttc" id="aclass_field_html"><div class="ttname"><a href="class_field.html">Field</a></div><div class="ttdef"><b>Definition:</b> field.h:112</div></div>
-<div class="ttc" id="aclass_hero_html"><div class="ttname"><a href="class_hero.html">Hero</a></div><div class="ttdef"><b>Definition:</b> hero.h:33</div></div>
+<div class="ttc" id="aclass_hero_html"><div class="ttname"><a href="class_hero.html">Hero</a></div><div class="ttdef"><b>Definition:</b> hero.h:41</div></div>
+<div class="ttc" id="aclass_hero_html_a25151892f5bf4b2d24e188cdc50071ba"><div class="ttname"><a href="class_hero.html#a25151892f5bf4b2d24e188cdc50071ba">Hero::drawEyes</a></div><div class="ttdeci">void drawEyes()</div><div class="ttdoc">Метод рисующий глаза персонажа.</div><div class="ttdef"><b>Definition:</b> hero.cpp:118</div></div>
+<div class="ttc" id="aclass_hero_html_a2598429df3e05650391e97b3facc95e9"><div class="ttname"><a href="class_hero.html#a2598429df3e05650391e97b3facc95e9">Hero::updateHeroDirection</a></div><div class="ttdeci">void updateHeroDirection()</div><div class="ttdoc">Метод обновляюший управления для персонажа.</div><div class="ttdef"><b>Definition:</b> hero.cpp:21</div></div>
+<div class="ttc" id="aclass_hero_html_a3a1959d09c0284214ad2946bd49b2faf"><div class="ttname"><a href="class_hero.html#a3a1959d09c0284214ad2946bd49b2faf">Hero::drawHero</a></div><div class="ttdeci">void drawHero(sf::RenderWindow &amp;window)</div><div class="ttdoc">Метод рисующий персонажа в игре.</div><div class="ttdef"><b>Definition:</b> hero.cpp:172</div></div>
+<div class="ttc" id="aclass_hero_html_a420e98f529b8311508a4e10ca2dd4e26"><div class="ttname"><a href="class_hero.html#a420e98f529b8311508a4e10ca2dd4e26">Hero::changeOfDirection</a></div><div class="ttdeci">Direction changeOfDirection(Direction direction)</div><div class="ttdoc">Метод изменяющий направление персонажа.</div><div class="ttdef"><b>Definition:</b> hero.cpp:47</div></div>
+<div class="ttc" id="aclass_hero_html_a727921bd9c760b2405664a262ba79e7e"><div class="ttname"><a href="class_hero.html#a727921bd9c760b2405664a262ba79e7e">Hero::initializeHero</a></div><div class="ttdeci">bool initializeHero(const sf::Vector2f &amp;position, const std::string &amp;texturePath)</div><div class="ttdoc">Метод инициализирующий персонажа.</div><div class="ttdef"><b>Definition:</b> hero.cpp:71</div></div>
+<div class="ttc" id="aclass_hero_html_ab7511236552673557a1c5c8b47f48948"><div class="ttname"><a href="class_hero.html#ab7511236552673557a1c5c8b47f48948">Hero::updateHero</a></div><div class="ttdeci">void updateHero(float elapsedTime, Field &amp;field, const float speed, bool stop=false)</div><div class="ttdoc">Метод обновляющий состояние персонажа.</div><div class="ttdef"><b>Definition:</b> hero.cpp:142</div></div>
+<div class="ttc" id="aclass_hero_html_aba5eae45a7af23a8d850a254e70b440d"><div class="ttname"><a href="class_hero.html#aba5eae45a7af23a8d850a254e70b440d">Hero::MovingOut</a></div><div class="ttdeci">void MovingOut(Field &amp;field, sf::Vector2f &amp;movement, const float speed)</div><div class="ttdoc">Метод определяющий выход за пределы карты.</div><div class="ttdef"><b>Definition:</b> hero.cpp:102</div></div>
+<div class="ttc" id="aclass_hero_html_af4ffe799dbaddeffbda0692ece97451c"><div class="ttname"><a href="class_hero.html#af4ffe799dbaddeffbda0692ece97451c">Hero::buildMovement</a></div><div class="ttdeci">sf::Vector2f buildMovement(sf::Vector2f &amp;movement, Hero &amp;hero, const float step)</div><div class="ttdoc">Мотод отвечающий за передвижение.</div><div class="ttdef"><b>Definition:</b> hero.cpp:85</div></div>
+<div class="ttc" id="aclass_hero_html_af52a71ab416685fce9059402ae26cbcf"><div class="ttname"><a href="class_hero.html#af52a71ab416685fce9059402ae26cbcf">Hero::getDirection</a></div><div class="ttdeci">void getDirection(Direction direction)</div><div class="ttdoc">Метод устанавливающий направление персонажу.</div><div class="ttdef"><b>Definition:</b> hero.h:325</div></div>
+<div class="ttc" id="aclass_hero_html_afb083cec97c68e59caaa19379ede7675"><div class="ttname"><a href="class_hero.html#afb083cec97c68e59caaa19379ede7675">Hero::randomDirection</a></div><div class="ttdeci">Direction randomDirection(Direction previousDirection)</div><div class="ttdoc">Метод задающий рандомное движения для персонажа.</div><div class="ttdef"><b>Definition:</b> hero.cpp:4</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

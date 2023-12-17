@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['updatehero_133',['updateHero',['../class_packman.html#af05650d0bc61dd3d2a5d404564b94310',1,'Packman']]],
-  ['updateherodirection_134',['updateHeroDirection',['../class_packman.html#a7ce18f2be48de55f254eaca5dd8c4f9b',1,'Packman']]]
+  ['pause_161',['Pause',['../classgame_1_1_pause.html#add3edce3808d64f0f3852c8702ae8ca4',1,'game::Pause']]]
 ];

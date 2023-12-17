@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['directionorientationdegrees_111',['directionOrientationDegrees',['../class_packman.html#aab5be6ef0d5677a769d7f67a5d107582',1,'Packman']]],
-  ['draw_112',['draw',['../classgame_1_1_menu_base.html#ab99d36fa5818b40e8df6213c148099b1',1,'game::MenuBase']]],
-  ['drawbonus_113',['drawBonus',['../class_bonus.html#aa3dc71cf456c895deaeeae83ba4a9a12',1,'Bonus']]],
-  ['drawpackman_114',['drawPackman',['../class_packman.html#a0c025ef1066c226630ff4a5e46f48ba6',1,'Packman']]]
+  ['changedbonusesposition_130',['changedBonusesPosition',['../class_game_process.html#a7ced2c0e1768ad58e311acdbf264583e',1,'GameProcess']]],
+  ['changeofdirection_131',['changeOfDirection',['../class_hero.html#a420e98f529b8311508a4e10ca2dd4e26',1,'Hero']]],
+  ['chosebots_132',['ChoseBots',['../classgame_1_1_chose_bots.html#a1bd1551ef17b99b0b443ef0c0c5ca8fb',1,'game::ChoseBots']]]
 ];

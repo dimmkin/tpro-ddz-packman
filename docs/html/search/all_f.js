@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7emenubase_70',['~MenuBase',['../classgame_1_1_menu_base.html#a7657b01bd785d907fd011ac3e5898359',1,'game::MenuBase']]]
+  ['typesbonuses_84',['TypesBonuses',['../bonus_8h.html#a46375ef6fc4f4233a9ea3e3ad4e9f21c',1,'bonus.h']]]
 ];
