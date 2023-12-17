@@ -107,7 +107,6 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     TitulFirstPlayerForGameOver.setFont(font);
     InitText(TitulFirstPlayerForGameOver, 850, 350, nickname.getString(), 140, sf::Color::Yellow, 3, sf::Color::Blue);
 
-
     sf::Text TitulFirstPlayerForGameWon;
     TitulFirstPlayerForGameWon.setFont(font);
     InitText(TitulFirstPlayerForGameWon, 825, 400, nickname.getString(), 160, sf::Color::Yellow, 3, sf::Color::Blue);
@@ -120,9 +119,9 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     TitulFirstPlayerForGameWon2.setFont(font);
     InitText(TitulFirstPlayerForGameWon2, 450, 450, L"Player 2", 140, sf::Color::Yellow, 3, sf::Color::Blue);
 
-    std::ifstream file("multiplayer.json");
-    json user = json::parse(file);
-    file.close();
+    std::ifstream multifile("multiplayer.json");
+    json user = json::parse(multifile);
+    multifile.close();
     std::string name_user_1 = user["firstPlayer"][0];
     std::string name_user_2 = user["secondPlayer"][0];
 
