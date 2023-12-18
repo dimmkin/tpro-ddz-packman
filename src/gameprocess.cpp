@@ -81,17 +81,13 @@ void GameProcess::initializeGameProcess(const sf::Vector2f& processSize, bool mu
 	const sf::FloatRect titleBounds = __gameOverTitle.getLocalBounds();
 	__gameOverTitle.setOrigin(0.5f * titleBounds.width, 0.5f * titleBounds.height);
 }
-
+#include <iostream>
 void GameProcess::killBotsAndChangePosition(bool multiplayer)
 {
 	__ghosts.clear();
 	__field.clearMap(SYMBOLS_GHOSTS, __field.__map);
 	__field.randomizeMap(SYMBOLS_GHOSTS, __field.__map);
-
-	std::ifstream file("text.json");
-	json data = json::parse(file);
-	file.close();
-
+	std::cout << "hi" << std::endl;
 	if (multiplayer) {
 		initializeGhostByID(__ghosts, GhostID::FIRST);
 		initializeGhostByID(__ghosts, GhostID::SECOND);
@@ -99,6 +95,9 @@ void GameProcess::killBotsAndChangePosition(bool multiplayer)
 		initializeGhostByID(__ghosts, GhostID::FORTH);
 	}
 	else {
+		std::ifstream file("text.json");
+		json data = json::parse(file);
+		file.close();
 		int i = data["Start_game"][1];
 		switch (i)
 		{
@@ -207,7 +206,6 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
     file.close();
 	
 	if (__gameState == GameState::PLAY) {
-		//	__packman1.updateHero(elapsedTime, __field, stop);
 		if (multiplayer) {
 			__packman1.updateHero(elapsedTime, __field, stop, multiplayer, true);
 			__packman2.updateHero(elapsedTime, __field, stop, multiplayer);
@@ -261,38 +259,70 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 					}
 				}
 			}
-			for (auto it = __packman1.__activeBonuses.begin(); it != __packman1.__activeBonuses.end(); ++it) {
-				if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman1.__eatenCookies >= it->second.__eatenDots + 10) {
-					__packman1.setSpeedMultiplier(localspeed_multiplier);
-					it->second.__active = false;
-				}
-			}
-			for (auto it = __bonuses.begin(); it != __bonuses.end();) {
-				if (it->second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
-					if (it->second.__bonusType == TypesBonuses::BOMB) {
-						it->second.__active = true;
-						killBotsAndChangePosition(multiplayer);
-					}
-					if (it->second.__bonusType == TypesBonuses::CYCLE) {
-						__packman1.setSpeedMultiplier(localspeed_bonus);
-						it->second.__active = true;
-						it->second.__eatenDots = __packman1.__eatenCookies;
-						__packman1.__activeBonuses[it->first] = it->second;
+			if (multiplayer) {
+				for (auto it = __packman1.__activeBonuses.begin(); it != __packman1.__activeBonuses.end(); ++it) {
+					if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman1.__eatenCookies >= it->second.__eatenDots + 10) {
+						__packman1.setSpeedMultiplier(localspeed_multiplier);
+						it->second.__active = false;
 					}
 				}
-				if (it->second.__bonusType == TypesBonuses::BOMB && it->second.__active) {
-					it = __bonuses.erase(it);
-					continue;
+				for (auto it = __bonuses.begin(); it != __bonuses.end();) {
+					if (it->second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
+						if (it->second.__bonusType == TypesBonuses::BOMB) {
+							it->second.__active = true;
+							killBotsAndChangePosition(multiplayer);
+							exit(1);
+						}
+						if (it->second.__bonusType == TypesBonuses::CYCLE) {
+							__packman1.setSpeedMultiplier(localspeed_bonus);
+							it->second.__active = true;
+							it->second.__eatenDots = __packman1.__eatenCookies;
+							__packman1.__activeBonuses[it->first] = it->second;
+						}
+					}
+					if (it->second.__bonusType == TypesBonuses::BOMB && it->second.__active) {
+						it = __bonuses.erase(it);
+						continue;
+					}
+					if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active) {
+						it = __bonuses.erase(it);
+						continue;
+					}
+					++it;
 				}
-				if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active) {
-					it = __bonuses.erase(it);
-					continue;
+				for (auto it = __packman2.__activeBonuses.begin(); it != __packman2.__activeBonuses.end(); ++it) {
+					if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman2.__eatenCookies >= it->second.__eatenDots + 10) {
+						__packman2.setSpeedMultiplier(localspeed_multiplier);
+						it->second.__active = false;
+					}
 				}
-				++it;
-			}
+				for (auto it = __bonuses.begin(); it != __bonuses.end();) {
+					if (it->second.__figure.getGlobalBounds().intersects(packmanBounds2)) {
+						if (it->second.__bonusType == TypesBonuses::BOMB) {
+							it->second.__active = true;
+							killBotsAndChangePosition(multiplayer);
+						}
+						if (it->second.__bonusType == TypesBonuses::CYCLE) {
+							__packman2.setSpeedMultiplier(localspeed_bonus);
+							it->second.__active = true;
+							it->second.__eatenDots = __packman2.__eatenCookies;
+							__packman2.__activeBonuses[it->first] = it->second;
+						}
+					}
+					if (it->second.__bonusType == TypesBonuses::BOMB && it->second.__active) {
+						it = __bonuses.erase(it);
+						continue;
+					}
+					if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active) {
+						it = __bonuses.erase(it);
+						continue;
+					}
+					++it;
+				}
 
-			if (__totalCookiesCount - (__packman1.__eatenCookies + __packman2.__eatenCookies) == 0) {
-				__gameState = GameState::WIN;
+				if (__totalCookiesCount - (__packman1.__eatenCookies + __packman2.__eatenCookies) == 0) {
+					__gameState = GameState::WIN;
+				}
 			}
 		}
 		if (!multiplayer) {
