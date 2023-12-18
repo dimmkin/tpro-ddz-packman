@@ -33,7 +33,7 @@ void GameProcess::initializeGameProcess(const sf::Vector2f& processSize, bool mu
 		__packman2.initializePackman(__field, __packman2, 150.f, multiplayer);
 	}
 	else {
-		__packman1.initializePackman(__field, __packman1, 250.f);
+		__packman1.initializePackman(__field, __packman1, 150.f);
 	}
 
 	std::ifstream file("text.json");
@@ -244,7 +244,7 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 					__gameState = GameState::LOSE;
 				}
 			}
-			else  {
+			else  if(!flag_lifes){
 				if (pair.second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
 					if (lifes == 1) {
 						__gameState = GameState::LOSE;
@@ -252,10 +252,19 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 					else
 					{
 						flag_lifes = true;
-						__packman1.__direction = __packman1.changeOfDirection(__packman1.__direction);
-						__packman1.__orientationDegrees = __packman1.directionOrientationDegrees(__packman1.__direction);
-						pair.second.__direction = pair.second.changeOfDirection(pair.second.__direction);
-						exit;
+						if (__packman2.__direction == pair.second.__direction) {
+							__packman2.__direction = __packman2.changeOfDirection(__packman2.__direction);
+							__packman2.__orientationDegrees = __packman2.directionOrientationDegrees(__packman2.__direction);
+							pair.second.__direction = pair.second.changeOfDirection(__packman2.__direction);
+							pair.second.__direction = pair.second.changeOfDirection(pair.second.__direction);
+							exit;
+						}
+						else{
+							__packman2.__direction = __packman2.changeOfDirection(__packman2.__direction);
+							__packman2.__orientationDegrees = __packman2.directionOrientationDegrees(__packman2.__direction);
+							pair.second.__direction = pair.second.changeOfDirectionGost(pair.second.__direction, __packman2.__direction);
+							exit;
+						}
 					}
 				}
 			}

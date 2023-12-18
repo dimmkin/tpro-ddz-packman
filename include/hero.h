@@ -323,4 +323,6 @@ public:
 	 * @endcode
 	 */
 	void getDirection(Direction direction) { __direction = direction; }
+
+	Direction changeOfDirectionGost(Direction gost, Direction Packman);
 };
