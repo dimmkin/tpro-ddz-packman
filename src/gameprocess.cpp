@@ -219,11 +219,11 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 			pair.second.updateHero(elapsedTime, __field, localspeed_ghost, stop);
 		}
 
-		const sf::FloatRect packmanBounds1 = __packman1.getPackmanBounds();
-		const sf::FloatRect packmanBounds2 = __packman2.getPackmanBounds();
+		if (multiplayer) {
+			const sf::FloatRect packmanBounds1 = __packman1.getPackmanBounds();
+			const sf::FloatRect packmanBounds2 = __packman2.getPackmanBounds();
+			for (auto& pair : __ghosts) {
 
-		for (auto& pair : __ghosts) {
-			if (multiplayer) {
 				if (pair.second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
 					unsigned int count = user["Game"][1];
 					++count;
@@ -243,95 +243,69 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 					__gameState = GameState::LOSE;
 				}
 			}
-			else  if(!flag_lifes){
-				if (pair.second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
-					if (lifes == 1) {
-						__gameState = GameState::LOSE;
-					}
-					else
-					{
-						flag_lifes = true;
-						if (__packman2.__direction == pair.second.__direction) {
-							__packman2.__direction = __packman2.changeOfDirection(__packman2.__direction);
-							__packman2.__orientationDegrees = __packman2.directionOrientationDegrees(__packman2.__direction);
-							pair.second.__direction = pair.second.changeOfDirection(__packman2.__direction);
-							pair.second.__direction = pair.second.changeOfDirection(pair.second.__direction);
-							exit;
-						}
-						else{
-							__packman2.__direction = __packman2.changeOfDirection(__packman2.__direction);
-							__packman2.__orientationDegrees = __packman2.directionOrientationDegrees(__packman2.__direction);
-							pair.second.__direction = pair.second.changeOfDirectionGost(pair.second.__direction, __packman2.__direction);
-							exit;
-						}
-					}
+			for (auto it = __packman1.__activeBonuses.begin(); it != __packman1.__activeBonuses.end(); ++it) {
+				if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman1.__eatenCookies >= it->second.__eatenDots + 10) {
+					__packman1.setSpeedMultiplier(localspeed_multiplier);
+					it->second.__active = false;
 				}
 			}
-			if (multiplayer) {
-				for (auto it = __packman1.__activeBonuses.begin(); it != __packman1.__activeBonuses.end(); ++it) {
-					if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman1.__eatenCookies >= it->second.__eatenDots + 10) {
-						__packman1.setSpeedMultiplier(localspeed_multiplier);
-						it->second.__active = false;
+			for (auto it = __bonuses.begin(); it != __bonuses.end();) {
+				if (it->second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
+					if (it->second.__bonusType == TypesBonuses::BOMB) {
+						it->second.__active = true;
+						killBotsAndChangePosition(multiplayer);
+					}
+					if (it->second.__bonusType == TypesBonuses::CYCLE) {
+						__packman1.setSpeedMultiplier(localspeed_bonus);
+						it->second.__active = true;
+						it->second.__eatenDots = __packman1.__eatenCookies;
+						__packman1.__activeBonuses[it->first] = it->second;
 					}
 				}
-				for (auto it = __bonuses.begin(); it != __bonuses.end();) {
-					if (it->second.__figure.getGlobalBounds().intersects(packmanBounds1)) {
-						if (it->second.__bonusType == TypesBonuses::BOMB) {
-							it->second.__active = true;
-							killBotsAndChangePosition(multiplayer);
-							exit(1);
-						}
-						if (it->second.__bonusType == TypesBonuses::CYCLE) {
-							__packman1.setSpeedMultiplier(localspeed_bonus);
-							it->second.__active = true;
-							it->second.__eatenDots = __packman1.__eatenCookies;
-							__packman1.__activeBonuses[it->first] = it->second;
-						}
-					}
-					if (it->second.__bonusType == TypesBonuses::BOMB && it->second.__active) {
-						it = __bonuses.erase(it);
-						continue;
-					}
-					if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active) {
-						it = __bonuses.erase(it);
-						continue;
-					}
-					++it;
+				if (it->second.__bonusType == TypesBonuses::BOMB && it->second.__active) {
+					it = __bonuses.erase(it);
+					continue;
 				}
-				for (auto it = __packman2.__activeBonuses.begin(); it != __packman2.__activeBonuses.end(); ++it) {
-					if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman2.__eatenCookies >= it->second.__eatenDots + 10) {
-						__packman2.setSpeedMultiplier(localspeed_multiplier);
-						it->second.__active = false;
+				if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active) {
+					it = __bonuses.erase(it);
+					continue;
+				}
+				++it;
+			}
+			for (auto it = __packman2.__activeBonuses.begin(); it != __packman2.__activeBonuses.end(); ++it) {
+				if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active && __packman2.__eatenCookies >= it->second.__eatenDots + 10) {
+					__packman2.setSpeedMultiplier(localspeed_multiplier);
+					it->second.__active = false;
+				}
+			}
+			for (auto it = __bonuses.begin(); it != __bonuses.end();) {
+				if (it->second.__figure.getGlobalBounds().intersects(packmanBounds2)) {
+					if (it->second.__bonusType == TypesBonuses::BOMB) {
+						it->second.__active = true;
+						killBotsAndChangePosition(multiplayer);
+					}
+					if (it->second.__bonusType == TypesBonuses::CYCLE) {
+						__packman2.setSpeedMultiplier(localspeed_bonus);
+						it->second.__active = true;
+						it->second.__eatenDots = __packman2.__eatenCookies;
+						__packman2.__activeBonuses[it->first] = it->second;
 					}
 				}
-				for (auto it = __bonuses.begin(); it != __bonuses.end();) {
-					if (it->second.__figure.getGlobalBounds().intersects(packmanBounds2)) {
-						if (it->second.__bonusType == TypesBonuses::BOMB) {
-							it->second.__active = true;
-							killBotsAndChangePosition(multiplayer);
-						}
-						if (it->second.__bonusType == TypesBonuses::CYCLE) {
-							__packman2.setSpeedMultiplier(localspeed_bonus);
-							it->second.__active = true;
-							it->second.__eatenDots = __packman2.__eatenCookies;
-							__packman2.__activeBonuses[it->first] = it->second;
-						}
-					}
-					if (it->second.__bonusType == TypesBonuses::BOMB && it->second.__active) {
-						it = __bonuses.erase(it);
-						continue;
-					}
-					if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active) {
-						it = __bonuses.erase(it);
-						continue;
-					}
-					++it;
+				if (it->second.__bonusType == TypesBonuses::BOMB && it->second.__active) {
+					it = __bonuses.erase(it);
+					continue;
 				}
+				if (it->second.__bonusType == TypesBonuses::CYCLE && it->second.__active) {
+					it = __bonuses.erase(it);
+					continue;
+				}
+				++it;
+			}
 
-				if (__totalCookiesCount - (__packman1.__eatenCookies + __packman2.__eatenCookies) == 0) {
-					__gameState = GameState::WIN;
-				}
+			if (__totalCookiesCount - (__packman1.__eatenCookies + __packman2.__eatenCookies) == 0) {
+				__gameState = GameState::WIN;
 			}
+			
 		}
 		if (!multiplayer) {
 			const sf::FloatRect packmanBounds1 = __packman1.getPackmanBounds();
@@ -346,7 +320,6 @@ void GameProcess::updateGameProcess(float elapsedTime, bool &flag_lifes, unsigne
 						__packman1.__direction = __packman1.changeOfDirection(__packman1.__direction);
 						__packman1.__orientationDegrees = __packman1.directionOrientationDegrees(__packman1.__direction);
 						pair.second.__direction = pair.second.changeOfDirection(pair.second.__direction);
-						exit;
 					}
 				}
 			}
