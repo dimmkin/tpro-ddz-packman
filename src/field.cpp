@@ -1,5 +1,5 @@
 #include "../include/field.h"
-
+#include <iostream>
 void Field::setMap()
 {
     std::ifstream file("text.json");
@@ -27,7 +27,6 @@ void Field::randomizeMap(std::vector<char> symbols, std::string startMap)
     for (char symbol : symbols) {
         while (true) {
             int position = std::uniform_int_distribution<int>(0, __map.size() - 1)(generator);
-
             if (__map[position] == ' ') {
                 __map[position] = symbol;
                 break;

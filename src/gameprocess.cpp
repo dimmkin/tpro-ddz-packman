@@ -81,13 +81,12 @@ void GameProcess::initializeGameProcess(const sf::Vector2f& processSize, bool mu
 	const sf::FloatRect titleBounds = __gameOverTitle.getLocalBounds();
 	__gameOverTitle.setOrigin(0.5f * titleBounds.width, 0.5f * titleBounds.height);
 }
-#include <iostream>
+
 void GameProcess::killBotsAndChangePosition(bool multiplayer)
 {
 	__ghosts.clear();
 	__field.clearMap(SYMBOLS_GHOSTS, __field.__map);
 	__field.randomizeMap(SYMBOLS_GHOSTS, __field.__map);
-	std::cout << "hi" << std::endl;
 	if (multiplayer) {
 		initializeGhostByID(__ghosts, GhostID::FIRST);
 		initializeGhostByID(__ghosts, GhostID::SECOND);
