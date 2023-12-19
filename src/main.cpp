@@ -213,7 +213,16 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
             window.draw(User1Vin);
             window.draw(User2Vin);
         }
-        if (process.__gameState == GameState::WIN ) {
+        if (process.__gameState == GameState::WIN && multiplayer) {
+            window.draw(TitulGameWon);
+            window.draw(TitulFirstPlayerForGameWon1);
+            window.draw(TitulFirstPlayerForGameWon2);
+            window.draw(NameUser1);
+            window.draw(NameUser2);
+            window.draw(User1Vin);
+            window.draw(User2Vin);
+        }
+        if (process.__gameState == GameState::WIN && !multiplayer) {
             window.draw(TitulGameWon);
             window.draw(TitulFirstPlayerForGameWon);
         }
