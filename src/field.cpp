@@ -1,5 +1,4 @@
 #include "../include/field.h"
-#include <iostream>
 void Field::setMap()
 {
     std::ifstream file("text.json");
