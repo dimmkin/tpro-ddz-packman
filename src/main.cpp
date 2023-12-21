@@ -146,6 +146,8 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     std::string game_vin_1 = to_string(date_game["Game"][0]);
     std::string game_vin_2 = to_string(date_game["Game"][1]);
 
+
+
     sf::Text User1Vin;
     std::string vin1 = game_vin_1 + "\\" + "3";
     User1Vin.setFont(font);
@@ -159,6 +161,12 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
     sf::Text TitulScores;
     TitulScores.setFont(font);
     InitText(TitulScores, 750, 500, L"SCORES: " + std::to_string(scores) + "%", 120, sf::Color::Yellow, 3, sf::Color::Blue);
+
+    std::ofstream file_game_close("multiplayer_game.json");
+    date_game["Game"][0] = 0;
+    date_game["Game"][1] = 0;
+    file_game_close << date_game;
+    file_game_close.close();
 
     sf::String nameEndGame[]{ L"RESTART",L"EXIT" };
 
@@ -205,7 +213,16 @@ void EndGame(sf::RenderWindow& window, sf::Font& font, double width, double heig
             window.draw(User1Vin);
             window.draw(User2Vin);
         }
-        if (process.__gameState == GameState::WIN ) {
+        if (process.__gameState == GameState::WIN && multiplayer) {
+            window.draw(TitulGameWon);
+            window.draw(TitulFirstPlayerForGameWon1);
+            window.draw(TitulFirstPlayerForGameWon2);
+            window.draw(NameUser1);
+            window.draw(NameUser2);
+            window.draw(User1Vin);
+            window.draw(User2Vin);
+        }
+        if (process.__gameState == GameState::WIN && !multiplayer) {
             window.draw(TitulGameWon);
             window.draw(TitulFirstPlayerForGameWon);
         }

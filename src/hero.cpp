@@ -41,9 +41,22 @@ void Hero::updateHeroDirection()
 		return;
 	}
 }
-// Direction Hero::changeOfDirectionMultiplayer(Direction) {
+Direction Hero::changeOfDirectionGost(Direction gost, Direction Packman)
+{
+	if(Packman == Direction::RIGHT && gost == Direction::LEFT) {
+		return Direction::RIGHT;
+	}
+	if(Packman == Direction::LEFT && gost == Direction::RIGHT) {
+		return Direction::LEFT;
+	}
+	if(Packman == Direction::UP && gost == Direction::DOWN) {
+		return Direction::UP;
+	}
+	if(Packman == Direction::DOWN && gost == Direction::UP) {
+		return Direction::DOWN;
+	}
+}
 
-// }
 Direction Hero::changeOfDirection(Direction direction)
 {
 	if (direction == Direction::UP) {
